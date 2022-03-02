@@ -11,7 +11,7 @@ export default function Shop({ products }: Props) {
       <p>Nombre de produits : {products.length}</p>
       <div>
         {products.map((product) => (
-          <p>{product.name}</p>
+          <p key={product.id}>{product.name}</p>
         ))}
       </div>
     </Layout>
