@@ -1,6 +1,24 @@
-import React from "react";
 import { Layout } from "../components/Layout";
+import { supabase } from "../utils/supabaseClient";
 
-export default function Shop() {
-  return <Layout pageTitle="Shop" isShop></Layout>;
+type Props = {
+  products: any[];
+};
+
+export default function Shop({ products }: Props) {
+  return (
+    <Layout pageTitle="Shop" isShop>
+      <p>Nombre de produits : {products.length}</p>
+      <div>
+        {products.map((product) => (
+          <p>{product.name}</p>
+        ))}
+      </div>
+    </Layout>
+  );
 }
+
+export const getServerSideProps = async () => {
+  const { data: products } = await supabase.from("product").select();
+  return { props: { products } };
+};
