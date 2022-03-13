@@ -1,7 +1,9 @@
 export type Product = {
   id: number;
   name: string;
-  productCategory: Category[];
+  productCategory: Category;
+  price: number;
+  inStock: boolean;
 };
 
 export type Category = {

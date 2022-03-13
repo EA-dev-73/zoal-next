@@ -10,7 +10,7 @@ type Props = {
 export const Layout = ({ children, pageTitle, isShop = false }: Props) => {
   return (
     <div>
-      <h1 style={{ color: isShop ? "red" : "black" }}>{pageTitle}</h1>
+      <h1>{pageTitle}</h1>
       <Nav />
       {children}
     </div>

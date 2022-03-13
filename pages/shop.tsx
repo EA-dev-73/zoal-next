@@ -1,19 +1,18 @@
+import { getProducts } from "../api/products-api";
 import { Layout } from "../components/Layout";
-import { Category, Product } from "../types";
-import { supabase } from "../utils/supabaseClient";
+import { Product } from "../components/Product";
+import { Product as ProductType } from "../types";
 
 type Props = {
-  products: Product[];
-  categories: Category[];
+  products: ProductType[];
 };
 
 export default function Shop({ products }: Props) {
   return (
     <Layout pageTitle="Shop" isShop>
-      <p>Nombre de produits : {products.length}</p>
       <div>
         {products.map((product) => (
-          <p key={product.id}>{product.name}</p>
+          <Product key={product.id} product={product} />
         ))}
       </div>
     </Layout>
@@ -21,10 +20,6 @@ export default function Shop({ products }: Props) {
 }
 
 export const getServerSideProps = async () => {
-  const { data: products } = await supabase.from("product").select(`
-      id, name,
-      productCategory (id, name)
-  `);
-
+  const products = await getProducts();
   return { props: { products } };
 };
