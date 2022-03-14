@@ -8,7 +8,7 @@ import {
 } from "../utils/localStorageHelpers";
 import { Price } from "../value-objects/Price";
 
-export default function Shop() {
+export default function Panier() {
   const [cartContent, setCartContent] = useState<CartItem[]>([]);
   const handleRemoveItemFromCart = (item: CartItem) => {
     const newCartContent = removeItemFromCart(item);
@@ -50,7 +50,7 @@ export default function Shop() {
         </>
       ) : (
         <p>
-          Votre pannier est vide. Va{" "}
+          Le panier est vide. Va{" "}
           <Link href={"shop"}>acheter des trucs 🤑🤑</Link>
         </p>
       )}
