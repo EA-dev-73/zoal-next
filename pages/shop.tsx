@@ -1,6 +1,6 @@
 import { getProducts } from "../api/products-api";
 import { Layout } from "../components/Layout";
-import { Product } from "../components/Product";
+import { ProductCard } from "../components/ProductCard";
 import { Product as ProductType } from "../types";
 
 type Props = {
@@ -12,7 +12,7 @@ export default function Shop({ products }: Props) {
     <Layout pageTitle="Shop" isShop>
       <div>
         {products.map((product) => (
-          <Product key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </Layout>
