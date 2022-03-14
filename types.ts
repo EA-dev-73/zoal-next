@@ -3,7 +3,7 @@ export type Product = {
   name: string;
   productCategory: Category;
   createdAt: Date;
-  productItem: ProductItem;
+  productItems: ProductItem[];
 };
 
 export type Category = {
@@ -17,4 +17,4 @@ export type ProductItem = {
   size: string;
   price: number;
   inStock: boolean;
-}[];
+};
