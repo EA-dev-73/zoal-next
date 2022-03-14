@@ -11,7 +11,7 @@ export default function Shop({ products }: Props) {
   return (
     <Layout pageTitle="Shop" isShop>
       <div>
-        {products.map((product) => (
+        {(products || []).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
