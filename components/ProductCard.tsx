@@ -6,7 +6,6 @@ type Props = {
 };
 
 export const ProductCard = ({ product }: Props) => {
-  console.log(1, product);
   return (
     <div style={{ border: "2px solid black" }}>
       <p>Nom : {product.name}</p>
