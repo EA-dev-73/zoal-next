@@ -1,14 +1,18 @@
 import React from "react";
 import { Product as ProductType, ProductItem } from "../types";
-import { addItemToCard } from "../utils/localStorageHelpers";
+import { addItemToCart } from "../utils/localStorageHelpers";
 
 type Props = {
   product: ProductType;
 };
 
 export const ProductCard = ({ product }: Props) => {
-  const handleAddProductToCard = (item: ProductItem) => {
-    addItemToCard(item);
+  const handleAddProductToCart = (item: ProductItem) => {
+    addItemToCart({
+      ...item,
+      name: product.name,
+      productCategory: product.productCategory,
+    });
   };
   return (
     <div style={{ border: "2px solid black" }}>
@@ -24,7 +28,7 @@ export const ProductCard = ({ product }: Props) => {
                 Taille : {item.size} | Prix : {item.price + "€"} | En stock :{" "}
                 {item.inStock ? "✅" : "❌"}
                 {item.inStock && (
-                  <button onClick={() => handleAddProductToCard(item)}>
+                  <button onClick={() => handleAddProductToCart(item)}>
                     Ajouter au panier
                   </button>
                 )}

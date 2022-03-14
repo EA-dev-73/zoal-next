@@ -1,17 +1,16 @@
-import { ProductItem } from "../types";
+import { CartItem, ProductItem } from "../types";
 
 const LOCAL_STORAGE_CART_KEY = "zoal-cart-content";
 
-export const getCartContentFromLocalStorage = (): ProductItem[] | null => {
+export const getCartContentFromLocalStorage = (): CartItem[] => {
   if (typeof window !== "undefined") {
     const content = localStorage.getItem(LOCAL_STORAGE_CART_KEY);
-    console.log(content);
-    return content ? JSON.parse(content) : null;
+    return content ? JSON.parse(content) : [];
   }
-  return null;
+  return [];
 };
 
-export const addItemToCard = (item: ProductItem) => {
+export const addItemToCart = (item: CartItem) => {
   if (typeof window !== "undefined") {
     const currentCartContent = getCartContentFromLocalStorage();
     localStorage.setItem(
@@ -21,4 +20,20 @@ export const addItemToCard = (item: ProductItem) => {
       )
     );
   }
+};
+export const removeItemFromCart = (
+  itemId: CartItem["id"],
+  createdAt: CartItem["createdAt"]
+): CartItem[] => {
+  if (typeof window !== "undefined") {
+    const currentCartContent = getCartContentFromLocalStorage();
+    const newContent = [
+      ...(currentCartContent || []).filter(
+        (x) => x.id !== itemId && x.createdAt !== createdAt
+      ),
+    ];
+    localStorage.setItem(LOCAL_STORAGE_CART_KEY, JSON.stringify(newContent));
+    return getCartContentFromLocalStorage() || [];
+  }
+  return [];
 };

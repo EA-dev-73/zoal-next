@@ -17,4 +17,7 @@ export type ProductItem = {
   size: string;
   price: number;
   inStock: boolean;
+  createdAt: Date;
 };
+
+export type CartItem = ProductItem & Pick<Product, "name" | "productCategory">;
