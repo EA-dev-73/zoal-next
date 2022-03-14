@@ -4,12 +4,11 @@ import { Nav } from "./Nav";
 type Props = {
   children?: ReactChild | ReactChild[];
   pageTitle: string;
-  isShop?: boolean;
 };
 
-export const Layout = ({ children, pageTitle, isShop = false }: Props) => {
+export const Layout = ({ children, pageTitle }: Props) => {
   return (
-    <div>
+    <div style={{ margin: "30px" }}>
       <h1>{pageTitle}</h1>
       <Nav />
       {children}

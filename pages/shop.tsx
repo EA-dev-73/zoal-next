@@ -9,8 +9,14 @@ type Props = {
 
 export default function Shop({ products }: Props) {
   return (
-    <Layout pageTitle="Shop" isShop>
-      <div>
+    <Layout pageTitle="Shop">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
         {(products || []).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

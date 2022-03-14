@@ -15,7 +15,7 @@ export const ProductCard = ({ product }: Props) => {
     });
   };
   return (
-    <div style={{ border: "2px solid black" }}>
+    <div style={{ border: "4px solid black", margin: "20px", padding: "10px" }}>
       <p>Nom : {product.name}</p>
       <p>Categorie : {product.productCategory.name}</p>
       <p>Créé le : {new Date(product.createdAt).toUTCString()}</p>
