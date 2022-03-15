@@ -1,15 +1,19 @@
+import { useState } from "react";
 import { fetchProductTypes } from "../api/products-api";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { ProductType as ProductType } from "../types";
+import { ProductCategorySelect } from "../components/ProductCategorySelect";
+import { Category, ProductType as ProductType } from "../types";
 
 type Props = {
   productTypes: ProductType[];
 };
 
 export default function Shop({ productTypes }: Props) {
+  const [filter, setFilter] = useState<Category["id"] | null>(null);
   return (
     <Layout pageTitle="Shop">
+      <ProductCategorySelect productTypes={productTypes} onChange={setFilter} />
       <div
         style={{
           display: "flex",
@@ -17,9 +21,13 @@ export default function Shop({ productTypes }: Props) {
           justifyContent: "space-between",
         }}
       >
-        {(productTypes || []).map((productType) => (
-          <ProductCard key={productType.id} productType={productType} />
-        ))}
+        {(productTypes || [])
+          .filter((productType) =>
+            filter ? productType.productCategory.id === filter : true
+          )
+          .map((productType) => (
+            <ProductCard key={productType.id} productType={productType} />
+          ))}
       </div>
     </Layout>
   );

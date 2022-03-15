@@ -17,6 +17,7 @@ export type ProductType = {
   productCategory: Category;
   createdAt: Date;
   products: Product[];
+  imageUrl?: string;
 };
 
 export type ProductWithTypeData = Product & {

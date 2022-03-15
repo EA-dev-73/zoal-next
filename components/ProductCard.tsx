@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { ProductType as ProductType, Product } from "../types";
 import { addProductIdToCart as addproductToCart } from "../utils/localStorageHelpers";
@@ -8,7 +9,18 @@ type Props = {
 
 export const ProductCard = ({ productType }: Props) => {
   return (
-    <div style={{ border: "4px solid black", margin: "20px", padding: "10px" }}>
+    <div
+      style={{ border: "1px dotted black", margin: "20px", padding: "10px" }}
+    >
+      {productType.imageUrl && (
+        <Image
+          src={productType.imageUrl}
+          alt={`Image du produit ${productType.name}`}
+          width={300}
+          height={300}
+        />
+      )}
+
       <p>Nom : {productType.name}</p>
       <p>Categorie : {productType.productCategory.name}</p>
       <p>

@@ -4,7 +4,7 @@ import { uniq } from "lodash";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   const { data: products, error } = await supabase.from("productType").select(`
-      id, name, createdAt,
+      id, name, createdAt, imageUrl,
       productCategory (id, name),
       products (id, productTypeId, size, price, inStock)
   `);

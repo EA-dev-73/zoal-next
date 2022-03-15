@@ -4,13 +4,13 @@ import { uniqBy } from "lodash";
 import { PostgrestError } from "@supabase/supabase-js";
 
 const CATEGORIES_TO_GENERATE = 50;
-const PRODUCTS_TO_GENERATE = 50;
-const PRODUCT_ITEMS_TO_GENERATE = 500;
+const PRODUCT_TYPES_TO_GENERATE = 50;
+const PRODUCTS_TO_GENERATE = 100;
 
 const cleanDatabase = async () => {
-  await supabase.from("product").delete().neq("id", 9999);
-  await supabase.from("productCategory").delete().neq("id", 9999);
-  await supabase.from("productItems").delete().neq("id", 9999);
+  await supabase.from("productType").delete().neq("id", 0);
+  await supabase.from("productCategory").delete().neq("id", 0);
+  await supabase.from("products").delete().neq("id", 0);
 };
 
 const handleError = (error: PostgrestError | null) => {
@@ -41,34 +41,38 @@ const generateCategories = async () => {
   return { createdCategoryIds };
 };
 
-const generateProducts = async (createdCategoryIds: string[]) => {
+const generateProductTypes = async (createdCategoryIds: string[]) => {
   const createdProductTypeIds: string[] = [];
-  const products = [];
-  for (let i = 0; i < PRODUCTS_TO_GENERATE; i++) {
-    products.push({
+  const productTypes = [];
+  for (let i = 0; i < PRODUCT_TYPES_TO_GENERATE; i++) {
+    productTypes.push({
       name: faker.commerce.productName(),
       categoryId:
         createdCategoryIds[
           Math.floor(Math.random() * createdCategoryIds.length)
         ],
+      imageUrl: faker.random.image(),
     });
+    console.log(productTypes);
   }
   const { data, error } = await supabase
-    .from("product")
-    .insert(uniqBy(products, "name"));
+    .from("productType")
+    .insert(uniqBy(productTypes, "name"));
   handleError(error);
   createdProductTypeIds.push(...(data || []).map((x) => x.id));
-  console.log(`Faux produits insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
+  console.log(
+    `Faux produits insérés en base : ${PRODUCT_TYPES_TO_GENERATE} ✅`
+  );
   return { createdCategoryIds, createdProductTypeIds };
 };
 
-const generateProductItems = async (createdproductTypeIds: string[]) => {
-  const productItems = [];
-  for (let i = 0; i < PRODUCT_ITEMS_TO_GENERATE; i++) {
-    productItems.push({
+const generateProducts = async (createdProductTypeIds: string[]) => {
+  const products = [];
+  for (let i = 0; i < PRODUCTS_TO_GENERATE; i++) {
+    products.push({
       productTypeId:
-        createdproductTypeIds[
-          Math.floor(Math.random() * createdproductTypeIds.length)
+        createdProductTypeIds[
+          Math.floor(Math.random() * createdProductTypeIds.length)
         ],
       size: `${faker.datatype.number({
         min: 1,
@@ -79,17 +83,19 @@ const generateProductItems = async (createdproductTypeIds: string[]) => {
       price: faker.datatype.number({ min: 1, max: 1000, precision: 0.01 }),
     });
   }
-  const { error } = await supabase.from("productItems").insert(productItems);
+  const { error } = await supabase.from("products").insert(products);
   handleError(error);
-  console.log(`Faux items insérés en base : ${PRODUCT_ITEMS_TO_GENERATE} ✅`);
-  return { createdproductTypeIds };
+  console.log(`Faux items insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
+  return { createdProductTypeIds };
 };
 
 export const insertFixtures = async () => {
   await cleanDatabase();
   console.log("Database vidée ✅");
   const { createdCategoryIds } = await generateCategories();
-  const { createdProductTypeIds } = await generateProducts(createdCategoryIds);
-  await generateProductItems(createdProductTypeIds);
+  const { createdProductTypeIds } = await generateProductTypes(
+    createdCategoryIds
+  );
+  await generateProducts(createdProductTypeIds);
   console.log("Fixtures appliquées ✅");
 };
