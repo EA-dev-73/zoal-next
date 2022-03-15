@@ -4,7 +4,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchProductsFromIds } from "../api/products-api";
 import { Layout } from "../components/Layout";
-import { Product, ProductWithTypeAndQuantity } from "../types";
+import {
+  Product,
+  ProductWithTypeAndQuantity,
+  ProductWithTypeData,
+} from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
 import { groupProductsByType } from "../utils/groupProductsByType";
 import {
@@ -16,20 +20,17 @@ import { Price } from "../value-objects/Price";
 export default function Panier() {
   const router = useRouter();
 
-  const [productsWithQuantity, setProductsWithQuantity] = useState(
-    [] as ProductWithTypeAndQuantity[]
-  );
+  const [products, setProducts] = useState([] as ProductWithTypeData[]);
 
   useEffect(() => {
     const localStorageContent = getCartContentFromLocalStorage();
     fetchProductsFromIds(localStorageContent).then((products) => {
-      const productsWithItemsQuantity = addQuantityToProducts(products || []);
-      setProductsWithQuantity(productsWithItemsQuantity || []);
+      setProducts(products || []);
     });
   }, []);
 
-  const handleRemoveItemFromCart = (itemId: Product["id"]) => {
-    removeItemFromCart(itemId);
+  const handleRemoveItemFromCart = (product: Product) => {
+    removeItemFromCart(product.id, product.inStock);
     router.reload();
   };
 
@@ -41,8 +42,17 @@ export default function Panier() {
       return acc;
     }, 0);
 
-  const isEmptyCart = !Object.values(groupProductsByType(productsWithQuantity))
-    ?.length;
+  const isEmptyCart = !Object.values(groupProductsByType(products))?.length;
+
+  const productsWithTypeAndQuantity = addQuantityToProducts(products || []);
+
+  const displayQuantity = (product: ProductWithTypeAndQuantity) => {
+    if (product.inStock) {
+      return ` ${product.quantity} `;
+    } else {
+      return <span style={{ color: "red" }}> En Rupture de stock ⚠️ </span>;
+    }
+  };
 
   return (
     <Layout pageTitle="Panier">
@@ -52,7 +62,7 @@ export default function Panier() {
           <ul>
             {Object.values(
               groupProductsByType<ProductWithTypeAndQuantity>(
-                productsWithQuantity
+                productsWithTypeAndQuantity
               )
             ).map((productTypes) => (
               <>
@@ -61,16 +71,10 @@ export default function Panier() {
                   {productTypes.map((product) => (
                     <li key={product.id}>
                       Taille : {product.size} | Prix : {product.price} |
-                      Quantité : {product.quantity}
-                      {!product.inStock && (
-                        <span style={{ color: "red" }}>
-                          {" "}
-                          (Rupture de stock ⚠️)
-                        </span>
-                      )}
+                      {displayQuantity(product)}
                       <button
                         style={{ marginLeft: "10px" }}
-                        onClick={() => handleRemoveItemFromCart(product.id)}
+                        onClick={() => handleRemoveItemFromCart(product)}
                       >
                         Supprimer du panier
                       </button>
@@ -82,7 +86,9 @@ export default function Panier() {
           </ul>
           <p>
             Total :{" "}
-            {new Price(calculateTotalPrice(productsWithQuantity)).format()}{" "}
+            {new Price(
+              calculateTotalPrice(productsWithTypeAndQuantity)
+            ).format()}{" "}
           </p>{" "}
         </>
       ) : (

@@ -20,10 +20,22 @@ export const addProductIdToCart = (itemId: Product["id"]) => {
   }
 };
 
-export const removeItemFromCart = (selectedItemId: Product["id"]): void => {
+export const removeItemFromCart = (
+  selectedProductId: Product["id"],
+  inStock = true
+): void => {
   if (typeof window !== "undefined") {
     const cartContent = getCartContentFromLocalStorage();
-    const idxToRemove = cartContent.findIndex((x) => x === selectedItemId);
+    console.log({ inStock });
+    if (!inStock) {
+      // si il n'y a plus de stock on n'enleve pas les articles 1 par 1
+      localStorage.setItem(
+        LOCAL_STORAGE_CART_KEY,
+        JSON.stringify(cartContent.filter((x) => x !== selectedProductId))
+      );
+      return;
+    }
+    const idxToRemove = cartContent.findIndex((x) => x === selectedProductId);
     cartContent.splice(idxToRemove, 1);
     localStorage.setItem(LOCAL_STORAGE_CART_KEY, JSON.stringify(cartContent));
   }
