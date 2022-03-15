@@ -1,13 +1,13 @@
-import { getProducts } from "../api/products-api";
+import { fetchProductTypes } from "../api/products-api";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { Product as ProductType } from "../types";
+import { ProductType as ProductType } from "../types";
 
 type Props = {
-  products: ProductType[];
+  productTypes: ProductType[];
 };
 
-export default function Shop({ products }: Props) {
+export default function Shop({ productTypes }: Props) {
   return (
     <Layout pageTitle="Shop">
       <div
@@ -17,8 +17,8 @@ export default function Shop({ products }: Props) {
           justifyContent: "space-between",
         }}
       >
-        {(products || []).map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {(productTypes || []).map((productType) => (
+          <ProductCard key={productType.id} productType={productType} />
         ))}
       </div>
     </Layout>
@@ -26,6 +26,6 @@ export default function Shop({ products }: Props) {
 }
 
 export const getServerSideProps = async () => {
-  const products = await getProducts();
-  return { props: { products } };
+  const productTypes = await fetchProductTypes();
+  return { props: { productTypes } };
 };

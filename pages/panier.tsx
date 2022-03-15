@@ -1,7 +1,12 @@
+import { groupBy } from "lodash";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { fetchProductsFromIds } from "../api/products-api";
 import { Layout } from "../components/Layout";
-import { CartItem } from "../types";
+import { Product, ProductWithTypeAndQuantity } from "../types";
+import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
+import { groupProductsByType } from "../utils/groupProductsByType";
 import {
   getCartContentFromLocalStorage,
   removeItemFromCart,
@@ -9,44 +14,76 @@ import {
 import { Price } from "../value-objects/Price";
 
 export default function Panier() {
-  const [cartContent, setCartContent] = useState<CartItem[]>([]);
-  const handleRemoveItemFromCart = (item: CartItem) => {
-    const newCartContent = removeItemFromCart(item);
-    setCartContent(newCartContent);
-  };
+  const router = useRouter();
+
+  const [productsWithQuantity, setProductsWithQuantity] = useState(
+    [] as ProductWithTypeAndQuantity[]
+  );
 
   useEffect(() => {
     const localStorageContent = getCartContentFromLocalStorage();
-    setCartContent(localStorageContent);
+    fetchProductsFromIds(localStorageContent).then((products) => {
+      const productsWithItemsQuantity = addQuantityToProducts(products || []);
+      setProductsWithQuantity(productsWithItemsQuantity || []);
+    });
   }, []);
 
-  const calculateTotalPrice = (cartContent: CartItem[]) => {
-    return cartContent.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
+  const handleRemoveItemFromCart = (itemId: Product["id"]) => {
+    removeItemFromCart(itemId);
+    router.reload();
   };
+
+  const calculateTotalPrice = (
+    productsWithQuantity: ProductWithTypeAndQuantity[]
+  ) =>
+    productsWithQuantity.reduce((acc, item) => {
+      if (item.inStock) return acc + item.price * item.quantity;
+      return acc;
+    }, 0);
+
+  const isEmptyCart = !Object.values(groupProductsByType(productsWithQuantity))
+    ?.length;
 
   return (
     <Layout pageTitle="Panier">
       <h1>Contenu du panier</h1>
-      {cartContent.length ? (
+      {!isEmptyCart ? (
         <>
-          {" "}
           <ul>
-            {(cartContent || []).map((item) => {
-              return (
-                <li key={item.id}>
-                  {item.name} | Taille : {item.size} | Prix : {item.price} |
-                  Quantité : {item.quantity}
-                  <button onClick={() => handleRemoveItemFromCart(item)}>
-                    Supprimer du panier
-                  </button>
-                </li>
-              );
-            })}
+            {Object.values(
+              groupProductsByType<ProductWithTypeAndQuantity>(
+                productsWithQuantity
+              )
+            ).map((productTypes) => (
+              <>
+                <li>{productTypes[0].productType.name}</li>
+                <ul>
+                  {productTypes.map((product) => (
+                    <li key={product.id}>
+                      Taille : {product.size} | Prix : {product.price} |
+                      Quantité : {product.quantity}
+                      {!product.inStock && (
+                        <span style={{ color: "red" }}>
+                          {" "}
+                          (Rupture de stock ⚠️)
+                        </span>
+                      )}
+                      <button
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => handleRemoveItemFromCart(product.id)}
+                      >
+                        Supprimer du panier
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ))}
           </ul>
-          <p>Total : {new Price(calculateTotalPrice(cartContent)).format()} </p>{" "}
+          <p>
+            Total :{" "}
+            {new Price(calculateTotalPrice(productsWithQuantity)).format()}{" "}
+          </p>{" "}
         </>
       ) : (
         <p>

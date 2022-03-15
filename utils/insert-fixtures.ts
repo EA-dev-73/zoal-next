@@ -42,7 +42,7 @@ const generateCategories = async () => {
 };
 
 const generateProducts = async (createdCategoryIds: string[]) => {
-  const createdProductIds: string[] = [];
+  const createdProductTypeIds: string[] = [];
   const products = [];
   for (let i = 0; i < PRODUCTS_TO_GENERATE; i++) {
     products.push({
@@ -57,17 +57,19 @@ const generateProducts = async (createdCategoryIds: string[]) => {
     .from("product")
     .insert(uniqBy(products, "name"));
   handleError(error);
-  createdProductIds.push(...(data || []).map((x) => x.id));
+  createdProductTypeIds.push(...(data || []).map((x) => x.id));
   console.log(`Faux produits insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
-  return { createdCategoryIds, createdProductIds };
+  return { createdCategoryIds, createdProductTypeIds };
 };
 
-const generateProductItems = async (createdProductIds: string[]) => {
+const generateProductItems = async (createdproductTypeIds: string[]) => {
   const productItems = [];
   for (let i = 0; i < PRODUCT_ITEMS_TO_GENERATE; i++) {
     productItems.push({
-      productId:
-        createdProductIds[Math.floor(Math.random() * createdProductIds.length)],
+      productTypeId:
+        createdproductTypeIds[
+          Math.floor(Math.random() * createdproductTypeIds.length)
+        ],
       size: `${faker.datatype.number({
         min: 1,
         max: 1000,
@@ -80,14 +82,14 @@ const generateProductItems = async (createdProductIds: string[]) => {
   const { error } = await supabase.from("productItems").insert(productItems);
   handleError(error);
   console.log(`Faux items insérés en base : ${PRODUCT_ITEMS_TO_GENERATE} ✅`);
-  return { createdProductIds };
+  return { createdproductTypeIds };
 };
 
 export const insertFixtures = async () => {
   await cleanDatabase();
   console.log("Database vidée ✅");
   const { createdCategoryIds } = await generateCategories();
-  const { createdProductIds } = await generateProducts(createdCategoryIds);
-  await generateProductItems(createdProductIds);
+  const { createdProductTypeIds } = await generateProducts(createdCategoryIds);
+  await generateProductItems(createdProductTypeIds);
   console.log("Fixtures appliquées ✅");
 };
