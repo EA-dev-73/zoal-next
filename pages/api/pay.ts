@@ -8,8 +8,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export default async function handler(req, res) {
   try {
+    //todo use payment intents api https://stripe.com/docs/payments/payment-intents/migration/charges
     const stripeRes = await stripe.charges.create({
-      amount: 1,
+      amount: 600,
       currency: "eur",
       source: "tok_amex",
       description: "Premiers pas vers la richesse d'Amélie",
