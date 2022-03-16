@@ -54,6 +54,14 @@ export default function Panier() {
     }
   };
 
+  const handleBuy = async () => {
+    try {
+      const test = fetch("/api/pay");
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   return (
     <Layout pageTitle="Panier">
       <h1>Contenu du panier</h1>
@@ -90,6 +98,7 @@ export default function Panier() {
               calculateTotalPrice(productsWithTypeAndQuantity)
             ).format()}{" "}
           </p>{" "}
+          <button onClick={handleBuy}>Acheter</button>
         </>
       ) : (
         <p>
