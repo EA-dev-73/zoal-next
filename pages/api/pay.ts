@@ -9,12 +9,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   try {
     //todo use payment intents api https://stripe.com/docs/payments/payment-intents/migration/charges
-    const stripeRes = await stripe.charges.create({
+    // https://stripe.com/docs/payments/payment-intents
+    const stripeRes = await stripe.paymentIntents.create({
       amount: 600,
       currency: "eur",
-      source: "tok_amex",
       description: "Premiers pas vers la richesse d'Amélie",
       receipt_email: "tommymartin1234@gmail.com",
+      payment_method_types: ["card"],
     });
     console.log({ stripeRes });
     res.status(200).json();
