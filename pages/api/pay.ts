@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("Missing secret STRIPE_SECRET_KEY");
@@ -6,21 +7,37 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
 });
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { paymentMethod, receiptEmail, amount } = JSON.parse(req.body);
+
+  if (!paymentMethod) {
+    return res.status(403).json("Payment method is missing");
+  }
+
+  if (!amount) {
+    return res.status(403).json("Amount is missing");
+  }
+
+  if (!receiptEmail) {
+    return res.status(403).json("Receipt email is missing");
+  }
+
   try {
-    //todo use payment intents api https://stripe.com/docs/payments/payment-intents/migration/charges
-    // https://stripe.com/docs/payments/payment-intents
-    const stripeRes = await stripe.paymentIntents.create({
-      amount: 600,
+    await stripe.paymentIntents.create({
+      amount: amount * 100, // en centimes
       currency: "eur",
-      description: "Premiers pas vers la richesse d'Amélie",
-      receipt_email: "tommymartin1234@gmail.com",
+      description:
+        "Premiers pas vers la richesse d'Amélie avec la payment intent API",
+      receipt_email: receiptEmail,
       payment_method_types: ["card"],
+      payment_method: paymentMethod.id,
+      confirm: true,
     });
-    console.log({ stripeRes });
-    res.status(200).json();
+    res.status(200).json("✅");
   } catch (error) {
-    res.status(500).json();
-    console.log(1, error);
+    return res.status(500).json(error);
   }
 }

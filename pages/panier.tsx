@@ -1,9 +1,9 @@
-import { groupBy } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchProductsFromIds } from "../api/products-api";
 import { Layout } from "../components/Layout";
+import { CheckoutForm } from "../components/StripeCheckoutForm";
 import {
   Product,
   ProductWithTypeAndQuantity,
@@ -16,10 +16,15 @@ import {
   removeItemFromCart,
 } from "../utils/localStorageHelpers";
 import { Price } from "../value-objects/Price";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 export default function Panier() {
   const router = useRouter();
-
   const [products, setProducts] = useState([] as ProductWithTypeData[]);
 
   useEffect(() => {
@@ -54,13 +59,7 @@ export default function Panier() {
     }
   };
 
-  const handleBuy = async () => {
-    try {
-      const test = fetch("/api/pay");
-    } catch (error) {
-      console.log({ error });
-    }
-  };
+  const totalPrice = calculateTotalPrice(productsWithTypeAndQuantity);
 
   return (
     <Layout pageTitle="Panier">
@@ -73,7 +72,7 @@ export default function Panier() {
                 productsWithTypeAndQuantity
               )
             ).map((productTypes) => (
-              <>
+              <div key={productTypes[0].id}>
                 <li>{productTypes[0].productType.name}</li>
                 <ul>
                   {productTypes.map((product) => (
@@ -89,16 +88,16 @@ export default function Panier() {
                     </li>
                   ))}
                 </ul>
-              </>
+              </div>
             ))}
           </ul>
-          <p>
-            Total :{" "}
-            {new Price(
-              calculateTotalPrice(productsWithTypeAndQuantity)
-            ).format()}{" "}
-          </p>{" "}
-          <button onClick={handleBuy}>Acheter</button>
+          <p>Total : {new Price(totalPrice).format()} </p>{" "}
+          <Elements stripe={stripePromise}>
+            <CheckoutForm
+              amount={totalPrice}
+              receiptEmail={"tommymartin1234@gmail.com"}
+            />
+          </Elements>
         </>
       ) : (
         <p>

@@ -1,6 +1,6 @@
 import { Product } from "../types";
 
-const LOCAL_STORAGE_CART_KEY = "zoal-cart-content";
+export const LOCAL_STORAGE_CART_KEY = "zoal-cart-content";
 
 export const getCartContentFromLocalStorage = (): Product["id"][] => {
   if (typeof window !== "undefined") {
@@ -26,7 +26,6 @@ export const removeItemFromCart = (
 ): void => {
   if (typeof window !== "undefined") {
     const cartContent = getCartContentFromLocalStorage();
-    console.log({ inStock });
     if (!inStock) {
       // si il n'y a plus de stock on n'enleve pas les articles 1 par 1
       localStorage.setItem(
