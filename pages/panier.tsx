@@ -2,7 +2,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchProductsFromIds } from "../api/products-api";
-import { Layout } from "../components/Layout";
 import { CheckoutForm } from "../components/StripeCheckoutForm";
 import {
   Product,
@@ -62,7 +61,7 @@ export default function Panier() {
   const totalPrice = calculateTotalPrice(productsWithTypeAndQuantity);
 
   return (
-    <Layout pageTitle="Panier">
+    <>
       <h1>Contenu du panier</h1>
       {!isEmptyCart ? (
         <>
@@ -105,6 +104,6 @@ export default function Panier() {
           <Link href={"shop"}>acheter des trucs 🤑🤑</Link>
         </p>
       )}
-    </Layout>
+    </>
   );
 }
