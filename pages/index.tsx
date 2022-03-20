@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Image from "next/image";
-import zolaImage from "../public/zola.jpg";
 
 const Home: NextPage = () => {
   return (
@@ -12,7 +11,6 @@ const Home: NextPage = () => {
         saepe libero aliquid qui autem corporis cupiditate reiciendis corrupti
         voluptatem totam!
       </p>
-      <Image src={zolaImage} alt="zola-image" />
     </>
   );
 };
