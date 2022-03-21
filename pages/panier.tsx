@@ -25,13 +25,23 @@ const stripePromise = loadStripe(
 
 export default function Panier() {
   const router = useRouter();
-  const [products, setProducts] = useState([] as ProductWithTypeData[]);
+  const [products, setProducts] = useState([] as ProductWithTypeAndQuantity[]);
   const [quantityError, setQuantityError] = useState(true);
 
   useEffect(() => {
+    //TODO refacto
     const localStorageContent = getCartContentFromLocalStorage();
     fetchProductsFromIds(localStorageContent).then((products) => {
-      setProducts(products || []);
+      const withQuantity = addQuantityToProducts(products || []);
+      setProducts(withQuantity);
+      const amountOfProductInLocalStorage = (productId: Product["id"]) =>
+        localStorageContent.filter(
+          (localStorageId) => localStorageId === productId
+        ).length;
+      const hasQuantityError = (withQuantity || []).some(
+        (product) => product.stock < amountOfProductInLocalStorage(product.id)
+      );
+      setQuantityError(hasQuantityError);
     });
   }, []);
 
@@ -61,10 +71,6 @@ export default function Panier() {
           | Pas assez de stock ({product.stock}){" "}
         </span>
       );
-    } else {
-      if (quantityError) {
-        setQuantityError(false);
-      }
     }
   };
 
