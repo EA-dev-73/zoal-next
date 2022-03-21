@@ -14,3 +14,505 @@ a {
 * {
   box-sizing: border-box;
 }
+
+/* CSS DE L'ANCIEN PROJET */
+
+/* the ~ allows you to reference things in node_modules */
+/* @import "~bootstrap/scss/bootstrap"; */
+
+@font-face {
+  font-family: "calligraphr";
+  src: url("../public/fonts/Calligraphr-Regular-1.ttf");
+}
+
+@font-face {
+  font-family: "nikofont";
+  src: url("../public/fonts/NikoFontUp.ttf");
+}
+
+body {
+  background-color: #fff;
+  font-family: "Dosis", sans-serif;
+
+  /* font-size: 3em; */
+}
+
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-family: "calligraphr", "nikofont", sans-serif;
+}
+
+h2 {
+  text-align: center;
+  text-transform: uppercase;
+  font-family: "nikofont";
+}
+
+span.d-block {
+  text-align: center;
+  text-transform: uppercase;
+  font-family: "calligraphr", "nikofont", sans-serif;
+}
+
+a:hover {
+  color: #fe9692 !important;
+}
+
+.btn-dark {
+  background-color: #334c53;
+  border-color: #deb887;
+  color: #f9f9f9;
+}
+
+.btn-danger {
+  background-color: #d45e5e;
+  border-color: #deb887;
+  color: #f9f9f9;
+}
+
+a {
+  color: #334c53;
+}
+
+/* page miniature */
+
+.block-min {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.miniature-btn {
+  margin: 0.5rem;
+}
+
+.miniature {
+  height: 15rem;
+  width: 15rem;
+  /* float: left; */
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.custom-file-input ~ .custom-file-label:lang(fr)::after {
+  content: "Choisir...";
+}
+
+.link {
+  color: #334c53;
+  font-family: "calligraphr";
+  font-size: 3rem;
+}
+
+.link-subtype {
+  color: #334c53;
+  font-family: "calligraphr";
+  font-size: 2rem;
+}
+
+/* adminIndex */
+.adminImage {
+  width: 15rem;
+}
+
+.btnAdmin {
+  margin: 10%;
+}
+
+/* homepage */
+
+.homeImage {
+  height: 10rem;
+  width: 10rem;
+  float: left;
+}
+
+div#galerie_mini {
+  margin: 1;
+  padding: 1;
+}
+
+#big_pict {
+  height: 40rem;
+}
+
+dl#photo {
+  clear: both;
+  margin: 0 auto;
+}
+
+dl#photo dt {
+  color: #dcb;
+}
+
+dl#photo dd {
+  margin: 0;
+}
+
+dl#photo img {
+  border: 1px solid #dcb;
+}
+
+/* modal projectPerso */
+
+.modal {
+  width: 100%;
+}
+
+/* login */
+.logIn {
+  margin-left: 35%;
+  margin-right: 35%;
+  margin-top: 10%;
+}
+
+/* sidebar */
+.logo-nav {
+  height: 3rem;
+  margin: 0.5rem;
+}
+
+.nav-link {
+  height: 4rem;
+  /* margin: auto; */
+}
+
+.nav-item {
+  margin: auto;
+}
+
+.subtype {
+  height: 3rem;
+}
+
+/* sidebar */
+html {
+  scroll-behavior: smooth;
+}
+
+.next:after {
+  content: "\2193";
+}
+
+.social-icons .fab {
+  font-size: 2rem !important;
+  padding-right: 15px;
+}
+.d-block {
+  text-align: center;
+  padding: 5px;
+}
+
+.dev-icons {
+  color: #334c53;
+  font-size: 3em;
+}
+
+.dev-icons i:hover {
+  color: #334c53;
+}
+
+#side-nav .navbar-nav .nav-item .nav-link {
+  font-weight: 800;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+}
+
+/* navMobil !media */
+
+.d-block {
+  color: #334c53;
+  font-size: 32px;
+}
+
+button {
+  color: #334c53;
+}
+
+#side-nav {
+  background-color: #d45e5e !important;
+}
+
+/*La règle @media permet d'imbriquer un ensemble d'instructions imbriquées(délimitées par des accolades) avec une condition
+définie par une requête média, ici min-width: 992px. Elle permet d'appliquer les styles à condition que la largeur de la zone 
+soit > à 992px.*/
+@media (min-width: 992px) {
+  body {
+    /*padding-left: permet d'avoir un padding adapté lorsque taille écran > 992px.*/
+    padding-top: 0;
+    padding-left: 16rem;
+    margin-bottom: 5%;
+  }
+  #side-nav {
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 16rem;
+    height: 100vh;
+    background-color: #d45e5e;
+  }
+
+  #side-nav .navbar-brand {
+    display: flex;
+    margin: auto auto 0;
+    padding: 0.5rem;
+  }
+
+  #side-nav .navbar-brand .img-profil {
+    max-width: 12rem;
+    max-height: 12rem;
+    /* border: .5rem solid rgba(12, 230, 230, 0.986); */
+  }
+
+  #side-nav .navbar-collapse {
+    display: flex;
+    align-items: flex-start;
+    flex-grow: 0;
+    width: 100%;
+    margin-bottom: auto;
+  }
+
+  #side-nav .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #side-nav .navbar-collapse .navbar-nav .nav-item {
+    display: block;
+  }
+
+  #side-nav .navbar-collapse .navbar-nav .nav-item .nav-link {
+    display: block;
+  }
+
+  .block-min {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    justify-content: center;
+  }
+
+  .miniature {
+    height: 15rem;
+    width: 15rem;
+    /* float: left; */
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+section.resume-section {
+  padding-top: 5rem !important;
+  padding-bottom: 5rem !important;
+  max-width: 75rem;
+}
+
+section.resume-section .resume-item .resume-date {
+  min-width: none;
+}
+
+@media (min-width: 768px) {
+  section.resume-section {
+    min-height: 100vh;
+  }
+
+  section.resume-section .resume-item .resume-date {
+    min-width: 18rem;
+  }
+}
+
+@media (min-width: 992px) {
+  section.resume-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+}
+
+/* Contact */
+
+.container-contact {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+#contact input[type="text"],
+#contact input[type="email"],
+#contact input[type="tel"],
+#contact input[type="url"],
+#contact textarea[type="message"],
+#contact button[type="submit"] {
+  font: 400 12px/16px "Open Sans", Helvetica, Arial, sans-serif;
+}
+
+#contact {
+  background: #f9f9f9;
+  padding: 25px;
+  margin: 50px 0;
+  text-align: center;
+}
+
+#contact h3 {
+  color: #deb887;
+  display: block;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+#contact h4 {
+  margin: 5px 0 15px;
+  display: block;
+  font-size: 13px;
+}
+
+fieldset {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+#contact textarea {
+  height: 100px;
+  max-width: 100%;
+  resize: none;
+}
+
+/* atelier */
+
+.atelier-container {
+  background-color: #f9f9f9;
+  margin-top: 4%;
+  padding-right: 2%;
+  padding-left: 2%;
+  padding-bottom: 2%;
+  padding-top: 2%;
+}
+
+.atelier-img {
+  height: auto;
+  width: 100%;
+}
+
+.atelier-name {
+  margin-bottom: 1%;
+}
+
+.atelier-description {
+  padding: 2.625rem;
+}
+
+@media (min-width: 992px) {
+  .atelierImg {
+    width: 100%;
+    height: auto;
+  }
+
+  .containerImg {
+    margin-top: 20%;
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+
+  .atelierDescription {
+    padding: 5.625rem;
+  }
+}
+
+.date-img {
+  text-align: right;
+}
+
+/* form */
+
+.container-form {
+  background-color: #f9f9f9;
+  margin: 2rem auto;
+  padding: 3%;
+}
+
+/* showPage */
+
+.show-container:nth-first-child .showName {
+  display: none;
+}
+
+.show-name {
+  text-align: center;
+  margin: 0.56225rem auto;
+}
+
+.show-container {
+  background-color: #f9f9f9;
+  margin-top: 6%;
+  padding: 4%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.show-image {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 40px 180px;
+}
+
+@media only screen and (max-width: 992px) {
+  .show-image {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 15px 10px;
+  }
+
+  .show-container:nth-first-child .showName {
+    display: none;
+  }
+}
+
+.show-description {
+  padding: 5% 24%;
+}
+
+.navbar-toggler {
+  border: 4px solid transparent;
+}
+
+.back-btn-block {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -1.5rem;
+  margin-top: -1.5rem;
+}
+
+.back-btn-block-admin {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -2.5rem;
+  margin-top: 0.5rem;
+}
+
+.icon-back-btn {
+  width: 2rem;
+  color: #334c53;
+  margin-bottom: -3.5rem;
+  margin-top: 0.5rem;
+}
+
+@media only screen and (max-width: 992px) {
+  .back-btn-block-admin {
+    display: block;
+    margin: auto;
+    text-align: end;
+  }
+}
