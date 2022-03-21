@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const Nav = () => {
@@ -42,87 +43,9 @@ export const Nav = () => {
       <div id="navbarSupportedContent" className="collapse navbar-collapse">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="link">
-              projet perso
-              {/* <img
-                className="nav-link"
-                src="/uploads/lesBellesImages/projetPerso.png"
-              /> */}
-            </a>
-          </li>
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="link-subtype">
-                illustration
-                {/* <img
-                  className="nav-link subtype"
-                  src="/uploads/lesBellesImages/Illustration.png"
-                  ref="#"
-                /> */}
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="link-subtype">
-                bd
-                {/* <img
-                  className="nav-link subtype"
-                  src="/uploads/lesBellesImages/BD.png"
-                  ref="#"
-                /> */}
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="link-subtype">
-                croquis
-                {/* <img
-                  className="nav-link subtype"
-                  src="/uploads/lesBellesImages/croquis.png"
-                  ref="#"
-                /> */}
-              </a>
-            </li>
-          </ul>
-          <li className="nav-item">
-            <a className="link">tatouage</a>
-          </li>
-          <li className="nav-item">
-            <a className="link">
-              prestation
-              {/* <img
-                className="nav-link"
-                src="/uploads/lesBellesImages/Presta.png"
-                ref="#"
-              /> */}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="link">
-              atelier
-              {/* <img
-                className="nav-link"
-                src="/uploads/lesBellesImages/Ateliers.png"
-                ref="#"
-              /> */}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="link">contact</a>
-          </li>
-          <li className="nav-item">
-            <a target="_blank">
-              {/* <img
-                className="logo-nav"
-                src="/uploads/lesBellesImages/instagram.png"
-                title="lien instagram"
-              /> */}
-            </a>
-            <a target="_blank">
-              {/* <img
-                className="logo-nav"
-                src="/uploads/lesBellesImages/facebook2.png"
-                title="lien facebook"
-              /> */}
-            </a>
+            <Link passHref href="/admin">
+              <a>Admin</a>
+            </Link>
           </li>
         </ul>
       </div>
