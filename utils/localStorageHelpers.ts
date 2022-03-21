@@ -22,11 +22,11 @@ export const addProductIdToCart = (itemId: Product["id"]) => {
 
 export const removeItemFromCart = (
   selectedProductId: Product["id"],
-  inStock = true
+  stock: number
 ): void => {
   if (typeof window !== "undefined") {
     const cartContent = getCartContentFromLocalStorage();
-    if (!inStock) {
+    if (stock < 1) {
       // si il n'y a plus de stock on n'enleve pas les articles 1 par 1
       localStorage.setItem(
         LOCAL_STORAGE_CART_KEY,

@@ -30,8 +30,8 @@ export const ProductCard = ({ productType }: Props) => {
             return (
               <li key={product.id}>
                 Taille : {product.size} | Prix : {product.price + "€"} | En
-                stock : {product.inStock ? "✅" : "❌"}
-                {product.inStock && (
+                stock : {product.stock > 0 ? product.stock : "❌"}
+                {product.stock && (
                   <button onClick={() => addproductToCart(product.id)}>
                     Ajouter au panier
                   </button>

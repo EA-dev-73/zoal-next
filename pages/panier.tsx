@@ -26,6 +26,7 @@ const stripePromise = loadStripe(
 export default function Panier() {
   const router = useRouter();
   const [products, setProducts] = useState([] as ProductWithTypeData[]);
+  const [quantityError, setQuantityError] = useState(true);
 
   useEffect(() => {
     const localStorageContent = getCartContentFromLocalStorage();
@@ -35,7 +36,7 @@ export default function Panier() {
   }, []);
 
   const handleRemoveItemFromCart = (product: Product) => {
-    removeItemFromCart(product.id, product.inStock);
+    removeItemFromCart(product.id, product.stock);
     router.reload();
   };
 
@@ -43,7 +44,7 @@ export default function Panier() {
     productsWithQuantity: ProductWithTypeAndQuantity[]
   ) =>
     productsWithQuantity.reduce((acc, item) => {
-      if (item.inStock) return acc + item.price * item.quantity;
+      if (item.stock > 0) return acc + item.price * item.quantity;
       return acc;
     }, 0);
 
@@ -52,10 +53,18 @@ export default function Panier() {
   const productsWithTypeAndQuantity = addQuantityToProducts(products || []);
 
   const displayQuantity = (product: ProductWithTypeAndQuantity) => {
-    if (product.inStock) {
-      return ` ${product.quantity} `;
+    if (product.stock < 1) {
+      return <span style={{ color: "red" }}> | En Rupture de stock ⚠️ </span>;
+    } else if (product.stock < product.quantity) {
+      return (
+        <span style={{ color: "red" }}>
+          | Pas assez de stock ({product.stock}){" "}
+        </span>
+      );
     } else {
-      return <span style={{ color: "red" }}> En Rupture de stock ⚠️ </span>;
+      if (quantityError) {
+        setQuantityError(false);
+      }
     }
   };
 
@@ -77,13 +86,14 @@ export default function Panier() {
                 <ul>
                   {productTypes.map((product) => (
                     <li key={product.id}>
-                      Taille : {product.size} | Prix : {product.price} |
+                      Taille : {product.size} | Prix unitaire : {product.price}{" "}
+                      | Quantité souhaitée : {product.quantity}{" "}
                       {displayQuantity(product)}
                       <button
                         style={{ marginLeft: "10px" }}
                         onClick={() => handleRemoveItemFromCart(product)}
                       >
-                        Supprimer du panier
+                        Supprimer 1 article du panier
                       </button>
                     </li>
                   ))}
@@ -96,13 +106,14 @@ export default function Panier() {
             <CheckoutForm
               amount={totalPrice}
               receiptEmail={"tommymartin1234@gmail.com"}
+              quantityError={quantityError}
             />
           </Elements>
         </>
       ) : (
         <p>
           Le panier est vide. Va{" "}
-          <Link href={"shop"}>acheter des trucs 🤑🤑</Link>
+          <Link href={"/shop"}>acheter des trucs 🤑🤑</Link>
         </p>
       )}
     </Layout>

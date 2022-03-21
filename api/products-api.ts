@@ -6,7 +6,7 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   const { data: products, error } = await supabase.from("productType").select(`
       id, name, createdAt, imageUrl,
       productCategory (id, name),
-      products (id, productTypeId, size, price, inStock)
+      products (id, productTypeId, size, price, stock)
   `);
   console.error(error);
   return products;
@@ -19,7 +19,7 @@ export const fetchProductsFromIds = async (
     .from("products")
     .select(
       `
-    id, productTypeId, size, price, inStock,
+    id, productTypeId, size, price, stock,
     productType (id, name)
     `
     )

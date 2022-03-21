@@ -6,9 +6,14 @@ import { LOCAL_STORAGE_CART_KEY } from "../utils/localStorageHelpers";
 type Props = {
   amount: number;
   receiptEmail: string;
+  quantityError: boolean;
 };
 
-export const CheckoutForm = ({ amount, receiptEmail }: Props) => {
+export const CheckoutForm = ({
+  amount,
+  receiptEmail,
+  quantityError,
+}: Props) => {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -44,7 +49,7 @@ export const CheckoutForm = ({ amount, receiptEmail }: Props) => {
   return (
     <form onSubmit={handleSubmit}>
       <CardElement />
-      <button type="submit" disabled={!stripe || !elements}>
+      <button type="submit" disabled={!stripe || !elements || quantityError}>
         Payer
       </button>
     </form>

@@ -8,7 +8,7 @@ export type Product = {
   productTypeId: ProductType["id"];
   size: string;
   price: number;
-  inStock: boolean;
+  stock: number;
 };
 
 export type ProductType = {

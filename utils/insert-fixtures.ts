@@ -79,8 +79,8 @@ const generateProducts = async (createdProductTypeIds: string[]) => {
         max: 1000,
         precision: 1,
       })} x ${faker.datatype.number({ min: 1, max: 1000, precision: 1 })} `,
-      inStock: faker.datatype.boolean(),
-      price: faker.datatype.number({ min: 1, max: 1000, precision: 0.01 }),
+      stock: faker.datatype.number({ min: 0, max: 4, precision: 1 }),
+      price: faker.datatype.number({ min: 1, max: 90, precision: 0.01 }),
     });
   }
   const { error } = await supabase.from("products").insert(products);
