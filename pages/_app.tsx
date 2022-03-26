@@ -6,6 +6,7 @@ import { insertFixtures } from "../utils/insert-fixtures";
 import { Layout } from "../components/Layout";
 import { locale, loadMessages } from "devextreme/localization";
 import frMessages from "devextreme/localization/messages/fr.json";
+import { RecoilRoot } from "recoil";
 
 function MyApp({ Component, pageProps }: AppProps) {
   process.env.NODE_ENV !== "production" &&
@@ -14,9 +15,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   loadMessages(frMessages);
   locale("fr-FR");
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <RecoilRoot>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </RecoilRoot>
   );
 }
 
