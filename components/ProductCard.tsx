@@ -7,19 +7,21 @@ type Props = {
   productType: ProductType;
 };
 
+//TODO display images
+
 export const ProductCard = ({ productType }: Props) => {
   return (
     <div
       style={{ border: "1px dotted black", margin: "20px", padding: "10px" }}
     >
-      {productType.imageUrl && (
+      {/* {productType.imageUrl && (
         <Image
           src={productType.imageUrl}
           alt={`Image du produit ${productType.name}`}
           width={300}
           height={300}
         />
-      )}
+      )} */}
 
       <p>Nom : {productType.name}</p>
       <p>Categorie : {productType.productCategory.name}</p>

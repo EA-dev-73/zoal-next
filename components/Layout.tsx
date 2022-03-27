@@ -15,7 +15,11 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
   const handleAuth = (children?: ReactChild | ReactChild[]) => {
     console.log({ user });
     if (!needsAuth || user?.id) {
-      return children;
+      return (
+        <div style={{ maxWidth: "99%", margin: "auto", paddingTop: "20px" }}>
+          {children}
+        </div>
+      );
     } else {
       return <LoginForm />;
     }

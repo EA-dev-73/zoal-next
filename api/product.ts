@@ -6,9 +6,10 @@ import { handlePostgresError } from "../utils/handleError";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   const { data: products, error } = await supabase.from("productType").select(`
-      id, name, createdAt, imageUrl,
+      id, name, createdAt,
       productCategory (id, name),
-      products (id, productTypeId, size, price, stock)
+      products (id, productTypeId, size, price, stock),
+      productTypeImage(id, imageName)
   `);
   console.error(error);
   return products;

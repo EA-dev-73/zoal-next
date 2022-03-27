@@ -13,10 +13,11 @@ import {
   fetchProductTypes,
 } from "../../api/product";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
+import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { FormattedProduct, OnRowInsertingEvent } from "./types";
 
 export const AdminProductsTable = () => {
-  const [products, setProducts] = useState([] as FormattedProduct[] | null);
+  const [products, setProducts] = useState<FormattedProduct[] | null>([]);
   useEffect(() => {
     fetchProductTypes().then((products) => {
       const formattedProducts = (products || []).map((product) => ({
@@ -47,7 +48,7 @@ export const AdminProductsTable = () => {
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
       <Editing mode="form" allowUpdating allowAdding allowDeleting />
-      <Column dataField="name">
+      <Column dataField="name" caption="Nom du produit">
         <RequiredRule />
       </Column>
       <Column
@@ -58,6 +59,13 @@ export const AdminProductsTable = () => {
       >
         <RequiredRule />
       </Column>
+      <Column
+        dataField="productTypeImage"
+        caption={"Images du produit"}
+        cellRender={(e) => (
+          <DisplayProductTypeImages images={e.data.productTypeImage} />
+        )}
+      />
       <MasterDetail
         enabled
         component={({
