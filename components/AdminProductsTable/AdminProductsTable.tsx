@@ -4,14 +4,19 @@ import {
   GroupPanel,
   Column,
   MasterDetail,
+  Editing,
+  RequiredRule,
 } from "devextreme-react/data-grid";
 import React, { useEffect, useState } from "react";
-import { fetchProductTypes } from "../api/products-api";
-import { ProductType } from "../types";
+import {
+  createProductTypeWithCategory,
+  fetchProductTypes,
+} from "../../api/product";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
+import { FormattedProduct, OnRowInsertingEvent } from "./types";
 
 export const AdminProductsTable = () => {
-  const [products, setProducts] = useState([] as ProductType[] | null);
+  const [products, setProducts] = useState([] as FormattedProduct[] | null);
   useEffect(() => {
     fetchProductTypes().then((products) => {
       const formattedProducts = (products || []).map((product) => ({
@@ -22,16 +27,37 @@ export const AdminProductsTable = () => {
     });
   }, []);
   return (
-    <DataGrid dataSource={products || []}>
+    <DataGrid
+      dataSource={products || []}
+      onRowInserting={async (e: OnRowInsertingEvent) => {
+        try {
+          await createProductTypeWithCategory({
+            createCategoryData: {
+              categoryName: e.data.categoryName,
+            },
+            createProductTypeData: {
+              name: e.data.name,
+            },
+          });
+        } catch (error: any) {
+          alert(error.message);
+        }
+      }}
+    >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
-      <Column dataField="name" />
+      <Editing mode="form" allowUpdating allowAdding allowDeleting />
+      <Column dataField="name">
+        <RequiredRule />
+      </Column>
       <Column
         dataField="categoryName"
         caption={"Catégorie"}
         groupIndex={0}
         autoExpandGroup={false}
-      />
+      >
+        <RequiredRule />
+      </Column>
       <MasterDetail
         enabled
         component={({

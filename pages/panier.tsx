@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { fetchProductsFromIds } from "../api/products-api";
+import { fetchProductsFromIds } from "../api/product";
 import { CheckoutForm } from "../components/StripeCheckoutForm";
 import {
   Product,

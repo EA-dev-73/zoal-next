@@ -1,11 +1,10 @@
-import { sign } from "crypto";
 import { useRouter } from "next/router";
-import React, { FormEventHandler, SyntheticEvent, useState } from "react";
-import { useRecoilCallback, useSetRecoilState } from "recoil";
-import { signIn } from "../api/user-api";
+import React, { SyntheticEvent, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { signIn } from "../api/user";
 import { userState } from "../context/user";
 
-function Connexion() {
+export const LoginForm = () => {
   const setUser = useSetRecoilState(userState);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -19,7 +18,6 @@ function Connexion() {
     if (error) {
       setError(error.message);
     } else {
-      console.log({ user });
       setUser(user);
       router.replace("/admin");
     }
@@ -37,6 +35,4 @@ function Connexion() {
       {error && <strong style={{ color: "red" }}>{error}</strong>}
     </>
   );
-}
-
-export default Connexion;
+};

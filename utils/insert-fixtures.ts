@@ -3,9 +3,9 @@ import faker from "@faker-js/faker";
 import { uniqBy } from "lodash";
 import { PostgrestError } from "@supabase/supabase-js";
 
-const CATEGORIES_TO_GENERATE = 50;
-const PRODUCT_TYPES_TO_GENERATE = 50;
-const PRODUCTS_TO_GENERATE = 100;
+const CATEGORIES_TO_GENERATE = 0;
+const PRODUCT_TYPES_TO_GENERATE = 0;
+const PRODUCTS_TO_GENERATE = 0;
 
 const cleanDatabase = async () => {
   await supabase.from("productType").delete().neq("id", 0);

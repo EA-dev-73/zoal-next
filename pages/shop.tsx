@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchProductTypes } from "../api/products-api";
+import { fetchProductTypes } from "../api/product";
 import { ProductCard } from "../components/ProductCard";
 import { ProductCategorySelect } from "../components/ProductCategorySelect";
 import { Category, ProductType as ProductType } from "../types";
