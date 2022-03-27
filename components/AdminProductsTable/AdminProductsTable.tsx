@@ -48,9 +48,6 @@ export const AdminProductsTable = () => {
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
       <Editing mode="form" allowUpdating allowAdding allowDeleting />
-      <Column dataField="name" caption="Nom du produit">
-        <RequiredRule />
-      </Column>
       <Column
         dataField="categoryName"
         caption={"Catégorie"}
@@ -59,12 +56,16 @@ export const AdminProductsTable = () => {
       >
         <RequiredRule />
       </Column>
+      <Column dataField="name" caption="Nom du produit">
+        <RequiredRule />
+      </Column>
       <Column
         dataField="productTypeImage"
         caption={"Images du produit"}
         cellRender={(e) => (
           <DisplayProductTypeImages images={e.data.productTypeImage} />
         )}
+        allowEditing={false}
       />
       <MasterDetail
         enabled
