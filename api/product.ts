@@ -3,9 +3,12 @@ import { Category, Product, ProductType, ProductWithTypeData } from "../types";
 import { uniq } from "lodash";
 import { upsertCategory, CreateCategoryDTO } from "./category";
 import { handlePostgresError } from "../utils/handleError";
+import { TableConstants } from "../utils/TableConstants";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
-  const { data: products, error } = await supabase.from("productType").select(`
+  const { data: products, error } = await supabase.from(
+    TableConstants.productType
+  ).select(`
       id, name, createdAt,
       productCategory (id, name),
       products (id, productTypeId, size, price, stock),
@@ -19,7 +22,7 @@ export const fetchProductsFromIds = async (
   productIds: Product["id"][]
 ): Promise<ProductWithTypeData[] | null> => {
   const { data: products } = await supabase
-    .from("products")
+    .from(TableConstants.products)
     .select(
       `
     id, productTypeId, size, price, stock,
@@ -38,15 +41,17 @@ export type CreateProductTypeDTO = {
 export const upsertProductType = async (
   createProductTypeData: CreateProductTypeDTO
 ) => {
-  const { data, error } = await supabase.from("productType").upsert(
-    {
-      name: createProductTypeData.name,
-      categoryId: createProductTypeData.categoryId,
-    },
-    {
-      onConflict: "name",
-    }
-  );
+  const { data, error } = await supabase
+    .from(TableConstants.productType)
+    .upsert(
+      {
+        name: createProductTypeData.name,
+        categoryId: createProductTypeData.categoryId,
+      },
+      {
+        onConflict: "name",
+      }
+    );
   return {
     data,
     error,
@@ -77,4 +82,28 @@ export const createProductTypeWithCategory = async ({
   });
 
   productTypeError && handlePostgresError(productTypeError);
+};
+
+export const deleteProductType = async (productTypeId: ProductType["id"]) => {
+  //TODO supprimer la categorie si plus de productType associés
+
+  // suppression des images associées
+
+  const { error: imagesError } = await supabase
+    .from(TableConstants.productTypeImage)
+    .delete()
+    .eq("productTypeId", productTypeId);
+
+  imagesError && handlePostgresError(imagesError);
+
+  //TODO delete images from server
+
+  const { data, error } = await supabase
+    .from(TableConstants.productType)
+    .delete()
+    .eq("id", productTypeId);
+  return {
+    data,
+    error,
+  };
 };

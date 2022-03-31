@@ -10,11 +10,16 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   createProductTypeWithCategory,
+  deleteProductType,
   fetchProductTypes,
 } from "../../api/product";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
-import { FormattedProduct, OnRowInsertingEvent } from "./types";
+import {
+  FormattedProduct,
+  OnRowDeletingEvent,
+  OnRowInsertingEvent,
+} from "./types";
 
 export const AdminProductsTable = () => {
   const [products, setProducts] = useState<FormattedProduct[] | null>([]);
@@ -44,6 +49,13 @@ export const AdminProductsTable = () => {
           alert(error.message);
         }
       }}
+      onRowRemoving={async (e: OnRowDeletingEvent) => {
+        try {
+          await deleteProductType(e.data.id);
+        } catch (error: any) {
+          alert(error.message);
+        }
+      }}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
@@ -63,7 +75,7 @@ export const AdminProductsTable = () => {
         dataField="productTypeImage"
         caption={"Images du produit"}
         cellRender={(e) => (
-          <DisplayProductTypeImages images={e.data.productTypeImage} />
+          <DisplayProductTypeImages images={e.data.productTypeImage || []} />
         )}
         allowEditing={false}
       />

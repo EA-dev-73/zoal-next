@@ -2,15 +2,16 @@ import { supabase } from "./supabaseClient";
 import faker from "@faker-js/faker";
 import { uniqBy } from "lodash";
 import { PostgrestError } from "@supabase/supabase-js";
+import { TableConstants } from "./TableConstants";
 
 const CATEGORIES_TO_GENERATE = 0;
 const PRODUCT_TYPES_TO_GENERATE = 0;
 const PRODUCTS_TO_GENERATE = 0;
 
 const cleanDatabase = async () => {
-  await supabase.from("productType").delete().neq("id", 0);
-  await supabase.from("productCategory").delete().neq("id", 0);
-  await supabase.from("products").delete().neq("id", 0);
+  await supabase.from(TableConstants.productType).delete().neq("id", 0);
+  await supabase.from(TableConstants.productCategory).delete().neq("id", 0);
+  await supabase.from(TableConstants.products).delete().neq("id", 0);
 };
 
 const handleError = (error: PostgrestError | null) => {
@@ -29,7 +30,7 @@ const generateCategories = async () => {
     });
   }
   const { data, error } = await supabase
-    .from("productCategory")
+    .from(TableConstants.productCategory)
     .insert(uniqBy(categories, "name"));
 
   handleError(error);
@@ -56,7 +57,7 @@ const generateProductTypes = async (createdCategoryIds: string[]) => {
     console.log(productTypes);
   }
   const { data, error } = await supabase
-    .from("productType")
+    .from(TableConstants.productType)
     .insert(uniqBy(productTypes, "name"));
   handleError(error);
   createdProductTypeIds.push(...(data || []).map((x) => x.id));
@@ -83,7 +84,9 @@ const generateProducts = async (createdProductTypeIds: string[]) => {
       price: faker.datatype.number({ min: 1, max: 90, precision: 0.01 }),
     });
   }
-  const { error } = await supabase.from("products").insert(products);
+  const { error } = await supabase
+    .from(TableConstants.products)
+    .insert(products);
   handleError(error);
   console.log(`Faux items insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
   return { createdProductTypeIds };

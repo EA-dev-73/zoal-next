@@ -10,3 +10,8 @@ export type OnRowInsertingEvent = {
     name: ProductType["name"];
   };
 };
+export type OnRowDeletingEvent = {
+  data: {
+    id: ProductType["id"];
+  };
+};
