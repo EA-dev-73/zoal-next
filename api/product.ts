@@ -37,6 +37,12 @@ export type CreateProductTypeDTO = {
   name: ProductType["name"];
   categoryId: Category["id"];
 };
+export type UpdateCategoryAndProductTypeDTO = Partial<{
+  id: ProductType["id"];
+  categoryId: Category["id"];
+  categoryName: ProductType["productCategory"]["name"];
+  name: ProductType["name"];
+}>;
 
 export const upsertProductType = async (
   createProductTypeData: CreateProductTypeDTO
@@ -106,4 +112,33 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
     data,
     error,
   };
+};
+
+export const updateCategoryAndProductType = async (
+  newData: UpdateCategoryAndProductTypeDTO
+) => {
+  const {
+    id: productTypeId,
+    name: productTypeName,
+    categoryName,
+    categoryId,
+  } = newData;
+
+  if (categoryName) {
+    const { error } = await supabase
+      .from(TableConstants.productCategory)
+      .update({ name: categoryName })
+      .match({ id: categoryId });
+
+    error && handlePostgresError(error);
+  }
+
+  if (productTypeName) {
+    const { error } = await supabase
+      .from(TableConstants.productType)
+      .update({ name: productTypeName })
+      .match({ id: productTypeId });
+    error && handlePostgresError(error);
+  }
+  return;
 };

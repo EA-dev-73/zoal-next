@@ -15,6 +15,7 @@ import {
 } from "../../api/product";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
+import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
 import {
   FormattedProduct,
   OnRowDeletingEvent,
@@ -32,30 +33,13 @@ export const AdminProductsTable = () => {
       setProducts(formattedProducts);
     });
   }, []);
+
   return (
     <DataGrid
       dataSource={products || []}
-      onRowInserting={async (e: OnRowInsertingEvent) => {
-        try {
-          await createProductTypeWithCategory({
-            createCategoryData: {
-              categoryName: e.data.categoryName,
-            },
-            createProductTypeData: {
-              name: e.data.name,
-            },
-          });
-        } catch (error: any) {
-          alert(error.message);
-        }
-      }}
-      onRowRemoving={async (e: OnRowDeletingEvent) => {
-        try {
-          await deleteProductType(e.data.id);
-        } catch (error: any) {
-          alert(error.message);
-        }
-      }}
+      onRowInserting={onRowInserting}
+      onRowUpdating={onRowUpdating}
+      onRowRemoving={onRowRemoving}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
