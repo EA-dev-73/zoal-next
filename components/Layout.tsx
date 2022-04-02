@@ -6,7 +6,7 @@ import { Nav } from "./Nav";
 
 type Props = {
   children?: ReactChild | ReactChild[];
-  needsAuth: boolean;
+  needsAuth?: boolean;
 };
 
 export const Layout = ({ children, needsAuth = false }: Props) => {

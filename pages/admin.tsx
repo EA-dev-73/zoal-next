@@ -1,8 +1,5 @@
-import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
 import { AdminProductsTable } from "../components/AdminProductsTable/AdminProductsTable";
 import { Layout } from "../components/Layout";
-import { userState } from "../context/user";
 
 export default function Admin() {
   return (
