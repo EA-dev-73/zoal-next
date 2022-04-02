@@ -30,5 +30,5 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
 
 export type ProductImage = {
   id: number;
-  imageName: string;
+  imageUrl: string;
 };

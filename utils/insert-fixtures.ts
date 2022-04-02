@@ -16,7 +16,7 @@ const cleanDatabase = async () => {
 
 const handleError = (error: PostgrestError | null) => {
   if (error) {
-    console.log(error.message);
+    console.info(error.message);
     throw error;
   }
 };
@@ -36,7 +36,7 @@ const generateCategories = async () => {
   handleError(error);
 
   createdCategoryIds.push(...(data || []).map((x) => x.id));
-  console.log(
+  console.info(
     `Fausses categories insérées en base : ${CATEGORIES_TO_GENERATE} ✅`
   );
   return { createdCategoryIds };
@@ -54,14 +54,14 @@ const generateProductTypes = async (createdCategoryIds: string[]) => {
         ],
       imageUrl: faker.random.image(),
     });
-    console.log(productTypes);
+    console.info(productTypes);
   }
   const { data, error } = await supabase
     .from(TableConstants.productType)
     .insert(uniqBy(productTypes, "name"));
   handleError(error);
   createdProductTypeIds.push(...(data || []).map((x) => x.id));
-  console.log(
+  console.info(
     `Faux produits insérés en base : ${PRODUCT_TYPES_TO_GENERATE} ✅`
   );
   return { createdCategoryIds, createdProductTypeIds };
@@ -88,17 +88,17 @@ const generateProducts = async (createdProductTypeIds: string[]) => {
     .from(TableConstants.products)
     .insert(products);
   handleError(error);
-  console.log(`Faux items insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
+  console.info(`Faux items insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
   return { createdProductTypeIds };
 };
 
 export const insertFixtures = async () => {
   await cleanDatabase();
-  console.log("Database vidée ✅");
+  console.info("Database vidée ✅");
   const { createdCategoryIds } = await generateCategories();
   const { createdProductTypeIds } = await generateProductTypes(
     createdCategoryIds
   );
   await generateProducts(createdProductTypeIds);
-  console.log("Fixtures appliquées ✅");
+  console.info("Fixtures appliquées ✅");
 };

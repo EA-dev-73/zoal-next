@@ -13,7 +13,6 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
   const user = useRecoilValue(userState);
 
   const handleAuth = (children?: ReactChild | ReactChild[]) => {
-    console.log({ user });
     if (!needsAuth || user?.id) {
       return (
         <div style={{ maxWidth: "99%", margin: "auto", paddingTop: "20px" }}>

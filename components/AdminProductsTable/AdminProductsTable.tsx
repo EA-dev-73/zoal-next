@@ -8,19 +8,11 @@ import {
   RequiredRule,
 } from "devextreme-react/data-grid";
 import React, { useEffect, useState } from "react";
-import {
-  createProductTypeWithCategory,
-  deleteProductType,
-  fetchProductTypes,
-} from "../../api/product";
+import { fetchProductTypes } from "../../api/product";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
-import {
-  FormattedProduct,
-  OnRowDeletingEvent,
-  OnRowInsertingEvent,
-} from "./types";
+import { FormattedProduct } from "./types";
 
 export const AdminProductsTable = () => {
   const [products, setProducts] = useState<FormattedProduct[] | null>([]);
@@ -29,6 +21,8 @@ export const AdminProductsTable = () => {
       const formattedProducts = (products || []).map((product) => ({
         ...product,
         categoryName: product.productCategory.name,
+        //traitement particulier sur les images pour pouvoir les éditer plus facilement
+        imagesUrl: product.productTypeImage.map((x) => x.imageUrl),
       }));
       setProducts(formattedProducts);
     });
@@ -38,6 +32,7 @@ export const AdminProductsTable = () => {
     <DataGrid
       dataSource={products || []}
       onRowInserting={onRowInserting}
+      //@ts-ignore
       onRowUpdating={onRowUpdating}
       onRowRemoving={onRowRemoving}
     >
@@ -56,12 +51,11 @@ export const AdminProductsTable = () => {
         <RequiredRule />
       </Column>
       <Column
-        dataField="productTypeImage"
-        caption={"Images du produit"}
+        dataField="imagesUrl"
+        caption={"Images du produit (entre ,)"}
         cellRender={(e) => (
-          <DisplayProductTypeImages images={e.data.productTypeImage || []} />
+          <DisplayProductTypeImages imagesUrl={e.data.imagesUrl || []} />
         )}
-        allowEditing={false}
       />
       <MasterDetail
         enabled

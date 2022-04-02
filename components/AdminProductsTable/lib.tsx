@@ -1,7 +1,7 @@
 import {
-  createProductTypeWithCategory,
+  createProductTypeWithCategoryAndImages,
   deleteProductType,
-  updateCategoryAndProductType,
+  updateCategoryAndProductType as updateCategoryAndProductTypeAndImages,
 } from "../../api/product";
 import {
   OnRowDeletingEvent,
@@ -11,12 +11,15 @@ import {
 
 export const onRowInserting = async (e: OnRowInsertingEvent) => {
   try {
-    await createProductTypeWithCategory({
+    await createProductTypeWithCategoryAndImages({
       createCategoryData: {
         categoryName: e.data.categoryName,
       },
       createProductTypeData: {
         name: e.data.name,
+      },
+      createProductTypeImages: {
+        imagesUrl: e.data.imagesUrl,
       },
     });
   } catch (error: any) {
@@ -34,11 +37,12 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
 
 export const onRowUpdating = async (e: OnRowEditingEvent) => {
   try {
-    await updateCategoryAndProductType({
+    await updateCategoryAndProductTypeAndImages({
       id: e.oldData?.id,
       name: e.newData?.name,
       categoryId: e.oldData?.productCategory?.id,
       categoryName: e.newData?.categoryName,
+      imagesUrl: e.newData?.imagesUrl,
     });
   } catch (error: any) {
     alert(error.message);

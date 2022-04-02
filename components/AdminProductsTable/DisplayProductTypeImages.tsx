@@ -1,11 +1,15 @@
 import Image from "next/image";
-import { ProductType } from "../../types";
+import { ProductImage, ProductType } from "../../types";
 
 type Props = {
-  images: ProductType["productTypeImage"];
+  // client-side save => string (devex); from server => string[]
+  imagesUrl: ProductImage["imageUrl"][] | string;
 };
 
-export const DisplayProductTypeImages = ({ images }: Props) => {
+export const DisplayProductTypeImages = ({ imagesUrl }: Props) => {
+  const images =
+    typeof imagesUrl === "object" ? imagesUrl : imagesUrl.split(",");
+  if (!images) return null;
   return (
     <div
       style={{
@@ -15,13 +19,7 @@ export const DisplayProductTypeImages = ({ images }: Props) => {
       }}
     >
       {images.map((image) => (
-        <Image
-          key={image.id}
-          alt={`/images/${image.imageName}`}
-          src={`/images/${image.imageName}`}
-          width={500}
-          height={500}
-        />
+        <Image key={image} alt={image} src={image} width={500} height={500} />
       ))}
     </div>
   );
