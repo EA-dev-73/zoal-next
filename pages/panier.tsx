@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { fetchProductsFromIds } from "../api/product";
+import { fetchProductsFromIds } from "../api/products/product";
 import { CheckoutForm } from "../components/StripeCheckoutForm";
-import {
-  Product,
-  ProductWithTypeAndQuantity,
-  ProductWithTypeData,
-} from "../types";
+import { Product, ProductWithTypeAndQuantity } from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
 import { groupProductsByType } from "../utils/groupProductsByType";
 import {

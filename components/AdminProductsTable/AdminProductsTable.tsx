@@ -8,7 +8,7 @@ import {
   RequiredRule,
 } from "devextreme-react/data-grid";
 import React, { useEffect, useState } from "react";
-import { fetchProductTypes } from "../../api/product";
+import { fetchProductTypes } from "../../api/products/product-type";
 import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";

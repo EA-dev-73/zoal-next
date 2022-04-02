@@ -1,3 +1,9 @@
+import { CreateCategoryDTO } from "./api/category";
+import {
+  CreateProductTypeDTO,
+  CreateProductTypeImagesDTO,
+} from "./api/products/types";
+
 export type Category = {
   id: number;
   name: string;
@@ -15,7 +21,7 @@ export type ProductType = {
   id: number;
   name: string;
   productCategory: Category;
-  productTypeImage: ProductImage[];
+  productTypeImage: ProductTypeImage[];
   createdAt: Date;
   products: Product[];
 };
@@ -28,7 +34,13 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
   quantity: number;
 };
 
-export type ProductImage = {
+export type ProductTypeImage = {
   id: number;
   imageUrl: string;
+};
+
+export type CreateProductTypeWithCategoryAndImagesParams = {
+  createCategoryData: CreateCategoryDTO;
+  createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
+  createProductTypeImages: CreateProductTypeImagesDTO;
 };

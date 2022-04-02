@@ -1,15 +1,15 @@
-import { Category, ProductImage, ProductType } from "../../types";
+import { Category, ProductTypeImage, ProductType } from "../../types";
 
 export type FormattedProduct = ProductType & {
   categoryName: string;
-  imagesUrl: ProductImage["imageUrl"][];
+  imagesUrl: ProductTypeImage["imageUrl"][];
 };
 
 export type OnRowInsertingEvent = {
   data: {
     categoryName: ProductType["productCategory"]["name"];
     name: ProductType["name"];
-    imagesUrl: ProductImage["imageUrl"][];
+    imagesUrl: ProductTypeImage["imageUrl"][];
   };
 };
 export type OnRowDeletingEvent = {

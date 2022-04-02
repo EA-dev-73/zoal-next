@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { ProductImage, ProductType } from "../../types";
+import { ProductTypeImage, ProductType } from "../../types";
 
 type Props = {
   // client-side save => string (devex); from server => string[]
-  imagesUrl: ProductImage["imageUrl"][] | string;
+  imagesUrl: ProductTypeImage["imageUrl"][] | string;
 };
 
 export const DisplayProductTypeImages = ({ imagesUrl }: Props) => {

@@ -1,58 +1,25 @@
-import { supabase } from "../utils/supabaseClient";
 import {
-  Category,
-  Product,
-  ProductImage,
+  CreateProductTypeWithCategoryAndImagesParams,
   ProductType,
-  ProductWithTypeData,
-} from "../types";
-import { uniq } from "lodash";
-import { upsertCategory, CreateCategoryDTO } from "./category";
-import { handlePostgresError } from "../utils/handleError";
-import { TableConstants } from "../utils/TableConstants";
+} from "../../types";
+import { handlePostgresError } from "../../utils/handleError";
+import { supabase } from "../../utils/supabaseClient";
+import { TableConstants } from "../../utils/TableConstants";
+import { upsertCategory } from "../category";
+import { cleanAndInsertProductTypeImages } from "./product-type-image";
+import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   const { data: products, error } = await supabase.from(
     TableConstants.productType
   ).select(`
-      id, name, createdAt,
-      productCategory (id, name),
-      products (id, productTypeId, size, price, stock),
-      productTypeImage(id, imageUrl)
-  `);
-  console.error(error);
+        id, name, createdAt,
+        productCategory (id, name),
+        products (id, productTypeId, size, price, stock),
+        productTypeImage(id, imageUrl)
+    `);
+  error && handlePostgresError(error);
   return products;
-};
-
-export const fetchProductsFromIds = async (
-  productIds: Product["id"][]
-): Promise<ProductWithTypeData[] | null> => {
-  const { data: products } = await supabase
-    .from(TableConstants.products)
-    .select(
-      `
-    id, productTypeId, size, price, stock,
-    productType (id, name)
-    `
-    )
-    .in("id", uniq(productIds));
-  return products;
-};
-
-export type CreateProductTypeDTO = {
-  name: ProductType["name"];
-  categoryId: Category["id"];
-};
-export type UpdateCategoryAndProductTypeDTO = Partial<{
-  id: ProductType["id"];
-  categoryId: Category["id"];
-  categoryName: ProductType["productCategory"]["name"];
-  name: ProductType["name"];
-  imagesUrl: string;
-}>;
-
-export type CreateProductTypeImagesDTO = {
-  imagesUrl: ProductImage["imageUrl"][];
 };
 
 export const upsertProductType = async (
@@ -73,38 +40,6 @@ export const upsertProductType = async (
     data,
     error,
   };
-};
-export const cleanAndInsertProductTypeImages =
-  async (createProductTypeImagesData: {
-    imageUrls: ProductImage["imageUrl"][] | null;
-    productTypeId: ProductType["id"];
-  }) => {
-    // on vide les images actuelles de ce produit
-    const { error: deletingError } = await supabase
-      .from(TableConstants.productTypeImage)
-      .delete()
-      .eq("productTypeId", createProductTypeImagesData.productTypeId);
-
-    deletingError && handlePostgresError(deletingError);
-    if (!createProductTypeImagesData?.imageUrls?.length) return;
-    // on insert ensuite les images
-    const { error } = await supabase
-      .from(TableConstants.productTypeImage)
-      .insert(
-        createProductTypeImagesData.imageUrls.map((x) => ({
-          imageUrl: x,
-          productTypeId: createProductTypeImagesData.productTypeId,
-        }))
-      );
-    return {
-      error,
-    };
-  };
-
-type CreateProductTypeWithCategoryAndImagesParams = {
-  createCategoryData: CreateCategoryDTO;
-  createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
-  createProductTypeImages: CreateProductTypeImagesDTO;
 };
 
 export const createProductTypeWithCategoryAndImages = async ({
@@ -167,7 +102,7 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
   };
 };
 
-export const updateCategoryAndProductType = async (
+export const updateProductTypeWithCategoryAndImages = async (
   newData: UpdateCategoryAndProductTypeDTO
 ) => {
   const {

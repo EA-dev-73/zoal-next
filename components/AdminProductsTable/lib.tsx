@@ -1,8 +1,8 @@
 import {
   createProductTypeWithCategoryAndImages,
   deleteProductType,
-  updateCategoryAndProductType as updateCategoryAndProductTypeAndImages,
-} from "../../api/product";
+  updateProductTypeWithCategoryAndImages,
+} from "../../api/products/product-type";
 import {
   OnRowDeletingEvent,
   OnRowEditingEvent,
@@ -37,7 +37,7 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
 
 export const onRowUpdating = async (e: OnRowEditingEvent) => {
   try {
-    await updateCategoryAndProductTypeAndImages({
+    await updateProductTypeWithCategoryAndImages({
       id: e.oldData?.id,
       name: e.newData?.name,
       categoryId: e.oldData?.productCategory?.id,
