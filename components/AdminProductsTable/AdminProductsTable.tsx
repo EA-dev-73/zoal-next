@@ -9,13 +9,15 @@ import {
 } from "devextreme-react/data-grid";
 import React, { useEffect, useState } from "react";
 import { fetchProductTypes } from "../../api/products/product-type";
-import { AdminProductsMasterDetail } from "./AdminProductsMasterDetail";
+import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMasterDetail";
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
 import { FormattedProduct } from "./types";
+import { useRouter } from "next/router";
 
 export const AdminProductsTable = () => {
   const [products, setProducts] = useState<FormattedProduct[] | null>([]);
+  const router = useRouter();
   useEffect(() => {
     fetchProductTypes().then((products) => {
       const formattedProducts = (products || []).map((product) => ({
@@ -35,6 +37,8 @@ export const AdminProductsTable = () => {
       //@ts-ignore
       onRowUpdating={onRowUpdating}
       onRowRemoving={onRowRemoving}
+      //TODO moche mais wip
+      onSaved={() => router.reload()}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
@@ -61,9 +65,14 @@ export const AdminProductsTable = () => {
         enabled
         component={({
           data: {
-            data: { products },
+            data: { products, id: productTypeId },
           },
-        }) => <AdminProductsMasterDetail products={products} />}
+        }) => (
+          <AdminProductsMasterDetail
+            products={products}
+            productTypeId={productTypeId}
+          />
+        )}
       />
     </DataGrid>
   );

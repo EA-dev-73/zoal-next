@@ -8,6 +8,7 @@ const nextConfig = {
       "doc-0o-b8-docs.googleusercontent.com",
       "cdn.pixabay.com",
       "media.istockphoto.com",
+      "i.redd.it",
     ],
   },
 };

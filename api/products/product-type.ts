@@ -15,7 +15,7 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   ).select(`
         id, name, createdAt,
         productCategory (id, name),
-        products (id, productTypeId, size, price, stock),
+        products (id, productTypeId, size, price, stock, shippingFees),
         productTypeImage(id, imageUrl)
     `);
   error && handlePostgresError(error);

@@ -15,6 +15,7 @@ export type Product = {
   size: string;
   price: number;
   stock: number;
+  shippingFees: number;
 };
 
 export type ProductType = {
