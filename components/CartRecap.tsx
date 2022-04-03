@@ -58,8 +58,9 @@ export const CartRecap = ({ isRecap }: Props) => {
             <ul>
               {productTypes.map((product) => (
                 <li key={product.id}>
-                  Taille : {product.size} | Prix à l'unité : {product.price}€ |
-                  Quantité : {product.quantity} {displayQuantity(product)}
+                  Taille : {product.size} | Prix à l&apos;unité :{" "}
+                  {product.price}€ | Quantité : {product.quantity}{" "}
+                  {displayQuantity(product)}
                   {!isRecap && (
                     <button
                       style={{ marginLeft: "10px" }}
