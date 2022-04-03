@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { cartState } from "../context/cart";
 import { userState } from "../context/user";
@@ -46,9 +47,11 @@ export const useRemoveItemFromCart = () => {
 };
 
 export const useLogOut = () => {
+  const router = useRouter();
   const resetState = useResetRecoilState(userState);
   return () => {
     localStorage.removeItem("supabase.auth.token");
     resetState;
+    router.reload();
   };
 };
