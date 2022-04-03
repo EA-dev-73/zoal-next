@@ -84,7 +84,12 @@ export const CheckoutForm = ({
         errors={errors}
         type="email"
       />
-      <BaseInput register={register} field="adress" label="Adresse" />
+      <BaseInput
+        register={register}
+        field="adress"
+        label="Adresse"
+        errors={errors}
+      />
       <BaseInput
         register={register}
         field="postalCode"
