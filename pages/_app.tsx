@@ -8,13 +8,15 @@ import { locale, loadMessages } from "devextreme/localization";
 import frMessages from "devextreme/localization/messages/fr.json";
 import { RecoilRoot } from "recoil";
 import Head from "next/head";
+import { useEffect } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  process.env.NODE_ENV !== "production" &&
-    process.env.INSERT_FIXTURES === "true" &&
-    insertFixtures();
-  loadMessages(frMessages);
-  locale("fr-FR");
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap"!);
+    //dx en francais
+    loadMessages(frMessages);
+    locale("fr-FR");
+  }, []);
 
   return (
     <RecoilRoot>
