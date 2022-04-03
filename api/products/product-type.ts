@@ -22,6 +22,24 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   return products;
 };
 
+export const fetchProductTypeById = async (
+  productTypeId: ProductType["id"]
+): Promise<ProductType | null> => {
+  const { data: product, error } = await supabase
+    .from(TableConstants.productType)
+    .select(
+      `
+        id, name, createdAt,
+        productCategory (id, name),
+        products (id, productTypeId, size, price, stock, shippingFees),
+        productTypeImage(id, imageUrl)
+    `
+    )
+    .eq("id", productTypeId);
+  error && handlePostgresError(error);
+  return product?.[0] as ProductType | null;
+};
+
 export const upsertProductType = async (
   createProductTypeData: CreateProductTypeDTO
 ) => {
