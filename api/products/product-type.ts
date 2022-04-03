@@ -82,14 +82,12 @@ export const createProductTypeWithCategoryAndImages = async ({
   productTypeError && handlePostgresError(productTypeError);
   // on retourne l'id productType fraichement créé
   if (!createProductTypeImages?.imagesUrl?.length) return;
-
   const productTypeId = returningProductType?.[0]?.id;
   if (!productTypeId) {
     throw new Error("Erreur lors de la création du produit :/");
   }
   //filouterie car on recoi des array d'images mais l'edit renvoi une string
   const imagesUrl = createProductTypeImages.imagesUrl as unknown as string;
-
   await cleanAndInsertProductTypeImages({
     imageUrls: imagesUrl.split(","),
     productTypeId,

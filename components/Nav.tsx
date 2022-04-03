@@ -47,7 +47,7 @@ export const Nav = () => {
                 />
               </Link>
             </div>
-            <li className="nav-item dropdown">
+            <span className="nav-item dropdown">
               <li className="nav-item">
                 <Link passHref href="/shop">
                   <a
@@ -90,7 +90,7 @@ export const Nav = () => {
                   </li>
                 </ul>
               )}
-            </li>
+            </span>
           </ul>
         </div>
       </div>
