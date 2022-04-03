@@ -1,49 +1,21 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { fetchProductsFromIds } from "../api/products/product";
 import { CheckoutForm } from "../components/StripeCheckoutForm";
-import { Product, ProductWithTypeAndQuantity } from "../types";
+import { ProductWithTypeAndQuantity } from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
 import { groupProductsByType } from "../utils/groupProductsByType";
-import {
-  getCartContentFromLocalStorage,
-  removeItemFromCart,
-} from "../utils/localStorageHelpers";
 import { Price } from "../value-objects/Price";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useRemoveItemFromCart } from "../utils/localStorageHelpers";
+import { useProductsForCart } from "../utils/cart";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
 export default function Panier() {
-  const router = useRouter();
-  const [products, setProducts] = useState([] as ProductWithTypeAndQuantity[]);
-  const [quantityError, setQuantityError] = useState(true);
-
-  useEffect(() => {
-    //TODO refacto
-    const localStorageContent = getCartContentFromLocalStorage();
-    fetchProductsFromIds(localStorageContent).then((products) => {
-      const withQuantity = addQuantityToProducts(products || []);
-      setProducts(withQuantity);
-      const amountOfProductInLocalStorage = (productId: Product["id"]) =>
-        localStorageContent.filter(
-          (localStorageId) => localStorageId === productId
-        ).length;
-      const hasQuantityError = (withQuantity || []).some(
-        (product) => product.stock < amountOfProductInLocalStorage(product.id)
-      );
-      setQuantityError(hasQuantityError);
-    });
-  }, []);
-
-  const handleRemoveItemFromCart = (product: Product) => {
-    removeItemFromCart(product.id, product.stock);
-    router.reload();
-  };
+  const { loadingProducts, products, quantityError } = useProductsForCart();
+  const removeItem = useRemoveItemFromCart();
 
   const calculateTotalPrice = (
     productsWithQuantity: ProductWithTypeAndQuantity[]
@@ -71,6 +43,8 @@ export default function Panier() {
 
   const totalPrice = calculateTotalPrice(productsWithTypeAndQuantity);
 
+  if (loadingProducts) return <p>Chargement des produits...</p>;
+
   return (
     <>
       <h1>Contenu du panier</h1>
@@ -92,7 +66,7 @@ export default function Panier() {
                       {displayQuantity(product)}
                       <button
                         style={{ marginLeft: "10px" }}
-                        onClick={() => handleRemoveItemFromCart(product)}
+                        onClick={() => removeItem(product.id)}
                       >
                         Supprimer 1 article du panier
                       </button>

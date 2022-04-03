@@ -21,7 +21,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Zoal - Boutique en ligne</title>
       </Head>
-      ;
       <Layout>
         <Component {...pageProps} />
       </Layout>

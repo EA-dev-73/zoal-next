@@ -15,7 +15,7 @@ export const ProductCategorySelect = ({ productTypes, onChange }: Props) => {
   return (
     <select onChange={(e) => onChange(Number(e.target.value))}>
       <option value={undefined} key="toutes_les_categories">
-        Toutes les catégories
+        Tous les produits
       </option>
       {uniqCategories.map((category) => (
         <option value={category.id} key={category.id}>

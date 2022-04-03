@@ -1,3 +1,6 @@
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { cartState } from "../context/cart";
+import { userState } from "../context/user";
 import { Product } from "../types";
 
 export const LOCAL_STORAGE_CART_KEY = "zoal-cart-content";
@@ -10,32 +13,42 @@ export const getCartContentFromLocalStorage = (): Product["id"][] => {
   return [];
 };
 
-export const addProductIdToCart = (itemId: Product["id"]) => {
-  if (typeof window !== "undefined") {
-    const currentCartContent = getCartContentFromLocalStorage();
-    localStorage.setItem(
-      LOCAL_STORAGE_CART_KEY,
-      JSON.stringify([...currentCartContent, itemId])
-    );
-  }
-};
-
-export const removeItemFromCart = (
-  selectedProductId: Product["id"],
-  stock: number
-): void => {
-  if (typeof window !== "undefined") {
-    const cartContent = getCartContentFromLocalStorage();
-    if (stock < 1) {
-      // si il n'y a plus de stock on n'enleve pas les articles 1 par 1
+export const useAddProductIdToCart = () => {
+  const [cartContent, setCartContent] = useRecoilState(cartState);
+  return (itemId: Product["id"]) => {
+    const newCartContent = [...cartContent, itemId];
+    if (typeof window !== "undefined") {
       localStorage.setItem(
         LOCAL_STORAGE_CART_KEY,
-        JSON.stringify(cartContent.filter((x) => x !== selectedProductId))
+        JSON.stringify(newCartContent)
       );
-      return;
+      setCartContent(newCartContent);
     }
-    const idxToRemove = cartContent.findIndex((x) => x === selectedProductId);
-    cartContent.splice(idxToRemove, 1);
-    localStorage.setItem(LOCAL_STORAGE_CART_KEY, JSON.stringify(cartContent));
-  }
+  };
+};
+
+export const useRemoveItemFromCart = () => {
+  const [cartContent, setCartContent] = useRecoilState(cartState);
+  return (selectedProductId: Product["id"]) => {
+    if (typeof window !== "undefined") {
+      const idxToRemove = cartContent.findIndex((x) => x === selectedProductId);
+      const newCartContent = cartContent.filter(
+        (_, idx) => idx !== idxToRemove
+      );
+      console.log({ idxToRemove, cartContent, newCartContent });
+      localStorage.setItem(
+        LOCAL_STORAGE_CART_KEY,
+        JSON.stringify(newCartContent)
+      );
+      setCartContent(newCartContent);
+    }
+  };
+};
+
+export const useLogOut = () => {
+  const resetState = useResetRecoilState(userState);
+  return () => {
+    localStorage.removeItem("supabase.auth.token");
+    resetState;
+  };
 };

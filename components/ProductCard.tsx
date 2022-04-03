@@ -1,7 +1,6 @@
-import Image from "next/image";
 import React from "react";
 import { ProductType as ProductType, Product } from "../types";
-import { addProductIdToCart as addproductToCart } from "../utils/localStorageHelpers";
+import { useAddProductIdToCart } from "../utils/localStorageHelpers";
 
 type Props = {
   productType: ProductType;
@@ -10,6 +9,7 @@ type Props = {
 //TODO display images
 
 export const ProductCard = ({ productType }: Props) => {
+  const addProductToCart = useAddProductIdToCart();
   return (
     <div
       style={{ border: "1px dotted black", margin: "20px", padding: "10px" }}
@@ -34,7 +34,7 @@ export const ProductCard = ({ productType }: Props) => {
                 Taille : {product.size} | Prix : {product.price + "€"} | En
                 stock : {product.stock > 0 ? product.stock : "❌"}
                 {product.stock && (
-                  <button onClick={() => addproductToCart(product.id)}>
+                  <button onClick={() => addProductToCart(product.id)}>
                     Ajouter au panier
                   </button>
                 )}
