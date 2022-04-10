@@ -13,8 +13,10 @@ import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMa
 import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
 import { FormattedProduct } from "./types";
+import { useRouter } from "next/router";
 
 export const AdminProductsTable = () => {
+  const router = useRouter();
   const [products, setProducts] = useState<FormattedProduct[] | null>([]);
   useEffect(() => {
     fetchProductTypes().then((products) => {
@@ -35,8 +37,7 @@ export const AdminProductsTable = () => {
       //@ts-ignore
       onRowUpdating={onRowUpdating}
       onRowRemoving={onRowRemoving}
-      //TODO moche mais wip
-      // onSaved={() => router.reload()}
+      onSaved={() => router.reload()}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />

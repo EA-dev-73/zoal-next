@@ -3,6 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { CheckoutForm } from "../components/CheckoutForm/CheckoutForm";
 import { CartRecap } from "../components/CartRecap";
 import { useCalculateCartTotalPrice } from "../utils/useTotalPrice";
+import { Layout } from "../components/Layout";
 
 function FinaliserCommande() {
   const stripePromise = loadStripe(
@@ -14,7 +15,7 @@ function FinaliserCommande() {
   if (loadingProducts) return <p>Chargement des produits...</p>;
 
   return (
-    <div>
+    <Layout>
       <Elements stripe={stripePromise}>
         <CheckoutForm
           amount={totalPrice}
@@ -24,7 +25,7 @@ function FinaliserCommande() {
       </Elements>
       <h1>Récapitulatif de la commande</h1>
       <CartRecap isRecap />
-    </div>
+    </Layout>
   );
 }
 

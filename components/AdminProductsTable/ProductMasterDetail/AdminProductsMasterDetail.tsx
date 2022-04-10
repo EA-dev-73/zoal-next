@@ -21,7 +21,7 @@ export const AdminProductsMasterDetail = ({
       onRowUpdating={(e) => onRowUpdating(e, productTypeId)}
       onRowRemoving={(e) => onRowRemoving(e.data.id)}
       //TODO moche mais wip
-      // onSaved={() => router.reload()}
+      onSaved={() => router.reload()}
     >
       <Editing mode="batch" allowUpdating allowAdding allowDeleting />
       <Column dataField="size" caption="Taille">

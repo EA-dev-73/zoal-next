@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fetchProductTypes } from "../api/products/product-type";
+import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
 import { ProductCategorySelect } from "../components/ProductCategorySelect";
 import { Category, ProductType as ProductType } from "../types";
@@ -11,7 +12,7 @@ type Props = {
 export default function Shop({ productTypes }: Props) {
   const [filter, setFilter] = useState<Category["id"] | null>(null);
   return (
-    <>
+    <Layout>
       <ProductCategorySelect productTypes={productTypes} onChange={setFilter} />
       <div
         style={{
@@ -28,7 +29,7 @@ export default function Shop({ productTypes }: Props) {
             <ProductCard key={productType.id} productType={productType} />
           ))}
       </div>
-    </>
+    </Layout>
   );
 }
 
