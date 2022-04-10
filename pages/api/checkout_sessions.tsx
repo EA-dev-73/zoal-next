@@ -37,6 +37,17 @@ export default async function handler(
           allowed_countries: ["FR"],
         },
       });
+
+      //TODO update les stock qu'une fois la commande effectuée
+      // await updateProductsStocks(
+      //   (products || []).map((product) => ({
+      //     productId: product.id,
+      //     quantityToRemove: productOccurences[product.id],
+      //     productTypeId: product.productTypeId,
+      //     size: product.size,
+      //     price: product.price,
+      //   }))
+      // );
       res.json({ url: session.url });
     } catch (err: any) {
       res.status(err.statusCode || 500).json(err.message);

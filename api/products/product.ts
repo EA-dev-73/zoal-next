@@ -1,9 +1,24 @@
 import { supabase } from "../../utils/supabaseClient";
-import { Product, ProductWithTypeData } from "../../types";
+import { Product, ProductType, ProductWithTypeData } from "../../types";
 import { uniq } from "lodash";
 import { TableConstants } from "../../utils/TableConstants";
 import { handlePostgresError } from "../../utils/handleError";
 import { DeleteProductDTO, UpsertProductDTO } from "./types";
+
+export const getProductById = async (
+  id: Product["id"]
+): Promise<Product | null> => {
+  const { data: product, error } = await supabase
+    .from(TableConstants.products)
+    .select(
+      `
+  id, productTypeId, size, price, stock, shippingFees
+  `
+    )
+    .eq("id", id);
+  error && handlePostgresError(error);
+  return product?.[0];
+};
 
 export const fetchProductsFromIds = async (
   productIds: Product["id"][]
@@ -44,4 +59,45 @@ export const upsertProduct = async (upsertProductData: UpsertProductDTO) => {
     }
   );
   error && handlePostgresError(error);
+};
+
+export const updateProductStock = async (
+  productId: Product["id"],
+  quantityToRemove: number,
+  productTypeId: ProductType["id"],
+  size: Product["size"],
+  price: Product["price"]
+) => {
+  const product = await getProductById(productId);
+  const newStock = (product?.stock || 0) - quantityToRemove;
+
+  await upsertProduct({
+    productId,
+    stock: newStock < 0 ? 0 : newStock,
+    productTypeId,
+    size,
+    price,
+  });
+};
+
+type UpdateProductsStocksParams = {
+  productId: Product["id"];
+  quantityToRemove: number;
+  productTypeId: ProductType["id"];
+  size: Product["size"];
+  price: Product["price"];
+}[];
+
+export const updateProductsStocks = async (
+  updateProductsStocksParams: UpdateProductsStocksParams
+) => {
+  for (const param of updateProductsStocksParams) {
+    await updateProductStock(
+      param.productId,
+      param.quantityToRemove,
+      param.productTypeId,
+      param.size,
+      param.price
+    );
+  }
 };
