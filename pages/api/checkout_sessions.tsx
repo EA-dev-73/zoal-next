@@ -1,6 +1,8 @@
+import { countBy } from "lodash";
 import { NextApiRequest, NextApiResponse } from "next";
+import { fetchProductsFromIds } from "../../api/products/product";
 import { Product } from "../../types";
-import { generateStripePriceData } from "./lib";
+import { generateStripePriceData, generateStripeShippingFees } from "./lib";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -15,8 +17,18 @@ export default async function handler(
         res.status(500).json("Le panier est vide");
       }
 
+      const products = await fetchProductsFromIds(cartContent);
+      const productOccurences = countBy(cartContent);
+
+      const shippingOptions = generateStripeShippingFees(products);
+      const productsFormattedForStripe = generateStripePriceData(
+        products,
+        productOccurences
+      );
+
       const session = await stripe.checkout.sessions.create({
-        line_items: await generateStripePriceData(cartContent),
+        shipping_options: shippingOptions,
+        line_items: productsFormattedForStripe,
         mode: "payment",
         success_url: `${req.headers.origin}/panier?success=true`,
         cancel_url: `${req.headers.origin}/panier?canceled=true`,

@@ -12,7 +12,7 @@ export const fetchProductsFromIds = async (
     .from(TableConstants.products)
     .select(
       `
-    id, productTypeId, size, price, stock,
+    id, productTypeId, size, price, stock, shippingFees,
     productType (id, name)
     `
     )
@@ -30,7 +30,6 @@ export const deleteProduct = async (deleteProductData: DeleteProductDTO) => {
 };
 
 export const upsertProduct = async (upsertProductData: UpsertProductDTO) => {
-  console.log({ upsertProductData });
   const { error } = await supabase.from(TableConstants.products).upsert(
     {
       id: upsertProductData.productId,
