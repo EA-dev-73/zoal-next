@@ -29,6 +29,7 @@ export default async function handler(
     await stripe.paymentIntents.create({
       amount: amount * 100, // en centimes
       currency: "eur",
+      //TODO description de la commande (date - produits et quantités)
       description:
         "Premiers pas vers la richesse d'Amélie avec la payment intent API",
       receipt_email: receiptEmail,

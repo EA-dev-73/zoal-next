@@ -23,7 +23,7 @@ function FinaliserCommande() {
           quantityError={quantityError}
         />
       </Elements>
-      <h1>Récapitulatif de la commande</h1>
+      <h2>Récapitulatif de la commande</h2>
       <CartRecap isRecap />
     </Layout>
   );
