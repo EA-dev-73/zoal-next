@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { ProductWithTypeAndQuantity } from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
@@ -18,6 +19,7 @@ type Props = {
 export const CartRecap = ({ isRecap }: Props) => {
   const { loadingProducts, products } = useProductsForCart();
   const removeItem = useRemoveItemFromCart();
+  const router = useRouter();
 
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
@@ -61,10 +63,12 @@ export const CartRecap = ({ isRecap }: Props) => {
 
   const handleFinalizeCommand = async () => {
     try {
-      await fetch("/api/checkout_sessions", {
+      const res = await fetch("/api/checkout_sessions", {
         method: "POST",
         body: JSON.stringify(getCartContentFromLocalStorage()),
       });
+      const body = await res.json();
+      router.replace(body.url);
     } catch (error: any) {
       console.error(error?.message || error);
     }

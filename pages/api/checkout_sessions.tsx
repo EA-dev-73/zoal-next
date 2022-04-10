@@ -9,9 +9,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
+    const cartContent: Product["id"][] = JSON.parse(req.body);
     try {
-      const cartContent: Product["id"][] = JSON.parse(req.body);
-
       if (!cartContent?.length) {
         res.status(500).json("Le panier est vide");
       }
@@ -26,9 +25,8 @@ export default async function handler(
           allowed_countries: ["FR"],
         },
       });
-      res.redirect(303, session.url);
+      res.json({ url: session.url });
     } catch (err: any) {
-      console.log(2);
       res.status(err.statusCode || 500).json(err.message);
     }
   } else {

@@ -10,7 +10,7 @@ export const generateStripePriceData = async (cartContent: Product["id"][]) => {
     price_data: {
       currency: "eur",
       product_data: {
-        name: product.productType.name,
+        name: `${product.productType.name} - Taille ${product.size}`,
       },
       unit_amount: product.price * 100, // en centimes
     },
