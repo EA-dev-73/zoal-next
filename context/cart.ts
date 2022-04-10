@@ -3,7 +3,8 @@ import { Product } from "../types";
 import { getCartContentFromLocalStorage } from "../utils/localStorageHelpers";
 
 const getCartContentStateDefaultValue = () => {
-  if (typeof window !== "undefined") {
+  //TODO virer le && getCartContentFromLocalStorage et regarder pourquoi ca fait une erreur apres cancel un stripe checkout
+  if (typeof window !== "undefined" && getCartContentFromLocalStorage) {
     const cartContent = getCartContentFromLocalStorage();
     if (!cartContent?.length) return [];
     return cartContent;

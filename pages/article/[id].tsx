@@ -1,5 +1,6 @@
 import { NextPageContext } from "next";
 import { fetchProductTypeById } from "../../api/products/product-type";
+import { Layout } from "../../components/Layout";
 import { ProductType } from "../../types";
 import { useAddProductIdToCart } from "../../utils/localStorageHelpers";
 
@@ -11,7 +12,7 @@ const ProductPage = ({ productType }: Props) => {
   const addProductToCart = useAddProductIdToCart();
 
   return (
-    <div>
+    <Layout>
       <p>
         Disponibilités :
         <ul>
@@ -30,7 +31,7 @@ const ProductPage = ({ productType }: Props) => {
           })}
         </ul>
       </p>
-    </div>
+    </Layout>
   );
 };
 export default ProductPage;

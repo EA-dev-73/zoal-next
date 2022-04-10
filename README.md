@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] envoyer données du formulaire de commande a stripe
 - [ ] inclure les frais de port dans le calcul du prix total
 - [ ] stocker les commandes
 - [ ] -x (x = quantité achetée) sur la quantité suite a une commande effectuée

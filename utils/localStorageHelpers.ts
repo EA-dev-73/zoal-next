@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { cartState } from "../context/cart";
 import { userState } from "../context/user";
 import { Product } from "../types";
@@ -36,7 +36,6 @@ export const useRemoveItemFromCart = () => {
       const newCartContent = cartContent.filter(
         (_, idx) => idx !== idxToRemove
       );
-      console.log({ idxToRemove, cartContent, newCartContent });
       localStorage.setItem(
         LOCAL_STORAGE_CART_KEY,
         JSON.stringify(newCartContent)

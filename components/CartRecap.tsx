@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { ProductWithTypeAndQuantity } from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
 import { calculateTotalPrice } from "../utils/calculateTotalPrice";
 import { useProductsForCart } from "../utils/cart";
 import { groupProductsByType } from "../utils/groupProductsByType";
-import { useRemoveItemFromCart } from "../utils/localStorageHelpers";
+import {
+  getCartContentFromLocalStorage,
+  useRemoveItemFromCart,
+} from "../utils/localStorageHelpers";
 import { Price } from "../value-objects/Price";
 
 type Props = {
@@ -16,7 +18,21 @@ type Props = {
 export const CartRecap = ({ isRecap }: Props) => {
   const { loadingProducts, products } = useProductsForCart();
   const removeItem = useRemoveItemFromCart();
-  const router = useRouter();
+
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("success")) {
+      alert(
+        "Commande validée ! Vous allez recevoir un email de confirmation 😀"
+      );
+    }
+
+    if (query.get("canceled")) {
+      alert("Commande annulée");
+    }
+  }, []);
+
   if (loadingProducts) return <p>Chargement des produits...</p>;
 
   const isEmptyCart = !Object.values(groupProductsByType(products))?.length;
@@ -42,6 +58,17 @@ export const CartRecap = ({ isRecap }: Props) => {
         <Link href={"/shop"}>acheter des trucs 🤑🤑</Link>
       </p>
     );
+
+  const handleFinalizeCommand = async () => {
+    try {
+      await fetch("/api/checkout_sessions", {
+        method: "POST",
+        body: JSON.stringify(getCartContentFromLocalStorage()),
+      });
+    } catch (error: any) {
+      console.error(error?.message || error);
+    }
+  };
 
   return (
     <>
@@ -99,10 +126,11 @@ export const CartRecap = ({ isRecap }: Props) => {
       </p>{" "}
       {!isRecap && (
         <button
+          role="link"
           className="btn btn-outline-primary float-end mx-3"
-          onClick={() => router.replace("/finaliser-commande")}
+          onClick={handleFinalizeCommand}
         >
-          Passer commande
+          Passer la commande
         </button>
       )}
     </>
