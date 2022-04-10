@@ -26,6 +26,19 @@ export default async function handler(
         productOccurences
       );
 
+      type CheckoutMetadata = Record<string, string | number>;
+
+      const generateMetadata = () => {
+        const obj: CheckoutMetadata = {};
+        const prod = products || [];
+        for (let i = 0; i < prod.length; i++) {
+          obj[`${prod[i].id}`] = `${prod[i].productTypeId}_${
+            productOccurences[prod[i].id]
+          }_${prod[i].size}_${prod[i].price}`;
+        }
+        return obj;
+      };
+
       const session = await stripe.checkout.sessions.create({
         shipping_options: shippingOptions,
         line_items: productsFormattedForStripe,
@@ -36,18 +49,8 @@ export default async function handler(
         shipping_address_collection: {
           allowed_countries: ["FR"],
         },
+        metadata: generateMetadata(),
       });
-
-      //TODO update les stock qu'une fois la commande effectuée
-      // await updateProductsStocks(
-      //   (products || []).map((product) => ({
-      //     productId: product.id,
-      //     quantityToRemove: productOccurences[product.id],
-      //     productTypeId: product.productTypeId,
-      //     size: product.size,
-      //     price: product.price,
-      //   }))
-      // );
       res.json({ url: session.url });
     } catch (err: any) {
       res.status(err.statusCode || 500).json(err.message);
