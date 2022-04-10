@@ -26,6 +26,9 @@ export const CheckoutForm = ({
     formState: { errors },
   } = useForm();
 
+  const watchPostalCode = watch("postalCode");
+  const watchEmail = watch("email");
+
   // type FormData = {
   //   adress: string;
   //   city: string;
@@ -60,6 +63,10 @@ export const CheckoutForm = ({
   };
   //TODO meilleure verif des champs : ex code postal doit etre un numero ect...
 
+  const frenchPostalCodeRegEx = /^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/;
+  const emailRegEx =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="my-5">
@@ -83,6 +90,7 @@ export const CheckoutForm = ({
         label="Email"
         errors={errors}
         type="email"
+        customValidator={() => emailRegEx.test(watchEmail)}
       />
       <BaseInput
         register={register}
@@ -96,6 +104,7 @@ export const CheckoutForm = ({
         label="Code postal"
         errors={errors}
         type="number"
+        customValidator={() => frenchPostalCodeRegEx.test(watchPostalCode)}
       />
       <BaseInput
         register={register}
