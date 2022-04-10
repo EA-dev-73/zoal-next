@@ -133,6 +133,7 @@ export const CartRecap = ({ isRecap }: Props) => {
           role="link"
           className="btn btn-outline-primary float-end mx-3"
           onClick={handleFinalizeCommand}
+          //TODO disable si pas assez de stock
         >
           Passer la commande
         </button>
