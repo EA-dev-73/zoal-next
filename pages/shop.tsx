@@ -1,3 +1,4 @@
+import { orderBy, sortBy } from "lodash";
 import { useState } from "react";
 import { fetchProductTypes } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
@@ -21,10 +22,11 @@ export default function Shop({ productTypes }: Props) {
           justifyContent: "space-between",
         }}
       >
-        {(productTypes || [])
+        {orderBy(productTypes || [], "createdAt", "desc")
           .filter((productType) =>
             filter ? productType.productCategory.id === filter : true
           )
+
           .map((productType) => (
             <ProductCard key={productType.id} productType={productType} />
           ))}
