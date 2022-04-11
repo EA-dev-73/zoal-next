@@ -15,6 +15,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 
 const handleCompletedSessionEvent = async (event: any) => {
+  // 1 - update les stocks en bdd
   const command = await stripe.checkout.sessions.retrieve(event.data.object.id);
 
   /**
@@ -36,6 +37,8 @@ const handleCompletedSessionEvent = async (event: any) => {
   );
 
   await updateProductsStocks(productsWithUpdatedStocks);
+
+  // l'update du localStorage sera ensuite faite coté client
 };
 
 export default async function handler(
@@ -43,7 +46,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    console.log("INSIDE");
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"];
 

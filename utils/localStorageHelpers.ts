@@ -6,6 +6,12 @@ import { Product } from "../types";
 
 export const LOCAL_STORAGE_CART_KEY = "zoal-cart-content";
 
+export const clearLocalStorageCart = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(LOCAL_STORAGE_CART_KEY);
+  }
+};
+
 export const getCartContentFromLocalStorage = (): Product["id"][] => {
   if (typeof window !== "undefined") {
     const content = localStorage.getItem(LOCAL_STORAGE_CART_KEY);

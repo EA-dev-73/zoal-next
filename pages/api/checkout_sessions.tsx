@@ -47,8 +47,8 @@ export default async function handler(
         shipping_options: shippingOptions,
         line_items: productsFormattedForStripe,
         mode: "payment",
-        success_url: `${req.headers.origin}/panier?success=true`,
-        cancel_url: `${req.headers.origin}/panier?canceled=true`,
+        success_url: `${req.headers.origin}?success=true`,
+        cancel_url: `${req.headers.origin}?canceled=true`,
         locale: "fr",
         shipping_address_collection: {
           allowed_countries: ["FR"],

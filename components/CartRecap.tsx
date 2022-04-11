@@ -21,20 +21,6 @@ export const CartRecap = ({ isRecap }: Props) => {
   const removeItem = useRemoveItemFromCart();
   const router = useRouter();
 
-  useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
-      alert(
-        "Commande validée ! Vous allez recevoir un email de confirmation 😀"
-      );
-    }
-
-    if (query.get("canceled")) {
-      alert("Commande annulée");
-    }
-  }, []);
-
   if (loadingProducts) return <p>Chargement des produits...</p>;
 
   const isEmptyCart = !Object.values(groupProductsByType(products))?.length;

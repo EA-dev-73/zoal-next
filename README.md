@@ -1,6 +1,9 @@
-## TODO
+## Lancer les webhooks stripe en local
 
-- [ ] fixer le soucis avec le local storage (non trouvé apres commande)
+`stripe listen --forward-to localhost:3000/api/webhook`
+
+## Todo list
+
 - [ ] disable le bouton pour commander si pas assez de stock
 - [ ] stocker les commandes
 - [ ] améliorer le référencement naturel
