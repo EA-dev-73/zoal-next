@@ -60,6 +60,16 @@ export const CartRecap = ({ isRecap }: Props) => {
     }
   };
 
+  const stockIsEnoughToFulfillOrder = () => {
+    return productsWithTypeAndQuantity.reduce((hasError, current) => {
+      if (current.quantity > current.stock) {
+        return false;
+      } else {
+        return hasError;
+      }
+    }, true);
+  };
+
   return (
     <>
       <ul>
@@ -119,7 +129,7 @@ export const CartRecap = ({ isRecap }: Props) => {
           role="link"
           className="btn btn-outline-primary float-end mx-3"
           onClick={handleFinalizeCommand}
-          //TODO disable si pas assez de stock
+          disabled={!stockIsEnoughToFulfillOrder()}
         >
           Passer la commande
         </button>
