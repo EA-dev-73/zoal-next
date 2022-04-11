@@ -28,6 +28,10 @@ export default async function handler(
 
       type CheckoutMetadata = Record<string, string | number>;
 
+      /**
+       * On génère des metadata du type {productId : productTypeId_quantity_size_price} pour pouvoir plus facilement mettre a jour les stocks une fois la commande validée
+       * Ca aurait été beaucoup mieux de JSON.stringify un .map mais stripe n'accepte que le format object {} :(
+       */
       const generateMetadata = () => {
         const obj: CheckoutMetadata = {};
         const prod = products || [];

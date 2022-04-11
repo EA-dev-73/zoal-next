@@ -44,6 +44,10 @@ export const deleteProduct = async (deleteProductData: DeleteProductDTO) => {
   error && handlePostgresError(error);
 };
 
+/**
+ *
+ * Supabase ne supporte pas encore le patch, il faut donc passer plus de params que ce que l'on aimerai :(
+ */
 export const upsertProduct = async (upsertProductData: UpsertProductDTO) => {
   const { error } = await supabase.from(TableConstants.products).upsert(
     {
@@ -61,6 +65,9 @@ export const upsertProduct = async (upsertProductData: UpsertProductDTO) => {
   error && handlePostgresError(error);
 };
 
+/**
+ * Supabase ne supporte pas encore le patch, il faut donc passer plus de params que ce que l'on aimerai :(
+ */
 export const updateProductStock = async (
   productId: Product["id"],
   quantityToRemove: number,
@@ -88,6 +95,10 @@ type UpdateProductsStocksParams = {
   price: Product["price"];
 }[];
 
+/**
+ *
+ * Supabase ne supporte pas encore le patch, il faut donc passer plus de params que ce que l'on aimerai :(
+ */
 export const updateProductsStocks = async (
   updateProductsStocksParams: UpdateProductsStocksParams
 ) => {

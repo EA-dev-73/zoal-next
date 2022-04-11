@@ -14,6 +14,26 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 
+const handleCompletedSessionEvent = async (event: any) => {
+  const command = await stripe.checkout.sessions.retrieve(event.data.object.id);
+
+  const productsWithUpdatedStocks = Object.entries(command.metadata).map(
+    ([productId, metadata]: [string, any]) => {
+      const [productTypeId, quantityToRemove, size, price] =
+        metadata.split("_");
+      return {
+        productId: Number(productId),
+        quantityToRemove,
+        productTypeId,
+        size,
+        price: Number(price),
+      };
+    }
+  );
+
+  await updateProductsStocks(productsWithUpdatedStocks);
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -36,25 +56,7 @@ export default async function handler(
     // Handle the event
     if (event.type === "checkout.session.completed") {
       try {
-        const command = await stripe.checkout.sessions.retrieve(
-          event.data.object.id
-        );
-
-        await updateProductsStocks(
-          Object.entries(command.metadata).map(
-            ([productId, metadata]: [string, any]) => {
-              const [productTypeId, quantityToRemove, size, price] =
-                metadata.split("_");
-              return {
-                productId: Number(productId),
-                quantityToRemove,
-                productTypeId,
-                size,
-                price: Number(price),
-              };
-            }
-          )
-        );
+        handleCompletedSessionEvent(event);
         res.status(200);
       } catch (error) {
         console.log(
