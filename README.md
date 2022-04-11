@@ -4,6 +4,7 @@
 
 ## Todo list
 
+- [ ] inclure un lien vers le dashboard stripe dans la partie admin
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
 - [ ] stocker les commandes
