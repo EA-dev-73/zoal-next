@@ -19,7 +19,8 @@ export default function Shop({ productTypes }: Props) {
         style={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-between",
+          justifyContent: "space-around",
+          margin: "50px",
         }}
       >
         {orderBy(productTypes || [], "createdAt", "desc")

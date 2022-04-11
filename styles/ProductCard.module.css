@@ -1,0 +1,16 @@
+.product-card {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  cursor: pointer;
+}
+
+.image {
+  max-width: 100%;
+  border-radius: 2px;
+  max-height: 300px;
+}
+
+.imageText {
+  text-align: center;
+}

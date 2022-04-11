@@ -37,7 +37,6 @@ export const AdminProductsTable = () => {
       //@ts-ignore
       onRowUpdating={onRowUpdating}
       onRowRemoving={onRowRemoving}
-      onSaved={() => router.reload()}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />

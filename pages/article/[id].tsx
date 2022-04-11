@@ -11,26 +11,31 @@ type Props = {
 const ProductPage = ({ productType }: Props) => {
   const addProductToCart = useAddProductIdToCart();
 
+  const displayDisponibilities = () => {
+    if (!productType?.products?.length)
+      return <p>Produit victime de son succès... pour le moment 🤔</p>;
+    return (
+      <ul>
+        {productType.products.map((product) => {
+          return (
+            <li key={product.id}>
+              Taille : {product.size} | Prix : {product.price + "€"} | En stock
+              : {product.stock > 0 ? product.stock : "❌"}
+              {product.stock && (
+                <button onClick={() => addProductToCart(product.id)}>
+                  Ajouter au panier
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
   return (
     <Layout>
-      <p>
-        Disponibilités :
-        <ul>
-          {productType.products.map((product) => {
-            return (
-              <li key={product.id}>
-                Taille : {product.size} | Prix : {product.price + "€"} | En
-                stock : {product.stock > 0 ? product.stock : "❌"}
-                {product.stock && (
-                  <button onClick={() => addProductToCart(product.id)}>
-                    Ajouter au panier
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </p>
+      <p>Disponibilités :{displayDisponibilities()}</p>
     </Layout>
   );
 };

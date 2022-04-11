@@ -1,25 +1,28 @@
 import Image from "next/image";
-import Link from "next/link";
-import React from "react";
 import { ProductType as ProductType, Product } from "../types";
-import { ImageCarousel } from "./ImageCarousel";
+import styles from "../styles/ProductCard.module.css";
+import Link from "next/link";
 
 type Props = {
   productType: ProductType;
 };
 
 export const ProductCard = ({ productType }: Props) => {
+  const image = productType.productTypeImage[0];
+  const placeholderImage = "/images/nav-logo.jpg";
+
   return (
-    <div
-      style={{ border: "1px dotted black", margin: "20px", padding: "10px" }}
-    >
-      <h2>{productType.name}</h2>
-      <ImageCarousel images={productType.productTypeImage} />
-      <div>
-        <Link href={`/article/${productType.id}`} passHref>
-          <a>Page produit</a>
-        </Link>
+    <Link href={`/article/${productType.id}`} passHref>
+      <div className={styles["product-card"]}>
+        <Image
+          src={image?.imageUrl || placeholderImage}
+          alt="image du produit"
+          className={styles.image}
+          width={300}
+          height={200}
+        />
+        <p className={styles.imageText}>{productType.name}</p>
       </div>
-    </div>
+    </Link>
   );
 };
