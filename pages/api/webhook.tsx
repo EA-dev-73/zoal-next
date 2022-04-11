@@ -17,6 +17,10 @@ const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 const handleCompletedSessionEvent = async (event: any) => {
   const command = await stripe.checkout.sessions.retrieve(event.data.object.id);
 
+  /**
+   * On récupère les infos sur les produits vendus dans les métadonnées envoyées précédemments a stripe
+   * On
+   */
   const productsWithUpdatedStocks = Object.entries(command.metadata).map(
     ([productId, metadata]: [string, any]) => {
       const [productTypeId, quantityToRemove, size, price] =
