@@ -8,35 +8,24 @@ export const config = {
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
-import { updateProductsStocks } from "../../api/products/product";
+import {
+  insertValidatedOrder,
+  updateStocksAfterValidatedOrder,
+} from "../../utils/webhookHelpers";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 
 const handleCompletedSessionEvent = async (event: any) => {
-  // 1 - update les stocks en bdd
   const command = await stripe.checkout.sessions.retrieve(event.data.object.id);
-
-  /**
-   * On récupère les infos sur les produits vendus dans les métadonnées envoyées précédemments a stripe
-   * On
-   */
-  const productsWithUpdatedStocks = Object.entries(command.metadata).map(
-    ([productId, metadata]: [string, any]) => {
-      const [productTypeId, quantityToRemove, size, price] =
-        metadata.split("_");
-      return {
-        productId: Number(productId),
-        quantityToRemove,
-        productTypeId,
-        size,
-        price: Number(price),
-      };
-    }
+  // 1 - update les stocks en bdd
+  const productsWithUpdatedStocks = await updateStocksAfterValidatedOrder(
+    command
   );
 
-  await updateProductsStocks(productsWithUpdatedStocks);
+  // 2 - Insert des données de la validatedOrder en base
+  insertValidatedOrder(command, productsWithUpdatedStocks);
 
   // l'update du localStorage sera ensuite faite coté client
 };

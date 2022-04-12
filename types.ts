@@ -45,3 +45,14 @@ export type CreateProductTypeWithCategoryAndImagesParams = {
   createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
   createProductTypeImages: CreateProductTypeImagesDTO;
 };
+
+export type ValidatedOrder = {
+  id: number;
+  stripeOrderId: string;
+  orderContent: string;
+  hasBeenSent: boolean;
+  stripePaymentUrl: string;
+  shippingAddress: string;
+  isArchived: boolean;
+  created_at: Date;
+};

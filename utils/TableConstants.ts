@@ -3,4 +3,5 @@ export const TableConstants = {
   productType: "productType",
   productCategory: "productCategory",
   productTypeImage: "productTypeImage",
+  validatedOrder: "validatedOrder",
 };
