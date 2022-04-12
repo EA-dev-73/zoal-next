@@ -16,8 +16,6 @@ export const AdminValidatedOrdersTable = () => {
     getValidatedOrders().then((res) => setValidatedOrders(res.data || []));
   }, []);
 
-  console.log(validatedOrders);
-
   return (
     <DataGrid dataSource={validatedOrders || []}>
       <SearchPanel visible />
