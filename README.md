@@ -6,7 +6,6 @@
 
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
-- [ ] stocker les commandes (1er draft OK)
 - [ ] améliorer le référencement naturel
 - [ ] utiliser une lib pour meilleure gestion des images coté admin (ex: cliquer pour agrandir)
 - [ ] setter les var d'envs de prod sur vercel (supabase, stripe, stripe webhooks)
