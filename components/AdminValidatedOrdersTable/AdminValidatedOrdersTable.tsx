@@ -5,10 +5,12 @@ import {
   Editing,
   RequiredRule,
   FilterRow,
+  MasterDetail,
 } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import { getValidatedOrders } from "../../api/validatedOrders";
 import { ValidatedOrder } from "../../types";
+import { AdminValidatedOrdersProductsMasterDetail } from "./AdminValidatedOrdersProductsMasterDetail";
 import { onRowRemoving, onRowUpdating } from "./lib";
 
 export const AdminValidatedOrdersTable = () => {
@@ -28,14 +30,6 @@ export const AdminValidatedOrdersTable = () => {
       <FilterRow visible />
       <SearchPanel visible />
       <Editing mode="row" allowUpdating allowDeleting />
-      <Column
-        dataField="orderContent"
-        caption={"Contenu"}
-        autoExpandGroup={false}
-        allowEditing={false}
-      >
-        <RequiredRule />
-      </Column>
       <Column dataField="shippingAddress" caption="Addresse de livraison">
         <RequiredRule />
       </Column>
@@ -66,6 +60,15 @@ export const AdminValidatedOrdersTable = () => {
         dataField="isArchived"
         caption="Commande supprimée"
         filterValue={false}
+      />
+      <MasterDetail
+        enabled
+        autoExpandAll
+        component={(e) => (
+          <AdminValidatedOrdersProductsMasterDetail
+            orderContent={e.data.data.orderContent}
+          />
+        )}
       />
     </DataGrid>
   );

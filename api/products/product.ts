@@ -1,5 +1,10 @@
 import { supabase } from "../../utils/supabaseClient";
-import { Product, ProductType, ProductWithTypeData } from "../../types";
+import {
+  Product,
+  ProductType,
+  ProductWithTypeData,
+  ProductWithTypeAndCategory,
+} from "../../types";
 import { uniq } from "lodash";
 import { TableConstants } from "../../utils/TableConstants";
 import { handlePostgresError } from "../../utils/handleError";
@@ -32,6 +37,22 @@ export const fetchProductsFromIds = async (
     `
     )
     .in("id", uniq(productIds));
+  error && handlePostgresError(error);
+  return products;
+};
+
+export const fetchProductWithTypeDataAndCategory = async (
+  productIds: Product["id"][]
+): Promise<ProductWithTypeAndCategory[] | null> => {
+  const { data: products, error } = await supabase
+    .from(TableConstants.productType)
+    .select(
+      `id, name,
+    products (id, productTypeId, size, price, stock, shippingFees),
+    productCategory(id, name)
+    `
+    )
+    .in("products.id", uniq(productIds));
   error && handlePostgresError(error);
   return products;
 };

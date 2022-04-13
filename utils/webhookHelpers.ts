@@ -23,8 +23,8 @@ export const updateStocksAfterValidatedOrder = async (
         metadata.split("_");
       return {
         productId: Number(productId),
-        quantityToRemove,
-        productTypeId,
+        quantityToRemove: Number(quantityToRemove),
+        productTypeId: Number(productTypeId),
         size,
         price: Number(price),
       };

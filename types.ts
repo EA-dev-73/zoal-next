@@ -31,6 +31,10 @@ export type ProductWithTypeData = Product & {
   productType: Pick<ProductType, "id" | "name">;
 };
 
+export type ProductWithTypeAndCategory = Pick<ProductType, "id" | "name"> & {
+  productCategory: Category;
+} & { products: Product[] };
+
 export type ProductWithTypeAndQuantity = ProductWithTypeData & {
   quantity: number;
 };
