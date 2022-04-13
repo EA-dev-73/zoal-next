@@ -4,6 +4,7 @@
 
 ## Todo list
 
+- [ ] fix mauvais nom de produit dans le commande master detail
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
 - [ ] améliorer le référencement naturel
