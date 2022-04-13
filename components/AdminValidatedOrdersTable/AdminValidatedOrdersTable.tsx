@@ -4,10 +4,12 @@ import {
   Column,
   Editing,
   RequiredRule,
+  FilterRow,
 } from "devextreme-react/data-grid";
 import { useEffect, useState } from "react";
 import { getValidatedOrders } from "../../api/validatedOrders";
 import { ValidatedOrder } from "../../types";
+import { onRowRemoving, onRowUpdating } from "./lib";
 
 export const AdminValidatedOrdersTable = () => {
   const [validatedOrders, setValidatedOrders] = useState<ValidatedOrder[]>([]);
@@ -17,13 +19,20 @@ export const AdminValidatedOrdersTable = () => {
   }, []);
 
   return (
-    <DataGrid dataSource={validatedOrders || []}>
+    <DataGrid
+      dataSource={validatedOrders || []}
+      //@ts-ignore
+      onRowUpdating={onRowUpdating}
+      onRowRemoving={onRowRemoving}
+    >
+      <FilterRow visible />
       <SearchPanel visible />
-      <Editing mode="form" allowUpdating allowAdding allowDeleting />
+      <Editing mode="row" allowUpdating allowDeleting />
       <Column
         dataField="orderContent"
         caption={"Contenu"}
         autoExpandGroup={false}
+        allowEditing={false}
       >
         <RequiredRule />
       </Column>
@@ -33,6 +42,7 @@ export const AdminValidatedOrdersTable = () => {
       <Column
         dataField="stripePaymentUrl"
         caption="Lien vers stripe"
+        allowEditing={false}
         cellRender={(e) => (
           <a
             target="_blank"
@@ -45,12 +55,18 @@ export const AdminValidatedOrdersTable = () => {
       >
         <RequiredRule />
       </Column>
-      <Column dataField="hasBeenSent" caption="Commande envoyée">
-        <RequiredRule />
-      </Column>
-      <Column dataField="isArchived" caption="Commande supprimée">
-        <RequiredRule />
-      </Column>
+      <Column
+        dataField="hasBeenSent"
+        caption="Commande envoyée"
+        dataType="boolean"
+        filterValue={false}
+      />
+      <Column
+        dataType="boolean"
+        dataField="isArchived"
+        caption="Commande supprimée"
+        filterValue={false}
+      />
     </DataGrid>
   );
 };
