@@ -1,5 +1,6 @@
 import { upsertValidatedOrder } from "../../api/validatedOrders";
-import { ValidatedOrder } from "../../types";
+import { ProductWithTypeAndCategory, ValidatedOrder } from "../../types";
+import { StripeProduct } from "./AdminValidatedOrdersProductsMasterDetail";
 
 export const onRowRemoving = (e: { data: ValidatedOrder }) => {
   const {
@@ -32,5 +33,22 @@ export const onRowUpdating = (e: {
     shippingAddress: newData.shippingAddress || oldData.shippingAddress,
     stripeOrderId: oldData.stripeOrderId,
     stripePaymentUrl: oldData.stripePaymentUrl,
+  });
+};
+
+export const formatStripeProductsForMasterDetail = (
+  stripeProducts: StripeProduct[],
+  databaseProductTypes: ProductWithTypeAndCategory[] | null
+) => {
+  return stripeProducts.map((stripeProduct) => {
+    //TODO pas ouf la double boucle. peut etre groupper..?
+    const productType = (databaseProductTypes || []).find((x) =>
+      x.products.some((y) => y.id === stripeProduct.productId)
+    );
+    return {
+      ...stripeProduct,
+      productName: productType?.name || "???",
+      productCategory: productType?.productCategory.name || "???",
+    };
   });
 };

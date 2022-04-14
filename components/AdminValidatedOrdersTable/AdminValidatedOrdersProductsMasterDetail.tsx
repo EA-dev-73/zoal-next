@@ -2,31 +2,45 @@ import { DataGrid } from "devextreme-react";
 import { Column } from "devextreme-react/data-grid";
 import React, { useEffect, useState } from "react";
 import { fetchProductWithTypeDataAndCategory } from "../../api/products/product";
-import { Product } from "../../types";
+import { Category, Product, ProductType } from "../../types";
+import { formatStripeProductsForMasterDetail } from "./lib";
+
+export type StripeProduct = {
+  price: Product["price"];
+  productId: Product["id"];
+  productTypeId: ProductType["id"];
+  quantity: number;
+  size: Product["size"];
+};
+
+export type ValidatedOrderMasterDetailProduct = {
+  productName: ProductType["name"];
+  productCategory: Category["name"];
+  size: Product["size"];
+  quantity: StripeProduct["quantity"];
+};
 
 export const AdminValidatedOrdersProductsMasterDetail = ({
   orderContent,
 }: {
   orderContent: string;
 }) => {
-  const [products, setProducts] = useState<Product[] | null>([]);
-  const parsed = JSON.parse(orderContent);
+  const [products, setProducts] = useState<
+    ValidatedOrderMasterDetailProduct[] | null
+  >([]);
+  const stripeProducts: StripeProduct[] = JSON.parse(orderContent);
 
   useEffect(() => {
     fetchProductWithTypeDataAndCategory(
-      parsed.map((x: any) => x.productId)
-    ).then((p) => {
-      console.log({ p });
-      setProducts(
-        parsed.map((x: any) => ({
-          ...x,
-          productName: (p || []).find((x) => x.id === x.id)?.name,
-          productCategory: (p || []).find((x) => x.id === x.id)?.productCategory
-            .name,
-        }))
+      stripeProducts.map((x: any) => x.productId)
+    ).then((databaseProductTypes) => {
+      const formattedForMasterDetail = formatStripeProductsForMasterDetail(
+        stripeProducts,
+        databaseProductTypes
       );
+      setProducts(formattedForMasterDetail);
     });
-  }, []);
+  }, [stripeProducts]);
 
   return (
     <DataGrid dataSource={products || []}>
