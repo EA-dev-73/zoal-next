@@ -4,7 +4,7 @@
 
 ## Todo list
 
-- [ ] fix mauvais nom de produit dans le commande master detail
+- [ ] brancher bucket supabase pour images + remplacer implementation sur admin + shop + panier ...
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
 - [ ] améliorer le référencement naturel
