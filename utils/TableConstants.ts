@@ -5,3 +5,7 @@ export const TableConstants = {
   productTypeImage: "productTypeImage",
   validatedOrder: "validatedOrder",
 };
+
+export const BucketsConstants = {
+  products: "products",
+};

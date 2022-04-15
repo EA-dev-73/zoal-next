@@ -13,7 +13,7 @@ export type UpdateCategoryAndProductTypeDTO = Partial<{
 }>;
 
 export type CreateProductTypeImagesDTO = {
-  imagesUrl: ProductTypeImage["imageUrl"][];
+  imagesUrl: ProductTypeImage["imageBucketKey"][];
 };
 
 export type DeleteProductDTO = {

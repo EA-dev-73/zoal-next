@@ -5,7 +5,7 @@ import { TableConstants } from "../../utils/TableConstants";
 
 export const cleanAndInsertProductTypeImages =
   async (createProductTypeImagesData: {
-    imageUrls: ProductTypeImage["imageUrl"][] | null;
+    imageBucketKey: ProductTypeImage["imageBucketKey"][] | null;
     productTypeId: ProductType["id"];
   }) => {
     // on vide les images actuelles de ce produit
@@ -15,13 +15,13 @@ export const cleanAndInsertProductTypeImages =
       .eq("productTypeId", createProductTypeImagesData.productTypeId);
 
     deletingError && handlePostgresError(deletingError);
-    if (!createProductTypeImagesData?.imageUrls?.length) return;
+    if (!createProductTypeImagesData?.imageBucketKey?.length) return;
     // on insert ensuite les images
     const { error } = await supabase
       .from(TableConstants.productTypeImage)
       .insert(
-        createProductTypeImagesData.imageUrls.map((x) => ({
-          imageUrl: x,
+        createProductTypeImagesData.imageBucketKey.map((x) => ({
+          imageBucketKey: x,
           productTypeId: createProductTypeImagesData.productTypeId,
         }))
       );

@@ -16,7 +16,7 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
         id, name, createdAt,
         productCategory (id, name),
         products (id, productTypeId, size, price, stock, shippingFees),
-        productTypeImage(id, imageUrl)
+        productTypeImage(id, imageBucketKey)
     `);
   error && handlePostgresError(error);
   return products;
@@ -32,7 +32,7 @@ export const fetchProductTypeById = async (
         id, name, createdAt,
         productCategory (id, name),
         products (id, productTypeId, size, price, stock, shippingFees),
-        productTypeImage(id, imageUrl)
+        productTypeImage(id, imageBucketKey)
     `
     )
     .eq("id", productTypeId);
@@ -63,8 +63,8 @@ export const upsertProductType = async (
 export const createProductTypeWithCategoryAndImages = async ({
   createCategoryData,
   createProductTypeData,
-  createProductTypeImages,
-}: CreateProductTypeWithCategoryAndImagesParams) => {
+}: // createProductTypeImages,
+CreateProductTypeWithCategoryAndImagesParams) => {
   // Upsert de la catégorie
   const { data, error } = await upsertCategory(createCategoryData);
   error && handlePostgresError(error);
@@ -81,17 +81,18 @@ export const createProductTypeWithCategoryAndImages = async ({
     });
   productTypeError && handlePostgresError(productTypeError);
   // on retourne l'id productType fraichement créé
-  if (!createProductTypeImages?.imagesUrl?.length) return;
-  const productTypeId = returningProductType?.[0]?.id;
-  if (!productTypeId) {
-    throw new Error("Erreur lors de la création du produit :/");
-  }
-  //filouterie car on recoi des array d'images mais l'edit renvoi une string
-  const imagesUrl = createProductTypeImages.imagesUrl as unknown as string;
-  await cleanAndInsertProductTypeImages({
-    imageUrls: imagesUrl.split(","),
-    productTypeId,
-  });
+  // if (!createProductTypeImages?.imagesUrl?.length) return;
+  // const productTypeId = returningProductType?.[0]?.id;
+  // if (!productTypeId) {
+  //   throw new Error("Erreur lors de la création du produit :/");
+  // }
+  // //filouterie car on recoi des array d'images mais l'edit renvoi une string
+  // const imageBucketKey =
+  //   createProductTypeImages.imageBucketKey as unknown as string;
+  // await cleanAndInsertProductTypeImages({
+  //   imageBucketKey: imageBucketKey.split(","),
+  //   productTypeId,
+  // });
 };
 
 export const deleteProductType = async (productTypeId: ProductType["id"]) => {
@@ -126,7 +127,7 @@ export const updateProductTypeWithCategoryAndImages = async (
     name: productTypeName,
     categoryName,
     categoryId,
-    imagesUrl,
+    // imageBucketKey,
   } = newData;
 
   if (categoryName) {
@@ -146,11 +147,13 @@ export const updateProductTypeWithCategoryAndImages = async (
     error && handlePostgresError(error);
   }
 
-  if (productTypeId) {
-    await cleanAndInsertProductTypeImages({
-      imageUrls: imagesUrl?.length ? imagesUrl?.split(",") : null,
-      productTypeId,
-    });
-  }
+  // if (productTypeId) {
+  //   await cleanAndInsertProductTypeImages({
+  //     imageBucketKey: imageBucketKey?.length
+  //       ? imageBucketKey?.split(",")
+  //       : null,
+  //     productTypeId,
+  //   });
+  // }
   return;
 };

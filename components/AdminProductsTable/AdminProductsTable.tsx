@@ -13,10 +13,10 @@ import { Item } from "devextreme-react/form";
 import React, { useEffect, useRef, useState } from "react";
 import { fetchProductTypes } from "../../api/products/product-type";
 import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMasterDetail";
-import { DisplayProductTypeImages } from "./DisplayProductTypeImages";
 import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
 import { FormattedProduct } from "./types";
 import Image from "next/image";
+import { uploadProductImagesToBuket } from "../../api/images";
 
 export const AdminProductsTable = () => {
   const [products, setProducts] = useState<FormattedProduct[] | null>([]);
@@ -26,8 +26,6 @@ export const AdminProductsTable = () => {
       const formattedProducts = (products || []).map((product) => ({
         ...product,
         categoryName: product.productCategory.name,
-        //traitement particulier sur les images pour pouvoir les éditer plus facilement
-        imagesUrl: product.productTypeImage.map((x) => x.imageUrl),
       }));
       setProducts(formattedProducts);
     });
@@ -66,34 +64,32 @@ export const AdminProductsTable = () => {
       <Column
         dataField="imagesUrl"
         allowSorting={false}
-        caption={"Images du produit (entre ,)"}
-        cellRender={(e) => (
-          <DisplayProductTypeImages imagesUrl={e.data.imagesUrl || []} />
-        )}
+        caption={"Images"}
         editCellRender={(cellInfo) => (
           <>
-            <Image
-              className="uploadedImage"
-              src={cellInfo.data.imagesUrl[0]}
-              alt="employee pic"
-              width={100}
-              height={100}
-            />
+            {cellInfo.data.imagesUrl &&
+              cellInfo.data.imagesUrl.map((x: any, idx: number) => (
+                <Image
+                  key={idx}
+                  className="uploadedImage"
+                  src={cellInfo.data.imagesUrl[0]}
+                  alt={`image ${idx}`}
+                  width={100}
+                  height={100}
+                />
+              ))}
+
             <FileUploader
               ref={fileUploaderRef}
-              multiple={false}
+              multiple
               accept="image/*"
-              uploadMode="instantly"
-              uploadUrl=""
-              onValueChanged={() => {}}
-              onUploaded={(e) => {}}
-              onUploadError={() => {}}
-            />
-            <Button
-              className={"retryButton"}
-              text="Retry"
-              visible={true}
-              onClick={() => {}}
+              uploadMode="useForm"
+              // onValueChanged={async ({ value: files }) => {
+              //   files && (await uploadProductImagesToBuket(files));
+              // }}
+              onUploadError={(e) => {
+                console.log("4", e);
+              }}
             />
           </>
         )}

@@ -13,8 +13,8 @@ export const ImageCarousel = ({ images }: Props) => {
         {images.map((image, idx) => (
           <div key={image.id}>
             <Image
-              src={image.imageUrl}
-              alt={image.imageUrl}
+              src={image.imageBucketKey}
+              alt={image.imageBucketKey}
               width={300}
               height={300}
             />

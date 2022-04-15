@@ -41,13 +41,13 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
 
 export type ProductTypeImage = {
   id: number;
-  imageUrl: string;
+  imageBucketKey: string;
 };
 
 export type CreateProductTypeWithCategoryAndImagesParams = {
   createCategoryData: CreateCategoryDTO;
   createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
-  createProductTypeImages: CreateProductTypeImagesDTO;
+  // createProductTypeImages: CreateProductTypeImagesDTO;
 };
 
 export type ValidatedOrder = {

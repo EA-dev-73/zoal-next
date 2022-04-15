@@ -15,7 +15,7 @@ export const ProductCard = ({ productType }: Props) => {
     <Link href={`/article/${productType.id}`} passHref>
       <div className={styles["product-card"]}>
         <Image
-          src={image?.imageUrl || placeholderImage}
+          src={image?.imageBucketKey || placeholderImage}
           alt="image du produit"
           className={styles.image}
           width={300}

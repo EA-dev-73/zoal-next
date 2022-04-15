@@ -52,7 +52,7 @@ const generateProductTypes = async (createdCategoryIds: string[]) => {
         createdCategoryIds[
           Math.floor(Math.random() * createdCategoryIds.length)
         ],
-      imageUrl: faker.random.image(),
+      imageBucketKey: faker.random.image(),
     });
     console.info(productTypes);
   }
