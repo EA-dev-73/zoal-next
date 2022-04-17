@@ -1,27 +1,50 @@
+import { useEffect, useState } from "react";
 import {
   createProductTypeWithCategoryAndImages,
   deleteProductType,
+  fetchProductTypesWithImages,
   updateProductTypeWithCategoryAndImages,
 } from "../../api/products/product-type";
+import { ProductTypeWithImages } from "../../types";
 import {
   OnRowDeletingEvent,
   OnRowEditingEvent,
   OnRowInsertingEvent,
 } from "./types";
 
-export const onRowInserting = async (e: OnRowInsertingEvent) => {
-  try {
-    await createProductTypeWithCategoryAndImages({
-      createCategoryData: {
-        categoryName: e.data.categoryName,
-      },
-      createProductTypeData: {
-        name: e.data.name,
-      },
-      // createProductTypeImages: {
-      //   imagesUrl: e.data.,
-      // },
+export const useProductsForAdminTable = () => {
+  const [products, setProducts] = useState<
+    (ProductTypeWithImages & {
+      categoryName: string;
+    })[]
+  >([]);
+  useEffect(() => {
+    fetchProductTypesWithImages().then((productTypes) => {
+      const formatted = (productTypes || []).map((productType) => ({
+        ...productType,
+        categoryName: productType.productCategory.name,
+      }));
+      setProducts(formatted);
     });
+  }, []);
+
+  return products || [];
+};
+
+export const onRowInserting = async (e: OnRowInsertingEvent) => {
+  console.log({ e });
+  try {
+    // await createProductTypeWithCategoryAndImages({
+    //   createCategoryData: {
+    //     categoryName: e.data.categoryName,
+    //   },
+    //   createProductTypeData: {
+    //     name: e.data.name,
+    //   },
+    //   // createProductTypeImages: {
+    //   //   imagesUrl: e.data.,
+    //   // },
+    // });
   } catch (error: any) {
     alert(error.message);
   }

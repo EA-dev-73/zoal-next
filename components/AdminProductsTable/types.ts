@@ -1,4 +1,4 @@
-import { Category, ProductTypeImage, ProductType } from "../../types";
+import { Category, ProductType } from "../../types";
 
 export type FormattedProduct = ProductType & {
   categoryName: string;
@@ -8,7 +8,6 @@ export type OnRowInsertingEvent = {
   data: {
     categoryName: ProductType["productCategory"]["name"];
     name: ProductType["name"];
-    // imagesUrl: ProductTypeImage["imageBucketKey"][];
   };
 };
 export type OnRowDeletingEvent = {
@@ -20,7 +19,6 @@ export type OnRowEditingEvent = {
   newData?: {
     categoryName?: ProductType["productCategory"]["name"];
     name?: ProductType["name"];
-    // imagesUrl?: string;
   };
   oldData?: {
     id?: ProductType["id"];

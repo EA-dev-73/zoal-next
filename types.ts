@@ -1,8 +1,5 @@
 import { CreateCategoryDTO } from "./api/category";
-import {
-  CreateProductTypeDTO,
-  CreateProductTypeImagesDTO,
-} from "./api/products/types";
+import { CreateProductTypeDTO } from "./api/products/types";
 
 export type Category = {
   id: number;
@@ -22,9 +19,12 @@ export type ProductType = {
   id: number;
   name: string;
   productCategory: Category;
-  productTypeImage: ProductTypeImage[];
   createdAt: Date;
   products: Product[];
+};
+
+export type ProductTypeWithImages = ProductType & {
+  imagesUrls: string[];
 };
 
 export type ProductWithTypeData = Product & {
@@ -39,15 +39,9 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
   quantity: number;
 };
 
-export type ProductTypeImage = {
-  id: number;
-  imageBucketKey: string;
-};
-
 export type CreateProductTypeWithCategoryAndImagesParams = {
   createCategoryData: CreateCategoryDTO;
   createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
-  // createProductTypeImages: CreateProductTypeImagesDTO;
 };
 
 export type ValidatedOrder = {

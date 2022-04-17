@@ -1,9 +1,8 @@
-import { ProductTypeImage } from "../types";
 import { Carousel } from "react-responsive-carousel";
 import Image from "next/image";
 
 type Props = {
-  images: ProductTypeImage[];
+  images: any[];
 };
 
 export const ImageCarousel = ({ images }: Props) => {

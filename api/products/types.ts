@@ -1,4 +1,4 @@
-import { Category, Product, ProductType, ProductTypeImage } from "../../types";
+import { Category, Product, ProductType } from "../../types";
 
 export type CreateProductTypeDTO = {
   name: ProductType["name"];
@@ -12,9 +12,7 @@ export type UpdateCategoryAndProductTypeDTO = Partial<{
   imagesUrl: string;
 }>;
 
-export type CreateProductTypeImagesDTO = {
-  imagesUrl: ProductTypeImage["imageBucketKey"][];
-};
+export type CreateProductTypeImagesDTO = {};
 
 export type DeleteProductDTO = {
   productId: Product["id"];

@@ -1,13 +1,13 @@
-import { orderBy, sortBy } from "lodash";
+import { orderBy } from "lodash";
 import { useState } from "react";
-import { fetchProductTypes } from "../api/products/product-type";
+import { fetchProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
 import { ProductCategorySelect } from "../components/ProductCategorySelect";
-import { Category, ProductType as ProductType } from "../types";
+import { Category, ProductTypeWithImages } from "../types";
 
 type Props = {
-  productTypes: ProductType[];
+  productTypes: ProductTypeWithImages[];
 };
 
 export default function Shop({ productTypes }: Props) {
@@ -37,6 +37,6 @@ export default function Shop({ productTypes }: Props) {
 }
 
 export const getServerSideProps = async () => {
-  const productTypes = await fetchProductTypes();
+  const productTypes = await fetchProductTypesWithImages();
   return { props: { productTypes } };
 };

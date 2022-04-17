@@ -1,12 +1,13 @@
 import {
   CreateProductTypeWithCategoryAndImagesParams,
   ProductType,
+  ProductTypeWithImages,
 } from "../../types";
 import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
 import { TableConstants } from "../../utils/TableConstants";
 import { upsertCategory } from "../category";
-import { cleanAndInsertProductTypeImages } from "./product-type-image";
+import { getProductsImagesDictionnary } from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
@@ -15,11 +16,23 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
   ).select(`
         id, name, createdAt,
         productCategory (id, name),
-        products (id, productTypeId, size, price, stock, shippingFees),
-        productTypeImage(id, imageBucketKey)
+        products (id, productTypeId, size, price, stock, shippingFees)
     `);
   error && handlePostgresError(error);
   return products;
+};
+
+export const fetchProductTypesWithImages = async (): Promise<
+  ProductTypeWithImages[]
+> => {
+  const products = await fetchProductTypes();
+  const images = await getProductsImagesDictionnary(
+    (products || []).map((x) => x.id)
+  );
+  return (products || []).map((product) => ({
+    ...product,
+    imagesUrls: images[product.id],
+  }));
 };
 
 export const fetchProductTypeById = async (
@@ -32,7 +45,6 @@ export const fetchProductTypeById = async (
         id, name, createdAt,
         productCategory (id, name),
         products (id, productTypeId, size, price, stock, shippingFees),
-        productTypeImage(id, imageBucketKey)
     `
     )
     .eq("id", productTypeId);
@@ -63,8 +75,7 @@ export const upsertProductType = async (
 export const createProductTypeWithCategoryAndImages = async ({
   createCategoryData,
   createProductTypeData,
-}: // createProductTypeImages,
-CreateProductTypeWithCategoryAndImagesParams) => {
+}: CreateProductTypeWithCategoryAndImagesParams) => {
   // Upsert de la catégorie
   const { data, error } = await upsertCategory(createCategoryData);
   error && handlePostgresError(error);
@@ -100,12 +111,14 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
 
   // suppression des images associées
 
-  const { error: imagesError } = await supabase
-    .from(TableConstants.productTypeImage)
-    .delete()
-    .eq("productTypeId", productTypeId);
+  //TODO supprimer les images du bucket
 
-  imagesError && handlePostgresError(imagesError);
+  // const { error: imagesError } = await supabase
+  //   .from(TableConstants.productTypeImage)
+  //   .delete()
+  //   .eq("productTypeId", productTypeId);
+
+  // imagesError && handlePostgresError(imagesError);
 
   //TODO delete images from server
 
@@ -127,7 +140,6 @@ export const updateProductTypeWithCategoryAndImages = async (
     name: productTypeName,
     categoryName,
     categoryId,
-    // imageBucketKey,
   } = newData;
 
   if (categoryName) {
