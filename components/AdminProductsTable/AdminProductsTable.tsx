@@ -24,7 +24,7 @@ import { DisplayCurrentProductImages } from "./DisplayCurrentProductPictures";
 export const AdminProductsTable = () => {
   const fileUploaderRef = useRef<HTMLInputElement>(null);
   const products = useProductsForAdminTable();
-  const [currentlyEditingProduct, setCurrentlyEditingProduct] =
+  const [currentlyEditingProductType, setCurrentlyEditingProductType] =
     useState<ProductForAdminTable | null>(null);
   return (
     <DataGrid
@@ -37,7 +37,7 @@ export const AdminProductsTable = () => {
       }
       onRowUpdating={onRowUpdating}
       onRowRemoving={onRowRemoving}
-      onEditingStart={(p) => setCurrentlyEditingProduct(p.data)}
+      onEditingStart={(p) => setCurrentlyEditingProductType(p.data)}
     >
       <SearchPanel visible />
       <GroupPanel visible allowColumnDragging={false} />
@@ -56,7 +56,8 @@ export const AdminProductsTable = () => {
               multiple
             />
             <DisplayCurrentProductImages
-              imagesUrls={currentlyEditingProduct?.imagesUrls || []}
+              productTypeId={currentlyEditingProductType?.id}
+              imagesUrls={currentlyEditingProductType?.imagesUrls || []}
             />
           </Item>
         </Form>
@@ -74,6 +75,7 @@ export const AdminProductsTable = () => {
         cellRender={(e) => {
           return (
             <DisplayCurrentProductImages
+              productTypeId={e.data.id}
               imagesUrls={e.data.imagesUrls}
               isEdit={false}
             />

@@ -6,7 +6,7 @@ export const uploadProductImageToBuket = async (
   productTypeId: ProductType["id"],
   image: File
 ) => {
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(BucketsConstants.products)
     .upload(`${productTypeId}/${image.name.replaceAll(" ", "_")}`, image, {
       cacheControl: "3600",
@@ -18,6 +18,11 @@ export const uploadProductImageToBuket = async (
 type UploadProductImagesToBucketDTO = {
   productTypeId: ProductType["id"];
   image: File;
+}[];
+
+type DeleteProductImagesFromBucketDTO = {
+  productTypeId: ProductType["id"];
+  imageName: string;
 }[];
 
 export const uploadProductImagesToBucket = async (
@@ -66,4 +71,17 @@ export const getProductsImagesDictionnary = async (
     images[productId] = tmpImages;
   }
   return images;
+};
+
+export const deleteImages = async (
+  deleteProductImagesFromBucketDTO: DeleteProductImagesFromBucketDTO
+) => {
+  for (const deleteProductImageFromBucketDTO of deleteProductImagesFromBucketDTO) {
+    const { error } = await supabase.storage
+      .from(BucketsConstants.products)
+      .remove([
+        `${deleteProductImageFromBucketDTO.productTypeId}/${deleteProductImageFromBucketDTO.imageName}`,
+      ]);
+    error && console.log("ERREUR2", error.message);
+  }
 };
