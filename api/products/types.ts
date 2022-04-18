@@ -12,8 +12,6 @@ export type UpdateCategoryAndProductTypeDTO = Partial<{
   imagesUrl: string;
 }>;
 
-export type CreateProductTypeImagesDTO = {};
-
 export type DeleteProductDTO = {
   productId: Product["id"];
 };

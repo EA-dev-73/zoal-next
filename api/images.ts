@@ -50,7 +50,7 @@ export const getProductImages = async (productTypeId: ProductType["id"]) => {
   for (const image of imagesList || []) {
     const { data, error } = supabase.storage
       .from(BucketsConstants.products)
-      .getPublicUrl(`4821/${image.name}`);
+      .getPublicUrl(`${productTypeId}/${image.name}`);
     error && console.log("ERREUR", error.message);
     data && images.push(data?.publicURL);
   }

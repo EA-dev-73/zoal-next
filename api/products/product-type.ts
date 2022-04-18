@@ -7,7 +7,10 @@ import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
 import { TableConstants } from "../../utils/TableConstants";
 import { upsertCategory } from "../category";
-import { getProductsImagesDictionnary } from "../images";
+import {
+  getProductsImagesDictionnary,
+  uploadProductImagesToBucket,
+} from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
@@ -75,6 +78,7 @@ export const upsertProductType = async (
 export const createProductTypeWithCategoryAndImages = async ({
   createCategoryData,
   createProductTypeData,
+  createProductTypeImages,
 }: CreateProductTypeWithCategoryAndImagesParams) => {
   // Upsert de la catégorie
   const { data, error } = await upsertCategory(createCategoryData);
@@ -92,18 +96,17 @@ export const createProductTypeWithCategoryAndImages = async ({
     });
   productTypeError && handlePostgresError(productTypeError);
   // on retourne l'id productType fraichement créé
-  // if (!createProductTypeImages?.imagesUrl?.length) return;
-  // const productTypeId = returningProductType?.[0]?.id;
-  // if (!productTypeId) {
-  //   throw new Error("Erreur lors de la création du produit :/");
-  // }
-  // //filouterie car on recoi des array d'images mais l'edit renvoi une string
-  // const imageBucketKey =
-  //   createProductTypeImages.imageBucketKey as unknown as string;
-  // await cleanAndInsertProductTypeImages({
-  //   imageBucketKey: imageBucketKey.split(","),
-  //   productTypeId,
-  // });
+  if (!createProductTypeImages?.images?.length) return;
+  const productTypeId = returningProductType?.[0]?.id;
+  if (!productTypeId) {
+    throw new Error("Erreur lors de la création du produit :/");
+  }
+  await uploadProductImagesToBucket(
+    Array.from(createProductTypeImages?.images || []).map((image) => ({
+      productTypeId,
+      image,
+    }))
+  );
 };
 
 export const deleteProductType = async (productTypeId: ProductType["id"]) => {

@@ -12,12 +12,12 @@ import {
   OnRowInsertingEvent,
 } from "./types";
 
+export type ProductForAdminTable = ProductTypeWithImages & {
+  categoryName: string;
+};
+
 export const useProductsForAdminTable = () => {
-  const [products, setProducts] = useState<
-    (ProductTypeWithImages & {
-      categoryName: string;
-    })[]
-  >([]);
+  const [products, setProducts] = useState<ProductForAdminTable[]>([]);
   useEffect(() => {
     fetchProductTypesWithImages().then((productTypes) => {
       const formatted = (productTypes || []).map((productType) => ({
@@ -31,20 +31,22 @@ export const useProductsForAdminTable = () => {
   return products || [];
 };
 
-export const onRowInserting = async (e: OnRowInsertingEvent) => {
-  console.log({ e });
+export const onRowInserting = async (
+  e: OnRowInsertingEvent,
+  images: FileList
+) => {
   try {
-    // await createProductTypeWithCategoryAndImages({
-    //   createCategoryData: {
-    //     categoryName: e.data.categoryName,
-    //   },
-    //   createProductTypeData: {
-    //     name: e.data.name,
-    //   },
-    //   // createProductTypeImages: {
-    //   //   imagesUrl: e.data.,
-    //   // },
-    // });
+    await createProductTypeWithCategoryAndImages({
+      createCategoryData: {
+        categoryName: e.data.categoryName,
+      },
+      createProductTypeData: {
+        name: e.data.name,
+      },
+      createProductTypeImages: {
+        images,
+      },
+    });
   } catch (error: any) {
     alert(error.message);
   }
@@ -59,7 +61,6 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
 };
 
 export const onRowUpdating = async (e: OnRowEditingEvent) => {
-  console.log({ e });
   try {
     await updateProductTypeWithCategoryAndImages({
       id: e.oldData?.id,

@@ -42,6 +42,9 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
 export type CreateProductTypeWithCategoryAndImagesParams = {
   createCategoryData: CreateCategoryDTO;
   createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
+  createProductTypeImages: {
+    images: FileList;
+  };
 };
 
 export type ValidatedOrder = {
