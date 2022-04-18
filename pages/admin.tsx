@@ -6,6 +6,7 @@ export default function Admin() {
     <Layout needsAuth>
       <h1>Admin</h1>
       <Link href="/gestion-des-produits">Gestion des produits</Link>
+      <br />
       <Link href="/gestion-des-commandes">Gestion des commandes</Link>
     </Layout>
   );

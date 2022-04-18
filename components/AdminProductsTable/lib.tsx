@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import {
+  deleteAllImagesForProductType,
+  uploadProductImagesToBucket,
+} from "../../api/images";
+import {
   createProductTypeWithCategoryAndImages,
   deleteProductType,
   fetchProductTypesWithImages,
-  updateProductTypeWithCategoryAndImages,
+  updateProductTypeWithCategory,
 } from "../../api/products/product-type";
 import { ProductTypeWithImages } from "../../types";
 import {
@@ -53,22 +57,41 @@ export const onRowInserting = async (
 };
 
 export const onRowRemoving = async (e: OnRowDeletingEvent) => {
+  const productTypeId = e.data.id;
   try {
-    await deleteProductType(e.data.id);
+    await deleteProductType(productTypeId);
+    await deleteAllImagesForProductType(productTypeId);
   } catch (error: any) {
     alert(error.message);
   }
 };
 
-export const onRowUpdating = async (e: OnRowEditingEvent) => {
+export const onRowUpdating = async (e: OnRowEditingEvent, images: FileList) => {
   try {
-    await updateProductTypeWithCategoryAndImages({
+    await updateProductTypeWithCategory({
       id: e.oldData?.id,
       name: e.newData?.name,
       categoryId: e.oldData?.productCategory?.id,
       categoryName: e.newData?.categoryName,
-      // imagesUrl: e.newData?.imagesUrl,
     });
+
+    const imagesArr = Array.from(images || []);
+
+    if (!imagesArr?.length) return;
+    if (!e.oldData?.id) {
+      const err = "Missing productTypeId..., voir avec tommy";
+      console.log(err);
+      alert(err);
+    }
+    await uploadProductImagesToBucket(
+      //@ts-ignore
+      (imagesArr || []).map((image) => {
+        return {
+          productTypeId: e.oldData?.id,
+          image,
+        };
+      })
+    );
   } catch (error: any) {
     alert(error.message);
   }

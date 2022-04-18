@@ -135,7 +135,7 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
   };
 };
 
-export const updateProductTypeWithCategoryAndImages = async (
+export const updateProductTypeWithCategory = async (
   newData: UpdateCategoryAndProductTypeDTO
 ) => {
   const {
@@ -161,14 +161,5 @@ export const updateProductTypeWithCategoryAndImages = async (
       .match({ id: productTypeId });
     error && handlePostgresError(error);
   }
-
-  // if (productTypeId) {
-  //   await cleanAndInsertProductTypeImages({
-  //     imageBucketKey: imageBucketKey?.length
-  //       ? imageBucketKey?.split(",")
-  //       : null,
-  //     productTypeId,
-  //   });
-  // }
   return;
 };

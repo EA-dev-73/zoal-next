@@ -36,7 +36,9 @@ export const uploadProductImagesToBucket = async (
   }
 };
 
-export const getProductImages = async (productTypeId: ProductType["id"]) => {
+export const listImagesForProductType = async (
+  productTypeId: ProductType["id"]
+) => {
   const { data: imagesList, error: errorList } = await supabase.storage
     .from(BucketsConstants.products)
     .list(String(productTypeId), {
@@ -44,6 +46,16 @@ export const getProductImages = async (productTypeId: ProductType["id"]) => {
       offset: 0,
       sortBy: { column: "name", order: "asc" },
     });
+  return {
+    imagesList,
+    errorList,
+  };
+};
+
+export const getProductImages = async (productTypeId: ProductType["id"]) => {
+  const { errorList, imagesList } = await listImagesForProductType(
+    productTypeId
+  );
 
   if (errorList) {
     console.log("ERROR", errorList);
@@ -84,4 +96,25 @@ export const deleteImages = async (
       ]);
     error && console.log("ERREUR2", error.message);
   }
+};
+
+export const deleteAllImagesForProductType = async (
+  productTypeId: ProductType["id"]
+) => {
+  const { errorList, imagesList } = await listImagesForProductType(
+    productTypeId
+  );
+  if (errorList) {
+    console.log("ERROR", errorList);
+    return [];
+  }
+
+  if (!imagesList?.length) return;
+
+  await deleteImages(
+    imagesList.map((image) => ({
+      productTypeId,
+      imageName: image.name,
+    }))
+  );
 };

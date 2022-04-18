@@ -9,7 +9,6 @@ export type UpdateCategoryAndProductTypeDTO = Partial<{
   categoryId: Category["id"];
   categoryName: ProductType["productCategory"]["name"];
   name: ProductType["name"];
-  imagesUrl: string;
 }>;
 
 export type DeleteProductDTO = {
