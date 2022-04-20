@@ -47,7 +47,7 @@ export const fetchProductTypeById = async (
       `
         id, name, createdAt,
         productCategory (id, name),
-        products (id, productTypeId, size, price, stock, shippingFees),
+        products (id, productTypeId, size, price, stock, shippingFees)
     `
     )
     .eq("id", productTypeId);
