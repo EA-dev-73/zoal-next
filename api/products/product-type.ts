@@ -38,11 +38,11 @@ export const fetchProductTypesWithImages = async (): Promise<
   }));
 };
 
-export const fetchProductTypeById = async (
+export const fetchProductTypeByIdWithImages = async (
   productTypeId: ProductType["id"]
-): Promise<ProductType | null> => {
+): Promise<ProductTypeWithImages | null> => {
   const { data: product, error } = await supabase
-    .from(TableConstants.productType)
+    .from<ProductType>(TableConstants.productType)
     .select(
       `
         id, name, createdAt,
@@ -51,8 +51,13 @@ export const fetchProductTypeById = async (
     `
     )
     .eq("id", productTypeId);
+  if (error || !product?.length) return null;
   error && handlePostgresError(error);
-  return product?.[0] as ProductType | null;
+  const images = await getProductsImagesDictionnary([product[0].id]);
+  return {
+    ...product[0],
+    imagesUrls: images[product[0].id],
+  };
 };
 
 export const upsertProductType = async (

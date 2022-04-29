@@ -1,22 +1,23 @@
 import { NextPageContext } from "next";
-import { fetchProductTypeById } from "../../api/products/product-type";
+import { fetchProductTypeByIdWithImages } from "../../api/products/product-type";
 import { Layout } from "../../components/Layout";
-import { ProductType } from "../../types";
+import { ProductTypeWithImages } from "../../types";
 import { useAddProductIdToCart } from "../../utils/localStorageHelpers";
+import Image from "next/image";
 
 type Props = {
-  productType: ProductType;
+  productTypeWithImages: ProductTypeWithImages;
 };
 
-const ProductPage = ({ productType }: Props) => {
+const ProductPage = ({ productTypeWithImages }: Props) => {
   const addProductToCart = useAddProductIdToCart();
 
   const displayDisponibilities = () => {
-    if (!productType?.products?.length)
+    if (!productTypeWithImages?.products?.length)
       return <p>Produit victime de son succès... pour le moment 🤔</p>;
     return (
       <ul>
-        {productType.products.map((product) => {
+        {productTypeWithImages.products.map((product) => {
           return (
             <li key={product.id}>
               Taille : {product.size} | Prix : {product.price + "€"} | En stock
@@ -35,13 +36,31 @@ const ProductPage = ({ productType }: Props) => {
 
   return (
     <Layout>
-      <p>Disponibilités :{displayDisponibilities()}</p>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        {(productTypeWithImages.imagesUrls || []).map((image) => (
+          <Image
+            src={image}
+            key={image}
+            alt="image produit"
+            width={500}
+            height={700}
+          />
+        ))}
+
+        <p>Disponibilités :{displayDisponibilities()}</p>
+      </div>
     </Layout>
   );
 };
 export default ProductPage;
 
 export const getServerSideProps = async (context: NextPageContext) => {
-  const productType = await fetchProductTypeById(Number(context.query.id));
-  return { props: { productType } };
+  const productTypeWithImages = await fetchProductTypeByIdWithImages(
+    Number(context.query.id)
+  );
+  return { props: { productTypeWithImages } };
 };
