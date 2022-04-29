@@ -1,4 +1,5 @@
 import { orderBy } from "lodash";
+import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { fetchProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
@@ -36,7 +37,19 @@ export default function Shop({ productTypes }: Props) {
   );
 }
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const queryParams = Object.keys(context.query);
   const productTypes = await fetchProductTypesWithImages();
-  return { props: { productTypes } };
+
+  if (!queryParams?.length) {
+    return { props: { productTypes } };
+  }
+
+  const filteredProducts = productTypes.filter((x) =>
+    queryParams
+      .map((x) => x.toLowerCase())
+      .includes(x.productCategory?.name?.toLowerCase())
+  );
+
+  return { props: { productTypes: filteredProducts } };
 };

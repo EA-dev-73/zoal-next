@@ -17,9 +17,9 @@ export const ProductCategorySelect = ({ productTypes, onChange }: Props) => {
       <option value={undefined} key="toutes_les_categories">
         Tous les produits
       </option>
-      {uniqCategories.map((category) => (
-        <option value={category.id} key={category.id}>
-          {category.name}
+      {(uniqCategories || []).map((category) => (
+        <option value={category?.id} key={category?.id}>
+          {category?.name}
         </option>
       ))}
     </select>

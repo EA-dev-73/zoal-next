@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { useRecoilValue } from "recoil";
+import { useCategories } from "../api/category";
 import { cartState } from "../context/cart";
 import { useLogOut } from "../utils/localStorageHelpers";
 import { useIsAdmin } from "../utils/user";
@@ -10,6 +11,12 @@ export const Nav = () => {
   const cartContent = useRecoilValue(cartState);
   const userIsAdmin = useIsAdmin();
   const logOut = useLogOut();
+
+  const { isLoading, categories } = useCategories();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <nav
@@ -58,6 +65,16 @@ export const Nav = () => {
                     Shop
                   </a>
                 </Link>
+                {(categories || []).map((category) => (
+                  <li className="nav-item" key={category.id}>
+                    <Link
+                      passHref
+                      href={`/shop?${category.name?.toLowerCase()}`}
+                    >
+                      <a className="nav-link">{category.name}</a>
+                    </Link>
+                  </li>
+                ))}
               </li>
               <li className="nav-item">
                 <Link passHref href="/panier">
