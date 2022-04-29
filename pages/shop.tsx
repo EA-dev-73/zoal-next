@@ -1,37 +1,28 @@
 import { orderBy } from "lodash";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
 import { fetchProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { ProductCategorySelect } from "../components/ProductCategorySelect";
-import { Category, ProductTypeWithImages } from "../types";
+import { ProductTypeWithImages } from "../types";
 
 type Props = {
   productTypes: ProductTypeWithImages[];
 };
 
 export default function Shop({ productTypes }: Props) {
-  const [filter, setFilter] = useState<Category["id"] | null>(null);
   return (
     <Layout>
-      <ProductCategorySelect productTypes={productTypes} onChange={setFilter} />
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-around",
+          justifyContent: "flex-start",
           margin: "50px",
         }}
       >
-        {orderBy(productTypes || [], "createdAt", "desc")
-          .filter((productType) =>
-            filter ? productType.productCategory.id === filter : true
-          )
-
-          .map((productType) => (
-            <ProductCard key={productType.id} productType={productType} />
-          ))}
+        {orderBy(productTypes || [], "createdAt", "desc").map((productType) => (
+          <ProductCard key={productType.id} productType={productType} />
+        ))}
       </div>
     </Layout>
   );
