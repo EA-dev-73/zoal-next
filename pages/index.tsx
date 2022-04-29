@@ -24,7 +24,6 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <h1>Présentation</h1>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, tempore
         enim? Temporibus, dicta reprehenderit ipsam, vitae ab perferendis nihil
