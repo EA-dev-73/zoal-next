@@ -10,7 +10,7 @@ jobs:
     name: A job to ping
     runs-on: ubuntu-latest
     env:
-      URL: https://rphleeptpwdelfjdjriu.supabase.co/rest/v1/productCategory?select=*
+      URL: ${{ secrets.PING_URL }}
       METHOD: GET
     steps:
       - id: ping
