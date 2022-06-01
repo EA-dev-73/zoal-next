@@ -1,0 +1,17 @@
+name: Scheduled Ping
+# This workflow is triggered at a scheduled interval of every 30 minutes
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string.
+    - cron:  '0 1 * * *'
+
+jobs:
+  pinger_job:
+    name: A job to ping
+    runs-on: ubuntu-latest
+    env:
+      URL: https://rphleeptpwdelfjdjriu.supabase.co/rest/v1/productCategory?select=*
+      METHOD: GET
+    steps:
+      - id: ping
+        uses: sisodiya2421/pinger@master
