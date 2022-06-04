@@ -18,13 +18,19 @@ export default function Shop({ productTypes }: Props) {
   const { categories } = useCategories();
 
   useEffect(() => {
-    if (!router.query) return;
+    if (!router.query) {
+      setFilter(null);
+      return;
+    }
     const catToFilter = (categories || []).find(
       (x) =>
         x.name?.toLowerCase() === Object.keys(router.query)[0]?.toLowerCase()
     );
 
-    if (!catToFilter) return;
+    if (!catToFilter) {
+      setFilter(null);
+      return;
+    }
 
     setFilter(catToFilter.id);
   }, [router.query, categories, router]);
