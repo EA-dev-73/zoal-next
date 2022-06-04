@@ -12,11 +12,7 @@ export const Nav = () => {
   const userIsAdmin = useIsAdmin();
   const logOut = useLogOut();
 
-  const { isLoading, categories } = useCategories();
-
-  if (isLoading) {
-    return null;
-  }
+  const { categories } = useCategories();
 
   return (
     <nav

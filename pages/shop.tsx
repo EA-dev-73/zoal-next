@@ -1,10 +1,10 @@
 import { orderBy } from "lodash";
-import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useCategories } from "../api/category";
 import { fetchProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { ProductCategorySelect } from "../components/ProductCategorySelect";
 import { Category, ProductTypeWithImages } from "../types";
 
 type Props = {
@@ -12,10 +12,26 @@ type Props = {
 };
 
 export default function Shop({ productTypes }: Props) {
+  const router = useRouter();
   const [filter, setFilter] = useState<Category["id"] | null>(null);
+  const { categories } = useCategories();
+
+  useEffect(() => {
+    if (!router.query) return;
+    console.log(router);
+    console.log(categories);
+    const catToFilter = (categories || []).find(
+      (x) =>
+        x.name?.toLowerCase() === Object.keys(router.query)[0]?.toLowerCase()
+    );
+
+    if (!catToFilter) return;
+
+    setFilter(catToFilter.id);
+  }, [router.query, categories, router]);
+
   return (
     <Layout>
-      <ProductCategorySelect productTypes={productTypes} onChange={setFilter} />
       <div
         style={{
           display: "flex",
@@ -37,19 +53,7 @@ export default function Shop({ productTypes }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const queryParams = Object.keys(context.query);
+export const getStaticProps = async () => {
   const productTypes = await fetchProductTypesWithImages();
-
-  if (!queryParams?.length) {
-    return { props: { productTypes } };
-  }
-
-  const filteredProducts = productTypes.filter((x) =>
-    queryParams
-      .map((x) => x.toLowerCase())
-      .includes(x.productCategory?.name?.toLowerCase())
-  );
-
-  return { props: { productTypes: filteredProducts } };
+  return { props: { productTypes } };
 };
