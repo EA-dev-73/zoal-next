@@ -1,4 +1,5 @@
 import { orderBy } from "lodash";
+import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useCategories } from "../api/category";
@@ -18,8 +19,6 @@ export default function Shop({ productTypes }: Props) {
 
   useEffect(() => {
     if (!router.query) return;
-    console.log(router);
-    console.log(categories);
     const catToFilter = (categories || []).find(
       (x) =>
         x.name?.toLowerCase() === Object.keys(router.query)[0]?.toLowerCase()
@@ -53,7 +52,11 @@ export default function Shop({ productTypes }: Props) {
   );
 }
 
-export const getStaticProps = async () => {
-  const productTypes = await fetchProductTypesWithImages();
-  return { props: { productTypes } };
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const productTypes = await fetchProductTypesWithImages();
+    return { props: { productTypes } };
+  } catch (error) {
+    throw new Error("error getStaticProps shop");
+  }
 };

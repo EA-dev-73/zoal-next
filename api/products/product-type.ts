@@ -28,14 +28,19 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
 export const fetchProductTypesWithImages = async (): Promise<
   ProductTypeWithImages[]
 > => {
-  const products = await fetchProductTypes();
-  const images = await getProductsImagesDictionnary(
-    (products || []).map((x) => x.id)
-  );
-  return (products || []).map((product) => ({
-    ...product,
-    imagesUrls: images[product.id],
-  }));
+  try {
+    const products = await fetchProductTypes();
+    const images = await getProductsImagesDictionnary(
+      (products || []).map((x) => x.id)
+    );
+    return (products || []).map((product) => ({
+      ...product,
+      imagesUrls: images[product.id],
+    }));
+  } catch (error) {
+    console.log(1, error);
+    throw error;
+  }
 };
 
 export const fetchProductTypeById = async (
