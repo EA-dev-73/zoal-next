@@ -19,7 +19,7 @@ export const ProductCard = ({ productType }: Props) => {
           alt="image du produit"
           className={styles.image}
           width={300}
-          height={200}
+          height={300}
         />
         <p className={styles.imageText}>{productType.name}</p>
       </div>

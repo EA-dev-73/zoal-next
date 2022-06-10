@@ -28,6 +28,7 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
   return (
     <div>
       <Nav />
+      <h1 className="title">ZOAL MNCH</h1>
       {handleAuth(children)}
       {needsAuth && isLogged && (
         <div

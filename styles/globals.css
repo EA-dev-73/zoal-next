@@ -49,6 +49,17 @@ h2 {
   font-family: "nikofont";
 }
 
+.title {
+  font-size: 4.5rem;
+  margin-top: 1.2rem;
+}
+
+.nav-link {
+  font-family: "calligraphr", "nikofont", sans-serif;
+  font-size: 1.8rem;
+  color: #334c53 !important;
+}
+
 span.d-block {
   text-align: center;
   text-transform: uppercase;
