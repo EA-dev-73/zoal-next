@@ -1,15 +1,40 @@
 import { orderBy } from "lodash";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useCategories } from "../api/category";
 import { fetchProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { ProductTypeWithImages } from "../types";
+import { Category, ProductTypeWithImages } from "../types";
 
 type Props = {
   productTypes: ProductTypeWithImages[];
 };
 
 export default function Shop({ productTypes }: Props) {
+  const router = useRouter();
+  const [filter, setFilter] = useState<Category["id"] | null>(null);
+  const { categories } = useCategories();
+
+  useEffect(() => {
+    if (!router.query) {
+      setFilter(null);
+      return;
+    }
+    const catToFilter = (categories || []).find(
+      (x) =>
+        x.name?.toLowerCase() === Object.keys(router.query)[0]?.toLowerCase()
+    );
+
+    if (!catToFilter) {
+      setFilter(null);
+      return;
+    }
+
+    setFilter(catToFilter.id);
+  }, [router.query, categories, router]);
+
   return (
     <Layout>
       <div
@@ -28,19 +53,11 @@ export default function Shop({ productTypes }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const queryParams = Object.keys(context.query);
-  const productTypes = await fetchProductTypesWithImages();
-
-  if (!queryParams?.length) {
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const productTypes = await fetchProductTypesWithImages();
     return { props: { productTypes } };
+  } catch (error) {
+    throw new Error("error getStaticProps shop");
   }
-
-  const filteredProducts = productTypes.filter((x) =>
-    queryParams
-      .map((x) => x.toLowerCase())
-      .includes(x.productCategory?.name?.toLowerCase())
-  );
-
-  return { props: { productTypes: filteredProducts } };
 };
