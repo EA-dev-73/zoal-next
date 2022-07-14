@@ -14,13 +14,16 @@ import {
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
-  const { data: products, error } = await supabase.from(
-    TableConstants.productType
-  ).select(`
+  const { data: products, error } = await supabase
+    .from(TableConstants.productType)
+    .select(
+      `
         id, name, createdAt,
         productCategory (id, name),
-        products (id, productTypeId, size, price, stock, shippingFees)
-    `);
+        products (id, productTypeId, size, price, stock, shippingFees, createdAt)
+    `
+    )
+    .order("createdAt", { ascending: true, foreignTable: "products" });
   error && handlePostgresError(error);
   return products;
 };
@@ -52,10 +55,11 @@ export const fetchProductTypeById = async (
       `
         id, name, createdAt,
         productCategory (id, name),
-        products (id, productTypeId, size, price, stock, shippingFees)
+        products (id, productTypeId, size, price, stock, shippingFees, createdAt)
     `
     )
-    .eq("id", productTypeId);
+    .eq("id", productTypeId)
+    .order("createdAt", { ascending: true, foreignTable: "products" });
   error && handlePostgresError(error);
   return product?.[0] as ProductType | null;
 };
