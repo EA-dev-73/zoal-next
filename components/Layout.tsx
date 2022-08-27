@@ -15,11 +15,7 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
 
   const handleAuth = (children?: ReactChild | ReactChild[]) => {
     if (!needsAuth || isLogged) {
-      return (
-        <div style={{ maxWidth: "99%", margin: "auto", paddingTop: "20px" }}>
-          {children}
-        </div>
-      );
+      return <div className="page-container">{children}</div>;
     } else {
       return <LoginForm />;
     }
@@ -31,11 +27,8 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
       <h1 className="title">ZOAL MNCH</h1>
       {handleAuth(children)}
       {needsAuth && isLogged && (
-        <div
-          style={{ position: "absolute", top: 0, right: 0, padding: "10px" }}
-        >
+        <div className="stripe-link-container">
           <a
-            style={{ marginTop: 100 }}
             target="_blank"
             href="https://dashboard.stripe.com/test/dashboard"
             rel="noreferrer"

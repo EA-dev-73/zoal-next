@@ -31,12 +31,9 @@ export const DisplayCurrentProductImages = ({
     router.reload();
   };
   return (
-    <div style={{ display: "flex", flexWrap: "wrap" }}>
+    <div className="d-flex flex-wrap">
       {imagesUrls.map((imageUrl) => (
-        <div
-          key={imageUrl}
-          style={{ display: "flex", flexDirection: "column" }}
-        >
+        <div key={imageUrl} className="d-flex flex-column">
           <Image
             src={imageUrl}
             width={100}

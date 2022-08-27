@@ -37,14 +37,7 @@ export default function Shop({ productTypes }: Props) {
 
   return (
     <Layout>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          margin: "0 50px",
-        }}
-      >
+      <div className="d-flex flex-wrap justify-content-between mx-5">
         {orderBy(productTypes || [], "createdAt", "desc")
           .filter((productType) =>
             filter ? productType.productCategory.id === filter : true

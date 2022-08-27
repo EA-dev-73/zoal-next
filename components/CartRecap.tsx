@@ -29,10 +29,10 @@ export const CartRecap = ({ isRecap }: Props) => {
 
   const displayQuantity = (product: ProductWithTypeAndQuantity) => {
     if (product.stock < 1) {
-      return <span style={{ color: "red" }}> | En Rupture de stock ⚠️ </span>;
+      return <span className="red-text"> | En Rupture de stock ⚠️ </span>;
     } else if (product.stock < product.quantity) {
       return (
-        <span style={{ color: "red" }}>
+        <span className="red-text">
           | Pas assez de stock ({product.stock}){" "}
         </span>
       );
@@ -80,7 +80,7 @@ export const CartRecap = ({ isRecap }: Props) => {
         ).map((productTypes) => (
           <div key={productTypes[0].id}>
             <Link href={`/article/${productTypes[0].productType.id}`} passHref>
-              <p className="lead" style={{ cursor: "pointer" }}>
+              <p className="lead cursor-pointer">
                 {productTypes[0].productType.name}
               </p>
             </Link>

@@ -32,7 +32,7 @@ export const LoginForm = () => {
         <input type="password" name="password" id="password" />
         <button type="submit">Se connecter</button>
       </form>
-      {error && <strong style={{ color: "red" }}>{error}</strong>}
+      {error && <strong className="red-text">{error}</strong>}
     </>
   );
 };

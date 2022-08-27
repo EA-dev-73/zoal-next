@@ -39,7 +39,7 @@ export const Nav = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
-            <div className="d-none d-lg-block" style={{ cursor: "pointer" }}>
+            <div className="d-none d-lg-block cursor-pointer">
               <Link passHref href="/">
                 <Image
                   src="/images/nav-logo.jpg"
@@ -81,7 +81,7 @@ export const Nav = () => {
               </li>
               {userIsAdmin && (
                 <ul className="navbar-nav">
-                  <li className="nav-item">___ADMIN___</li>
+                  <li className="nav-item big">Gestion ⬇️</li>
                   <li className="nav-item">
                     <Link passHref href="/gestion-des-produits">
                       <a className="nav-link">Produits</a>
@@ -93,11 +93,7 @@ export const Nav = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <span
-                      className="nav-link"
-                      onClick={logOut}
-                      style={{ cursor: "pointer" }}
-                    >
+                    <span className="nav-link cursor-pointer" onClick={logOut}>
                       Déconnexion
                     </span>
                   </li>
