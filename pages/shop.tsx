@@ -15,7 +15,7 @@ type Props = {
 export default function Shop({ productTypes }: Props) {
   const router = useRouter();
   const [filter, setFilter] = useState<Category["id"] | null>(null);
-  const { categories } = useCategories();
+  const { data: categories } = useCategories();
 
   useEffect(() => {
     if (!router.query) {
