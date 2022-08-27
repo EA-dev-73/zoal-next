@@ -530,7 +530,6 @@ fieldset {
 
 /* Checkout form */
 
-
 form {
   max-width: 500px;
   margin: 0 auto;
@@ -562,4 +561,32 @@ label {
   color: black;
   font-size: 14px;
   font-weight: 200;
+}
+
+.red-text {
+  color: red;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.page-container {
+  max-width: 99%;
+  margin: auto;
+  padding-top: 20px;
+}
+
+.stripe-link-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+}
+.stripe-link-container > a {
+  margin-top: 100;
+}
+
+.nav-item .big {
+  font-size: 150%;
 }
