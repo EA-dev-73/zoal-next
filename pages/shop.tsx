@@ -3,19 +3,17 @@ import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useCategories } from "../api/category";
-import { fetchProductTypesWithImages } from "../api/products/product-type";
+import { useProductTypesWithImages } from "../api/products/product-type";
 import { Layout } from "../components/Layout";
 import { ProductCard } from "../components/ProductCard";
-import { Category, ProductTypeWithImages } from "../types";
+import { Category } from "../types";
 
-type Props = {
-  productTypes: ProductTypeWithImages[];
-};
-
-export default function Shop({ productTypes }: Props) {
+export default function Shop() {
   const router = useRouter();
   const [filter, setFilter] = useState<Category["id"] | null>(null);
   const { data: categories } = useCategories();
+
+  const productTypes = useProductTypesWithImages();
 
   useEffect(() => {
     if (!router.query) {
@@ -50,12 +48,3 @@ export default function Shop({ productTypes }: Props) {
     </Layout>
   );
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-  try {
-    const productTypes = await fetchProductTypesWithImages();
-    return { props: { productTypes } };
-  } catch (error) {
-    throw new Error("error getStaticProps shop");
-  }
-};

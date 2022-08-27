@@ -24,7 +24,7 @@ export type ProductType = {
 };
 
 export type ProductTypeWithImages = ProductType & {
-  imagesUrls: string[];
+  imagesUrls?: string[];
 };
 
 export type ProductWithTypeData = Product & {
@@ -62,3 +62,13 @@ export type UpdateEntityNameDTO<T extends ProductType | Category> = {
   id: T["id"];
   name: T["name"];
 };
+
+export type UploadProductImagesToBucketDTO = {
+  productTypeId: ProductType["id"];
+  image: File;
+}[];
+
+export type DeleteProductImagesFromBucketDTO = {
+  productTypeId: ProductType["id"];
+  imageName: string;
+}[];

@@ -1,108 +1,120 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { ProductType } from "../types";
+import { PostgrestError } from "@supabase/supabase-js";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { reactQueryKeys } from "../react-query-keys";
+import { DeleteProductImagesFromBucketDTO, ProductType } from "../types";
+import { handlePostgresError } from "../utils/handleError";
 import { supabase } from "../utils/supabaseClient";
 import { BucketsConstants } from "../utils/TableConstants";
 
-export const uploadProductImageToBuket = async (
-  productTypeId: ProductType["id"],
-  image: File
-) => {
-  const { error } = await supabase.storage
-    .from(BucketsConstants.products)
-    .upload(`${productTypeId}/${image.name.replaceAll(" ", "_")}`, image, {
-      cacheControl: "3600",
-      upsert: false,
-    });
-  error && console.log("ERREUR", error.message);
-};
-
-type UploadProductImagesToBucketDTO = {
-  productTypeId: ProductType["id"];
-  image: File;
-}[];
-
-type DeleteProductImagesFromBucketDTO = {
-  productTypeId: ProductType["id"];
-  imageName: string;
-}[];
-
-export const uploadProductImagesToBucket = async (
-  uploadProductImagesToBucketDTO: UploadProductImagesToBucketDTO
-) => {
-  for (const uploadProductImageToBucketDTO of uploadProductImagesToBucketDTO) {
-    await uploadProductImageToBuket(
-      uploadProductImageToBucketDTO.productTypeId,
-      uploadProductImageToBucketDTO.image
-    );
-  }
-};
-
-export const listImagesForProductType = async (
-  productTypeId: ProductType["id"]
-) => {
-  const { data: imagesList, error: errorList } = await supabase.storage
-    .from(BucketsConstants.products)
-    .list(String(productTypeId), {
-      limit: 100,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-  return {
-    imagesList,
-    errorList,
-  };
-};
-
-export const getProductImages = async (productTypeId: ProductType["id"]) => {
-  const { errorList, imagesList } = await listImagesForProductType(
-    productTypeId
-  );
-
-  if (errorList) {
-    console.log("ERROR", errorList);
-    return [];
-  }
-
-  let images: string[] = [];
-
-  for (const image of imagesList || []) {
-    const { data, error } = supabase.storage
-      .from(BucketsConstants.products)
-      .getPublicUrl(`${productTypeId}/${image.name}`);
-    error && console.log("ERREUR", error.message);
-    data && images.push(data?.publicURL);
-  }
-  return images;
-};
-
-export const getProductsImagesDictionnary = async (
-  productIds: ProductType["id"][]
-) => {
-  let images: Record<number, string[]> = {};
-  for (const productId of productIds) {
-    const tmpImages = await getProductImages(productId);
-    images[productId] = tmpImages;
-  }
-  return images;
-};
-export const useProductsImagesDictionnary = (
-  productIds: ProductType["id"][]
-) => {
-  let tmpImagesDic = useRef({}) as any;
-  const imagesDic = useMemo(() => tmpImagesDic.current, []);
-
-  useEffect(() => {
-    for (const productId of productIds) {
-      getProductImages(productId).then((tmpImages) => {
-        tmpImagesDic.current = {
-          ...tmpImagesDic.current,
-          [productId]: tmpImages,
-        };
-      });
+export const useUploadProductTypeImageToBucket = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({
+      productTypeId,
+      image,
+    }: {
+      productTypeId: ProductType["id"];
+      image: File;
+    }) => {
+      await supabase.storage
+        .from(BucketsConstants.products)
+        .upload(`${productTypeId}/${image.name.replaceAll(" ", "_")}`, image, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+      onError: (err: PostgrestError) => handlePostgresError(err),
     }
-  }, [productIds]);
-  return imagesDic;
+  );
+};
+
+export const useListImagesForProductsTypes = ({
+  productsTypesIds,
+}: {
+  productsTypesIds: ProductType["id"][];
+}) => {
+  return useQuery(
+    reactQueryKeys.listImages,
+    () => {
+      if (!productsTypesIds?.length) return {};
+      return productsTypesIds.reduce<Record<ProductType["id"], any>>(
+        (acc, productTypeId) => {
+          supabase.storage
+            .from(BucketsConstants.products)
+            .list(String(productTypeId), {
+              limit: 100,
+              offset: 0,
+              sortBy: { column: "name", order: "asc" },
+            })
+            .then((images) => {
+              acc[productTypeId] = images.data;
+            });
+          return acc;
+        },
+        {}
+      );
+    },
+    {
+      enabled: !!productsTypesIds?.length,
+    }
+  );
+};
+
+export const useBucketImagesPublicUrlsDic = ({
+  productsTypesIds,
+  imagesPerProductDic,
+}: {
+  productsTypesIds: ProductType["id"][];
+  imagesPerProductDic: Record<number, any> | undefined;
+}) => {
+  return useQuery(
+    reactQueryKeys.bucketImagePublicUrl,
+    () => {
+      return productsTypesIds.reduce<Record<ProductType["id"], string[]>>(
+        (acc, productTypeId) => {
+          console.log({
+            imagePerProduct: imagesPerProductDic?.[productTypeId],
+          });
+          {
+            acc[productTypeId] = (
+              imagesPerProductDic?.[productTypeId] || []
+            ).reduce((accImage: any, image: any) => {
+              const { data } = supabase.storage
+                .from(BucketsConstants.products)
+                .getPublicUrl(`${productTypeId}/${image.name}`);
+              accImage[productTypeId] = [
+                ...accImage[productTypeId],
+                data?.publicURL,
+              ];
+              return accImage;
+            }, []);
+          }
+          return acc;
+        },
+        {}
+      );
+    },
+    {
+      enabled: !!productsTypesIds?.length,
+    }
+  );
+};
+
+export const useProductTypesImages = ({
+  productsTypesIds,
+}: {
+  productsTypesIds: ProductType["id"][];
+}) => {
+  const { data: images } = useListImagesForProductsTypes({ productsTypesIds });
+  const { data: dicImagesUrls } = useBucketImagesPublicUrlsDic({
+    productsTypesIds,
+    imagesPerProductDic: images,
+  });
+  return { dicImagesUrls };
 };
 
 export const deleteImages = async (
@@ -121,32 +133,18 @@ export const deleteImages = async (
 export const deleteAllImagesForProductType = async (
   productTypeId: ProductType["id"]
 ) => {
-  const { errorList, imagesList } = await listImagesForProductType(
-    productTypeId
-  );
-  if (errorList) {
-    console.log("ERROR", errorList);
-    return [];
-  }
+  const { data: images } = useListImagesForProductsTypes({
+    productsTypesIds: [productTypeId],
+  });
 
-  if (!imagesList?.length) return;
+  const productImages = images?.[productTypeId];
+
+  if (!productImages?.length) return;
 
   await deleteImages(
-    imagesList.map((image) => ({
+    productImages.map((image: any) => ({
       productTypeId,
       imageName: image.name,
     }))
-  );
-};
-
-export const useUploadProductImagesToBucket = () => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    async (uploadProductImagesToBucketDTO: UploadProductImagesToBucketDTO) => {
-      await uploadProductImagesToBucket(uploadProductImagesToBucketDTO);
-    },
-    {
-      onSuccess: () => queryClient.invalidateQueries(["product-images"]),
-    }
   );
 };

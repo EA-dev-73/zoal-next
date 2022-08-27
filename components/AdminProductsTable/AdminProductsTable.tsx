@@ -51,6 +51,7 @@ export const AdminProductsTable = () => {
           router.reload();
         }}
         onEditingStart={(p) => {
+          //@ts-ignore
           setCurrentlyEditingProductType(p.data);
           const rowIdx = p.component.getRowIndexByKey(p.key);
           p.component.cellValue(rowIdx, "imagesUrls", "tmp");

@@ -1,12 +1,11 @@
 import { useUpdateCategoryName } from "../../api/category";
 import {
   deleteAllImagesForProductType,
-  useUploadProductImagesToBucket,
+  useUploadProductTypeImageToBucket,
 } from "../../api/images";
 import {
-  createProductTypeWithCategoryAndImages,
   deleteProductType,
-  useProductTypesWithImages,
+  useProductTypes,
   useUpdateProductTypeName,
 } from "../../api/products/product-type";
 import { ProductTypeWithImages } from "../../types";
@@ -21,8 +20,8 @@ export type ProductForAdminTable = ProductTypeWithImages & {
 };
 
 export const useProductsForAdminTable = () => {
-  const productTypeWithImages = useProductTypesWithImages();
-  return (productTypeWithImages || []).map((productType) => ({
+  const { data: productTypes } = useProductTypes();
+  return (productTypes || []).map((productType) => ({
     ...productType,
     categoryName: productType.productCategory.name,
   }));
@@ -32,21 +31,21 @@ export const onRowInserting = async (
   e: OnRowInsertingEvent,
   images: FileList
 ) => {
-  try {
-    await createProductTypeWithCategoryAndImages({
-      createCategoryData: {
-        categoryName: e.data.categoryName,
-      },
-      createProductTypeData: {
-        name: e.data.name,
-      },
-      createProductTypeImages: {
-        images,
-      },
-    });
-  } catch (error: any) {
-    alert(error.message);
-  }
+  // try {
+  //   await createProductTypeWithCategoryAndImages({
+  //     createCategoryData: {
+  //       categoryName: e.data.categoryName,
+  //     },
+  //     createProductTypeData: {
+  //       name: e.data.name,
+  //     },
+  //     createProductTypeImages: {
+  //       images,
+  //     },
+  //   });
+  // } catch (error: any) {
+  //   alert(error.message);
+  // }
 };
 
 export const onRowRemoving = async (e: OnRowDeletingEvent) => {
@@ -62,8 +61,8 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
 export const useOnRowUpdating = () => {
   const { mutate: updateCategoryName } = useUpdateCategoryName();
   const { mutate: updateProductTypeName } = useUpdateProductTypeName();
-  const { mutate: uploadProductImagesToBucket } =
-    useUploadProductImagesToBucket();
+  const { mutate: uploadProductImageToBuket } =
+    useUploadProductTypeImageToBucket();
 
   const onRowUpdating = (e: OnRowEditingEvent, images: FileList) => {
     const [productTypeId, productTypeName] = [e.oldData?.id, e.newData?.name];
@@ -96,15 +95,20 @@ export const useOnRowUpdating = () => {
       alert(err);
     }
 
-    uploadProductImagesToBucket(
-      //@ts-ignore
-      (imagesArr || []).map((image) => {
-        return {
-          productTypeId: e.oldData?.id,
-          image,
-        };
-      })
-    );
+    const imagesToSave = (imagesArr || []).map((image) => {
+      return {
+        productTypeId: e.oldData?.id,
+        image,
+      };
+    });
+
+    for (const image of imagesToSave) {
+      uploadProductImageToBuket({
+        image: image.image,
+        //@ts-ignore
+        productTypeId: image.productTypeId,
+      });
+    }
   };
 
   return { onRowUpdating };
