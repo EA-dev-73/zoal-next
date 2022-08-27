@@ -1,7 +1,9 @@
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   CreateProductTypeWithCategoryAndImagesParams,
   ProductType,
   ProductTypeWithImages,
+  UpdateEntityNameDTO,
 } from "../../types";
 import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
@@ -10,6 +12,7 @@ import { upsertCategory } from "../category";
 import {
   getProductsImagesDictionnary,
   uploadProductImagesToBucket,
+  useProductsImagesDictionnary,
 } from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
@@ -167,4 +170,36 @@ export const updateProductTypeWithCategory = async (
     error && handlePostgresError(error);
   }
   return;
+};
+
+type UpdateProductTypeNameDTO = UpdateEntityNameDTO<ProductType>;
+
+export const useUpdateProductTypeName = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ name, id }: UpdateProductTypeNameDTO) => {
+      await supabase
+        .from(TableConstants.productType)
+        .update({ name })
+        .match({ id });
+    },
+    {
+      onSuccess: () => queryClient.refetchQueries(["product-types"]),
+    }
+  );
+};
+
+export const useProductTypes = () =>
+  useQuery(["product-types"], fetchProductTypes);
+
+export const useProductTypesWithImages = () => {
+  const { data: productTypes } = useProductTypes();
+  const dicImages = useProductsImagesDictionnary(
+    (productTypes || []).map((x) => x.id)
+  );
+
+  return (productTypes || []).map((product) => ({
+    ...product,
+    imagesUrls: dicImages?.[product.id],
+  }));
 };

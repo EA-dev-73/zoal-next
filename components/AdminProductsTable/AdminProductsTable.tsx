@@ -15,8 +15,8 @@ import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMa
 import {
   onRowInserting,
   onRowRemoving,
-  onRowUpdating,
   ProductForAdminTable,
+  useOnRowUpdating,
   useProductsForAdminTable,
 } from "./lib";
 import { DisplayCurrentProductImages } from "./DisplayCurrentProductPictures";
@@ -28,6 +28,8 @@ export const AdminProductsTable = () => {
   const products = useProductsForAdminTable();
   const [currentlyEditingProductType, setCurrentlyEditingProductType] =
     useState<ProductForAdminTable | null>(null);
+
+  const { onRowUpdating } = useOnRowUpdating();
   return (
     <>
       <DataGrid
@@ -38,13 +40,12 @@ export const AdminProductsTable = () => {
             fileUploaderRef?.current?.files || ([] as unknown as FileList)
           )
         }
-        onRowUpdating={async (e) => {
-          await onRowUpdating(
+        onRowUpdating={(e) =>
+          onRowUpdating(
             e,
             fileUploaderRef?.current?.files || ([] as unknown as FileList)
-          );
-          router.reload();
-        }}
+          )
+        }
         onRowRemoving={async (e) => {
           await onRowRemoving(e);
           router.reload();

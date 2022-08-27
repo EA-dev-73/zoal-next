@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useUpdateCategoryName } from "../../api/category";
 import {
   deleteAllImagesForProductType,
-  uploadProductImagesToBucket,
+  useUploadProductImagesToBucket,
 } from "../../api/images";
 import {
   createProductTypeWithCategoryAndImages,
   deleteProductType,
-  fetchProductTypesWithImages,
-  updateProductTypeWithCategory,
+  useProductTypesWithImages,
+  useUpdateProductTypeName,
 } from "../../api/products/product-type";
 import { ProductTypeWithImages } from "../../types";
 import {
@@ -21,18 +21,11 @@ export type ProductForAdminTable = ProductTypeWithImages & {
 };
 
 export const useProductsForAdminTable = () => {
-  const [products, setProducts] = useState<ProductForAdminTable[]>([]);
-  useEffect(() => {
-    fetchProductTypesWithImages().then((productTypes) => {
-      const formatted = (productTypes || []).map((productType) => ({
-        ...productType,
-        categoryName: productType.productCategory.name,
-      }));
-      setProducts(formatted);
-    });
-  }, []);
-
-  return products || [];
+  const productTypeWithImages = useProductTypesWithImages();
+  return (productTypeWithImages || []).map((productType) => ({
+    ...productType,
+    categoryName: productType.productCategory.name,
+  }));
 };
 
 export const onRowInserting = async (
@@ -66,24 +59,44 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
   }
 };
 
-export const onRowUpdating = async (e: OnRowEditingEvent, images: FileList) => {
-  try {
-    await updateProductTypeWithCategory({
-      id: e.oldData?.id,
-      name: e.newData?.name,
-      categoryId: e.oldData?.productCategory?.id,
-      categoryName: e.newData?.categoryName,
-    });
+export const useOnRowUpdating = () => {
+  const { mutate: updateCategoryName } = useUpdateCategoryName();
+  const { mutate: updateProductTypeName } = useUpdateProductTypeName();
+  const { mutate: uploadProductImagesToBucket } =
+    useUploadProductImagesToBucket();
+
+  const onRowUpdating = (e: OnRowEditingEvent, images: FileList) => {
+    const [productTypeId, productTypeName] = [e.oldData?.id, e.newData?.name];
+    const [categoryId, categoryName] = [
+      e.oldData?.productCategory?.id,
+      e.newData?.categoryName,
+    ];
+
+    if (categoryId && categoryName) {
+      updateCategoryName({
+        id: categoryId,
+        name: categoryName,
+      });
+    }
+
+    if (productTypeId && productTypeName) {
+      updateProductTypeName({
+        id: productTypeId,
+        name: productTypeName,
+      });
+    }
 
     const imagesArr = Array.from(images || []);
 
     if (!imagesArr?.length) return;
-    if (!e.oldData?.id) {
+
+    if (!productTypeId) {
       const err = "Missing productTypeId..., voir avec tommy";
       console.log(err);
       alert(err);
     }
-    await uploadProductImagesToBucket(
+
+    uploadProductImagesToBucket(
       //@ts-ignore
       (imagesArr || []).map((image) => {
         return {
@@ -92,7 +105,7 @@ export const onRowUpdating = async (e: OnRowEditingEvent, images: FileList) => {
         };
       })
     );
-  } catch (error: any) {
-    alert(error.message);
-  }
+  };
+
+  return { onRowUpdating };
 };

@@ -1,5 +1,5 @@
-import { useQuery } from "react-query";
-import { Category } from "../types";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Category, UpdateEntityNameDTO } from "../types";
 import { handlePostgresError } from "../utils/handleError";
 import { supabase } from "../utils/supabaseClient";
 import { TableConstants } from "../utils/TableConstants";
@@ -34,4 +34,20 @@ const fetchCategories = async (): Promise<Category[] | null> => {
   return categories;
 };
 
-export const useCategories = () => useQuery("categories", fetchCategories);
+export const useCategories = () => useQuery(["categories"], fetchCategories);
+
+type UpdateCategoryNameDTO = UpdateEntityNameDTO<Category>;
+export const useUpdateCategoryName = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ name, id }: UpdateCategoryNameDTO) => {
+      await supabase
+        .from(TableConstants.productCategory)
+        .update({ name })
+        .match({ id });
+    },
+    {
+      onSuccess: () => queryClient.refetchQueries(["categories"]),
+    }
+  );
+};

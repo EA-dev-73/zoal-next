@@ -57,3 +57,8 @@ export type ValidatedOrder = {
   isArchived: boolean;
   created_at: Date;
 };
+
+export type UpdateEntityNameDTO<T extends ProductType | Category> = {
+  id: T["id"];
+  name: T["name"];
+};

@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { ProductType } from "../types";
 import { supabase } from "../utils/supabaseClient";
 import { BucketsConstants } from "../utils/TableConstants";
@@ -84,6 +86,24 @@ export const getProductsImagesDictionnary = async (
   }
   return images;
 };
+export const useProductsImagesDictionnary = (
+  productIds: ProductType["id"][]
+) => {
+  let tmpImagesDic = useRef({}) as any;
+  const imagesDic = useMemo(() => tmpImagesDic.current, []);
+
+  useEffect(() => {
+    for (const productId of productIds) {
+      getProductImages(productId).then((tmpImages) => {
+        tmpImagesDic.current = {
+          ...tmpImagesDic.current,
+          [productId]: tmpImages,
+        };
+      });
+    }
+  }, [productIds]);
+  return imagesDic;
+};
 
 export const deleteImages = async (
   deleteProductImagesFromBucketDTO: DeleteProductImagesFromBucketDTO
@@ -116,5 +136,17 @@ export const deleteAllImagesForProductType = async (
       productTypeId,
       imageName: image.name,
     }))
+  );
+};
+
+export const useUploadProductImagesToBucket = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (uploadProductImagesToBucketDTO: UploadProductImagesToBucketDTO) => {
+      await uploadProductImagesToBucket(uploadProductImagesToBucketDTO);
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(["product-images"]),
+    }
   );
 };
