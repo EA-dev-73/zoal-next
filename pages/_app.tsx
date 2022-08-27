@@ -8,10 +8,14 @@ import { locale, loadMessages } from "devextreme/localization";
 import frMessages from "devextreme/localization/messages/fr.json";
 import { RecoilRoot } from "recoil";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 function ZoalApp({ Component, pageProps }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
+
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap"!);
   }, []);
@@ -25,7 +29,10 @@ function ZoalApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Zoal - Boutique en ligne</title>
       </Head>
-      <Container Component={Component} {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <Container Component={Component} {...pageProps} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </RecoilRoot>
   );
 }

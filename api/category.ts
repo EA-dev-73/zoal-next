@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Category } from "../types";
 import { handlePostgresError } from "../utils/handleError";
 import { supabase } from "../utils/supabaseClient";
@@ -26,7 +26,7 @@ export const upsertCategory = async (createCategoryData: CreateCategoryDTO) => {
   };
 };
 
-export const fetchCategories = async (): Promise<Category[] | null> => {
+const fetchCategories = async (): Promise<Category[] | null> => {
   const { data: categories, error } = await supabase
     .from(TableConstants.productCategory)
     .select(`*`);
@@ -34,25 +34,4 @@ export const fetchCategories = async (): Promise<Category[] | null> => {
   return categories;
 };
 
-export const useCategories = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState<Category[] | null>([]);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    try {
-      fetchCategories().then((res) => {
-        setCategories(res);
-        setIsLoading(false);
-        setError(null);
-      });
-    } catch (error: any) {
-      setError(error);
-    }
-  }, []);
-
-  return {
-    isLoading,
-    categories,
-    error,
-  };
-};
+export const useCategories = () => useQuery("categories", fetchCategories);
