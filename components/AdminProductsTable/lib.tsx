@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useUpdateCategoryName } from "../../api/category";
+import { useUpdateCategoryName, useUpsertCategory } from "../../api/category";
 import {
   deleteAllImagesForProductType,
   useUploadProductTypeImagesToBucket,
@@ -8,6 +8,7 @@ import {
   deleteProductType,
   useProductTypesWithImages,
   useUpdateProductTypeName,
+  useUpsertProductType,
 } from "../../api/products/product-type";
 import { ProductTypeWithImages } from "../../types";
 import {
@@ -15,13 +16,14 @@ import {
   OnRowEditingEvent,
   OnRowInsertingEvent,
 } from "./types";
+import { displayToast } from "../../utils/displayToast";
 
 export type ProductForAdminTable = ProductTypeWithImages & {
   categoryName: string;
 };
 
 export const useProductsForAdminTable = () => {
-  const { productTypesWithImages } = useProductTypesWithImages();
+  const { productTypesWithImages, isLoading } = useProductTypesWithImages();
 
   const products = useMemo(() => {
     return (productTypesWithImages || []).map((productType) => ({
@@ -30,28 +32,57 @@ export const useProductsForAdminTable = () => {
     }));
   }, [productTypesWithImages]);
 
-  return products;
+  return { products, isLoading };
 };
 
-export const onRowInserting = async (
-  e: OnRowInsertingEvent,
-  images: FileList
-) => {
-  // try {
-  //   await createProductTypeWithCategoryAndImages({
-  //     createCategoryData: {
-  //       categoryName: e.data.categoryName,
-  //     },
-  //     createProductTypeData: {
-  //       name: e.data.name,
-  //     },
-  //     createProductTypeImages: {
-  //       images,
-  //     },
-  //   });
-  // } catch (error: any) {
-  //   alert(error.message);
-  // }
+export const useOnRowInserting = () => {
+  const { mutateAsync: upsertCategory } = useUpsertCategory();
+  const { mutateAsync: upsertProductType } = useUpsertProductType();
+  const { mutate: uploadProductImagesToBuket } =
+    useUploadProductTypeImagesToBucket();
+
+  const onRowInserting = async (e: OnRowInsertingEvent, images: FileList) => {
+    // create category
+    const { data: createdCategory, error: errorCreatingCategory } =
+      await upsertCategory({
+        categoryName: e.data.categoryName,
+      });
+
+    if (errorCreatingCategory) {
+      displayToast({
+        message: `Error lors de la création de la catégorie : ${errorCreatingCategory.message}`,
+        type: "error",
+      });
+    }
+
+    // create product type
+    const categoryId = createdCategory?.[0]?.id;
+    const { data: createdProductType, error: errorCreatingProductType } =
+      await upsertProductType({
+        categoryId,
+        name: e.data.name,
+      });
+
+    if (errorCreatingProductType) {
+      displayToast({
+        message: `Error lors de la création du produit : ${errorCreatingProductType.message}`,
+        type: "error",
+      });
+    }
+
+    // upload images
+
+    const productTypeId = createdProductType?.[0]?.id;
+
+    const imagesArr = Array.from(images || []);
+
+    uploadProductImagesToBuket({
+      images: imagesArr,
+      productTypeId,
+    });
+  };
+
+  return { onRowInserting };
 };
 
 export const onRowRemoving = async (e: OnRowDeletingEvent) => {

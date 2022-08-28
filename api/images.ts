@@ -137,22 +137,32 @@ export const useProductTypesImages = ({
   };
 };
 
-export const deleteImages = async (
-  deleteProductImagesFromBucketDTO: DeleteProductImagesFromBucketDTO
-) => {
-  for (const deleteProductImageFromBucketDTO of deleteProductImagesFromBucketDTO) {
-    const { error } = await supabase.storage
-      .from(BucketsConstants.products)
-      .remove([
-        `${deleteProductImageFromBucketDTO.productTypeId}/${deleteProductImageFromBucketDTO.imageName}`,
-      ]);
-    error && console.error("err2", error.message);
-  }
+export const useDeleteImages = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (
+      deleteProductImagesFromBucketDTO: DeleteProductImagesFromBucketDTO
+    ) => {
+      for (const deleteProductImageFromBucketDTO of deleteProductImagesFromBucketDTO) {
+        await supabase.storage
+          .from(BucketsConstants.products)
+          .remove([
+            `${deleteProductImageFromBucketDTO.productTypeId}/${deleteProductImageFromBucketDTO.imageName}`,
+          ]);
+      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
 };
 
 export const deleteAllImagesForProductType = async (
   productTypeId: ProductType["id"]
 ) => {
+  const { mutate: deleteImages } = useDeleteImages();
   // const { data: images } = useListImagesForProductsTypes({
   //   productsTypesIds: [productTypeId],
   // });
@@ -163,7 +173,7 @@ export const deleteAllImagesForProductType = async (
 
   if (!productImages?.length) return;
 
-  await deleteImages(
+  deleteImages(
     productImages.map((image: any) => ({
       productTypeId,
       imageName: image.name,

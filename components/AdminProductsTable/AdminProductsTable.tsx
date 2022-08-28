@@ -13,9 +13,9 @@ import { Item } from "devextreme-react/form";
 import React, { useRef, useState } from "react";
 import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMasterDetail";
 import {
-  onRowInserting,
   onRowRemoving,
   ProductForAdminTable,
+  useOnRowInserting,
   useOnRowUpdating,
   useProductsForAdminTable,
 } from "./lib";
@@ -25,11 +25,17 @@ import { useRouter } from "next/router";
 export const AdminProductsTable = () => {
   const router = useRouter();
   const fileUploaderRef = useRef<HTMLInputElement>(null);
-  const products = useProductsForAdminTable();
+  const { products, isLoading } = useProductsForAdminTable();
   const [currentlyEditingProductType, setCurrentlyEditingProductType] =
     useState<ProductForAdminTable | null>(null);
 
   const { onRowUpdating } = useOnRowUpdating();
+  const { onRowInserting } = useOnRowInserting();
+
+  if (isLoading) {
+    return <p>Chargement des produits...</p>;
+  }
+
   return (
     <>
       <DataGrid

@@ -39,14 +39,6 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
   quantity: number;
 };
 
-export type CreateProductTypeWithCategoryAndImagesParams = {
-  createCategoryData: CreateCategoryDTO;
-  createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
-  createProductTypeImages: {
-    images: FileList;
-  };
-};
-
 export type ValidatedOrder = {
   id: number;
   stripeOrderId: string;

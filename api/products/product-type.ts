@@ -1,18 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { reactQueryKeys } from "../../react-query-keys";
-import {
-  CreateProductTypeWithCategoryAndImagesParams,
-  ProductType,
-  UpdateEntityNameDTO,
-} from "../../types";
+import { ProductType, UpdateEntityNameDTO } from "../../types";
 import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
 import { TableConstants } from "../../utils/TableConstants";
-import { upsertCategory } from "../category";
-import {
-  useProductTypesImages,
-  useUploadProductTypeImagesToBucket,
-} from "../images";
+import { useProductTypesImages } from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
@@ -44,63 +36,30 @@ export const fetchProductTypeById = async (
   return product?.[0] as ProductType | null;
 };
 
-export const upsertProductType = async (
-  createProductTypeData: CreateProductTypeDTO
-) => {
-  const { data, error } = await supabase
-    .from(TableConstants.productType)
-    .upsert(
-      {
-        name: createProductTypeData.name,
-        categoryId: createProductTypeData.categoryId,
+export const useUpsertProductType = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ categoryId, name }: CreateProductTypeDTO) => {
+      if (!categoryId || !name) return { data: null, error: null };
+      const { data, error } = await supabase
+        .from(TableConstants.productType)
+        .upsert(
+          {
+            name: name,
+            categoryId: categoryId,
+          },
+          {
+            onConflict: "name",
+          }
+        );
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
       },
-      {
-        onConflict: "name",
-      }
-    );
-  return {
-    data,
-    error,
-  };
-};
-
-export const useCreateProductTypeWithCategoryAndImages = async ({
-  createCategoryData,
-  createProductTypeData,
-  createProductTypeImages,
-}: CreateProductTypeWithCategoryAndImagesParams) => {
-  const { mutate: uploadProductImagesToBucket } =
-    useUploadProductTypeImagesToBucket();
-
-  // Upsert de la catégorie
-  const { data, error } = await upsertCategory(createCategoryData);
-  error && handlePostgresError(error);
-  const newCategoryId = data?.[0]?.id;
-
-  if (!newCategoryId) {
-    throw new Error("Something went wrong while creating a new category");
-  }
-  // Upsert du product type
-  const { data: returningProductType, error: productTypeError } =
-    await upsertProductType({
-      categoryId: newCategoryId,
-      name: createProductTypeData.name,
-    });
-  productTypeError && handlePostgresError(productTypeError);
-  // on retourne l'id productType fraichement créé
-  if (!createProductTypeImages?.images?.length) return;
-  const productTypeId = returningProductType?.[0]?.id;
-  if (!productTypeId) {
-    throw new Error("Erreur lors de la création du produit :/");
-  }
-  //TODO
-
-  // for (const image of createProductTypeImages?.images || []) {
-  //   uploadProductImagesToBucket({
-  //     image,
-  //     productTypeId,
-  //   });
-  // }
+    }
+  );
 };
 
 export const deleteProductType = async (productTypeId: ProductType["id"]) => {

@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React from "react";
-import { deleteImages } from "../../api/images";
+import { useDeleteImages } from "../../api/images";
 import { ProductType, ProductTypeWithImages } from "../../types";
 
 type Props = {
@@ -15,20 +14,19 @@ export const DisplayCurrentProductImages = ({
   imagesUrls = [],
   isEdit = true,
 }: Props) => {
-  const router = useRouter();
+  const { mutate: deleteImages } = useDeleteImages();
   const handleDelete = async (imageUrl: string) => {
     if (!productTypeId) {
       alert("Missing productTypeId... tommy you suck");
       return;
     }
     const imageName = imageUrl.split("/")[imageUrl.split("/").length - 1];
-    await deleteImages([
+    deleteImages([
       {
         productTypeId,
         imageName,
       },
     ]);
-    router.reload();
   };
   return (
     <div className="d-flex flex-wrap">

@@ -9,22 +9,26 @@ export type CreateCategoryDTO = {
   categoryName: Category["name"];
 };
 
-/**
- * Creates the category or updates it if it already exists
- */
-export const upsertCategory = async (createCategoryData: CreateCategoryDTO) => {
-  const { data, error } = await supabase
-    .from(TableConstants.productCategory)
-    .upsert(
-      { name: createCategoryData.categoryName },
-      {
-        onConflict: "name",
-      }
-    );
-  return {
-    data,
-    error,
-  };
+export const useUpsertCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ categoryName }: CreateCategoryDTO) => {
+      const { data, error } = await supabase
+        .from(TableConstants.productCategory)
+        .upsert(
+          { name: categoryName },
+          {
+            onConflict: "name",
+          }
+        );
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
 };
 
 const fetchCategories = async (): Promise<Category[] | null> => {
