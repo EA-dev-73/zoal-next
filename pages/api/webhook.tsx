@@ -43,7 +43,7 @@ export default async function handler(
     try {
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
     } catch (err: any) {
-      console.log({ err });
+      console.error({ err });
       res.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
@@ -54,13 +54,13 @@ export default async function handler(
         handleCompletedSessionEvent(event);
         res.status(200);
       } catch (error) {
-        console.log(
+        console.error(
           "Erreur lors de la mise a jour des stocks suite a une commande"
         );
       }
     }
 
-    console.log(`Unhandled event type ${event.type}`);
+    console.error(`Unhandled event type ${event.type}`);
   } else {
     res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");

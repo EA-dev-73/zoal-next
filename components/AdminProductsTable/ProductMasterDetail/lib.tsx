@@ -25,7 +25,7 @@ export const onRowInserting = async (
       productTypeId,
     });
   } catch (error) {
-    console.log(2, error);
+    console.error(2, error);
   }
 };
 export const onRowUpdating = async (
@@ -42,7 +42,7 @@ export const onRowUpdating = async (
       productTypeId,
     });
   } catch (error) {
-    console.log(3, error);
+    console.error(3, error);
   }
 };
 export const onRowRemoving = async (productId: Product["id"]) => {
@@ -51,6 +51,6 @@ export const onRowRemoving = async (productId: Product["id"]) => {
       productId,
     });
   } catch (error) {
-    console.log(1, error);
+    console.error(1, error);
   }
 };

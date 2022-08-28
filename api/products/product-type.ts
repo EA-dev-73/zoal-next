@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { reactQueryKeys } from "../../react-query-keys";
 import {
   CreateProductTypeWithCategoryAndImagesParams,
@@ -11,7 +11,7 @@ import { TableConstants } from "../../utils/TableConstants";
 import { upsertCategory } from "../category";
 import {
   useProductTypesImages,
-  useUploadProductTypeImageToBucket,
+  useUploadProductTypeImagesToBucket,
 } from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
@@ -70,7 +70,7 @@ export const useCreateProductTypeWithCategoryAndImages = async ({
   createProductTypeImages,
 }: CreateProductTypeWithCategoryAndImagesParams) => {
   const { mutate: uploadProductImagesToBucket } =
-    useUploadProductTypeImageToBucket();
+    useUploadProductTypeImagesToBucket();
 
   // Upsert de la catégorie
   const { data, error } = await upsertCategory(createCategoryData);
@@ -93,13 +93,14 @@ export const useCreateProductTypeWithCategoryAndImages = async ({
   if (!productTypeId) {
     throw new Error("Erreur lors de la création du produit :/");
   }
+  //TODO
 
-  for (const image of createProductTypeImages?.images || []) {
-    uploadProductImagesToBucket({
-      image,
-      productTypeId,
-    });
-  }
+  // for (const image of createProductTypeImages?.images || []) {
+  //   uploadProductImagesToBucket({
+  //     image,
+  //     productTypeId,
+  //   });
+  // }
 };
 
 export const deleteProductType = async (productTypeId: ProductType["id"]) => {
@@ -180,13 +181,18 @@ export const useProductTypes = () =>
   useQuery([reactQueryKeys.productTypes], fetchProductTypes);
 
 export const useProductTypesWithImages = () => {
-  const { data: productTypes } = useProductTypes();
-  const { dicImagesUrls } = useProductTypesImages({
-    productsTypesIds: (productTypes || []).map((x) => x.id),
-  });
+  const { data: productTypes, isLoading: isLoadingProductTypes } =
+    useProductTypes();
+  const { data: dicImagesUrls, isLoading: isLoadingImages } =
+    useProductTypesImages({
+      productsTypesIds: (productTypes || []).map((x) => x.id),
+    });
 
-  return (productTypes || []).map((product) => ({
-    ...product,
-    imagesUrls: dicImagesUrls?.[product.id],
-  }));
+  return {
+    productTypesWithImages: (productTypes || []).map((product) => ({
+      ...product,
+      imagesUrls: dicImagesUrls?.[product.id],
+    })),
+    isLoading: isLoadingProductTypes || isLoadingImages,
+  };
 };

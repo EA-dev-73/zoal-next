@@ -13,7 +13,7 @@ export default function Shop() {
   const [filter, setFilter] = useState<Category["id"] | null>(null);
   const { data: categories } = useCategories();
 
-  const productTypes = useProductTypesWithImages();
+  const { productTypesWithImages, isLoading } = useProductTypesWithImages();
 
   useEffect(() => {
     if (!router.query) {
@@ -36,14 +36,18 @@ export default function Shop() {
   return (
     <Layout>
       <div className="d-flex flex-wrap justify-content-between mx-5">
-        {orderBy(productTypes || [], "createdAt", "desc")
-          .filter((productType) =>
-            filter ? productType.productCategory.id === filter : true
-          )
+        {isLoading ? (
+          <p>chargement des produits... </p>
+        ) : (
+          orderBy(productTypesWithImages || [], "createdAt", "desc")
+            .filter((productType) =>
+              filter ? productType.productCategory.id === filter : true
+            )
 
-          .map((productType) => (
-            <ProductCard key={productType.id} productType={productType} />
-          ))}
+            .map((productType) => (
+              <ProductCard key={productType.id} productType={productType} />
+            ))
+        )}
       </div>
     </Layout>
   );

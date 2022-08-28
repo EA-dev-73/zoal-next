@@ -10,8 +10,8 @@ import { RecoilRoot } from "recoil";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 function ZoalApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());

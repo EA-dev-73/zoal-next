@@ -1,11 +1,12 @@
+import { useMemo } from "react";
 import { useUpdateCategoryName } from "../../api/category";
 import {
   deleteAllImagesForProductType,
-  useUploadProductTypeImageToBucket,
+  useUploadProductTypeImagesToBucket,
 } from "../../api/images";
 import {
   deleteProductType,
-  useProductTypes,
+  useProductTypesWithImages,
   useUpdateProductTypeName,
 } from "../../api/products/product-type";
 import { ProductTypeWithImages } from "../../types";
@@ -20,11 +21,16 @@ export type ProductForAdminTable = ProductTypeWithImages & {
 };
 
 export const useProductsForAdminTable = () => {
-  const { data: productTypes } = useProductTypes();
-  return (productTypes || []).map((productType) => ({
-    ...productType,
-    categoryName: productType.productCategory.name,
-  }));
+  const { productTypesWithImages } = useProductTypesWithImages();
+
+  const products = useMemo(() => {
+    return (productTypesWithImages || []).map((productType) => ({
+      ...productType,
+      categoryName: productType.productCategory.name,
+    }));
+  }, [productTypesWithImages]);
+
+  return products;
 };
 
 export const onRowInserting = async (
@@ -61,8 +67,8 @@ export const onRowRemoving = async (e: OnRowDeletingEvent) => {
 export const useOnRowUpdating = () => {
   const { mutate: updateCategoryName } = useUpdateCategoryName();
   const { mutate: updateProductTypeName } = useUpdateProductTypeName();
-  const { mutate: uploadProductImageToBuket } =
-    useUploadProductTypeImageToBucket();
+  const { mutate: uploadProductImagesToBuket } =
+    useUploadProductTypeImagesToBucket();
 
   const onRowUpdating = (e: OnRowEditingEvent, images: FileList) => {
     const [productTypeId, productTypeName] = [e.oldData?.id, e.newData?.name];
@@ -71,6 +77,8 @@ export const useOnRowUpdating = () => {
       e.newData?.categoryName,
     ];
 
+    // update category
+
     if (categoryId && categoryName) {
       updateCategoryName({
         id: categoryId,
@@ -78,7 +86,14 @@ export const useOnRowUpdating = () => {
       });
     }
 
-    if (productTypeId && productTypeName) {
+    // update product type
+
+    if (!productTypeId) {
+      alert("⚠️⚠️ Il manque le  productTypeId... voir avec tommy");
+      return;
+    }
+
+    if (productTypeName) {
       updateProductTypeName({
         id: productTypeId,
         name: productTypeName,
@@ -89,26 +104,12 @@ export const useOnRowUpdating = () => {
 
     if (!imagesArr?.length) return;
 
-    if (!productTypeId) {
-      const err = "Missing productTypeId..., voir avec tommy";
-      console.log(err);
-      alert(err);
-    }
+    // upload images
 
-    const imagesToSave = (imagesArr || []).map((image) => {
-      return {
-        productTypeId: e.oldData?.id,
-        image,
-      };
+    uploadProductImagesToBuket({
+      images: imagesArr,
+      productTypeId,
     });
-
-    for (const image of imagesToSave) {
-      uploadProductImageToBuket({
-        image: image.image,
-        //@ts-ignore
-        productTypeId: image.productTypeId,
-      });
-    }
   };
 
   return { onRowUpdating };

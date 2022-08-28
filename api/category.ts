@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { reactQueryKeys } from "../react-query-keys";
 import { Category, UpdateEntityNameDTO } from "../types";
 import { handlePostgresError } from "../utils/handleError";
