@@ -1,9 +1,11 @@
+import { sortBy } from "lodash";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { useCategories } from "../api/category";
 import { cartState } from "../context/cart";
+import { Category } from "../types";
 import { useLogOut } from "../utils/localStorageHelpers";
 import { useIsAdmin } from "../utils/user";
 
@@ -13,6 +15,11 @@ export const Nav = () => {
   const logOut = useLogOut();
 
   const { data: categories } = useCategories();
+
+  const sortedCategories = useMemo(
+    () => sortBy<Category>(categories || [], "name"),
+    [categories]
+  );
 
   return (
     <nav
@@ -61,7 +68,7 @@ export const Nav = () => {
                     Shop
                   </a>
                 </Link>
-                {(categories || []).map((category) => (
+                {sortedCategories.map((category) => (
                   <li className="nav-item" key={category.id}>
                     <Link
                       passHref
