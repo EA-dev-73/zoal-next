@@ -92,10 +92,17 @@ export const useDeleteProductType = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async (productTypeId: ProductType["id"]) => {
+      console.log({ productTypeId });
+      await supabase
+        .from(TableConstants.products)
+        .delete()
+        .eq("productTypeId", productTypeId);
+
       const { data, error } = await supabase
         .from(TableConstants.productType)
         .delete()
         .eq("id", productTypeId);
+
       return {
         data,
         error,

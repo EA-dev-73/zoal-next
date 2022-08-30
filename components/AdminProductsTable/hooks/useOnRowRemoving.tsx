@@ -1,4 +1,5 @@
 import { useDeleteAllImagesForProductType } from "../../../api/images";
+import { useDeleteProduct } from "../../../api/products/product";
 import { useDeleteProductType } from "../../../api/products/product-type";
 import { ProductType } from "../../../types";
 import { displayToast } from "../../../utils/displayToast";
@@ -12,27 +13,23 @@ export const useOnRowRemoving = (productTypeId: ProductType["id"]) => {
   const onRowRemoving = async (e: OnRowDeletingEvent) => {
     const productTypeId = e.data.id;
 
-    try {
-      const { data: deletedProductType, error: errorDeletingProductType } =
-        await deleteProductType(productTypeId);
+    const { data: deletedProductType, error: errorDeletingProductType } =
+      await deleteProductType(productTypeId);
 
-      if (errorDeletingProductType) {
-        displayToast({
-          message: `Error lors de la suppréssion du produit type : ${errorDeletingProductType.message}`,
-          type: "error",
-        });
-        return;
-      } else {
-        displayToast({
-          message: `Produit type : ${deletedProductType?.[0]?.name} supprimé`,
-          type: "success",
-        });
-      }
-
-      deleteAllImagesForProductType();
-    } catch (error: any) {
-      alert(error.message);
+    if (errorDeletingProductType) {
+      displayToast({
+        message: `Error lors de la suppréssion du produit type : ${errorDeletingProductType.message}`,
+        type: "error",
+      });
+      return;
+    } else {
+      displayToast({
+        message: `Produit type : ${deletedProductType?.[0]?.name} supprimé`,
+        type: "success",
+      });
     }
+
+    deleteAllImagesForProductType();
   };
 
   return { onRowRemoving };
