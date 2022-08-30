@@ -7,9 +7,14 @@ import { Nav } from "./Nav";
 type Props = {
   children?: ReactChild | ReactChild[];
   needsAuth?: boolean;
+  insideContainer?: boolean;
 };
 
-export const Layout = ({ children, needsAuth = false }: Props) => {
+export const Layout = ({
+  children,
+  needsAuth = false,
+  insideContainer = true,
+}: Props) => {
   const user = useRecoilValue(userState);
   const isLogged = user?.id;
 
@@ -22,7 +27,7 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
   };
 
   return (
-    <div className="main-layout">
+    <div className={insideContainer ? "main-layout" : ""}>
       <Nav />
       <h1 className="title">ZOAL MNCH</h1>
       {handleAuth(children)}

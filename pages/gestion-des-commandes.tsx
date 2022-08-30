@@ -3,7 +3,7 @@ import { Layout } from "../components/Layout";
 
 export default function GestionDesCommandes() {
   return (
-    <Layout needsAuth>
+    <Layout needsAuth insideContainer={false}>
       <h1>Gestion des commandes</h1>
       <AdminValidatedOrdersTable />
     </Layout>
