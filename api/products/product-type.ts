@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { reactQueryKeys } from "../../react-query-keys";
 import { ProductType, UpdateEntityNameDTO } from "../../types";
+import { displayToast } from "../../utils/displayToast";
 import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
 import { TableConstants } from "../../utils/TableConstants";
@@ -92,11 +93,17 @@ export const useDeleteProductType = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async (productTypeId: ProductType["id"]) => {
-      console.log({ productTypeId });
-      await supabase
+      const { data: d, error: e } = await supabase
         .from(TableConstants.products)
         .delete()
         .eq("productTypeId", productTypeId);
+
+      if (e) {
+        displayToast({
+          type: "error",
+          message: `Erreur lors de la suppresion d'un produit en amont de la suppression du produit type`,
+        });
+      }
 
       const { data, error } = await supabase
         .from(TableConstants.productType)
