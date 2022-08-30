@@ -4,6 +4,7 @@
 
 ## Todo list
 
+- [ ] les commandes ne sont pas enregistrées en PROD
 - [ ] admin => bug suppresion d'une image
 - [ ] brancher react-query + cache partout
 - [ ] pouvoir update les images d'un product type sans editer le reste du product type
