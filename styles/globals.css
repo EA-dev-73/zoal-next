@@ -603,3 +603,8 @@ label {
 .blocs-accueil p {
   text-align: center;
 }
+
+.main-layout {
+  margin: auto;
+  max-width: 90%;
+}

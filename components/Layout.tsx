@@ -22,7 +22,7 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
   };
 
   return (
-    <div>
+    <div className="main-layout">
       <Nav />
       <h1 className="title">ZOAL MNCH</h1>
       {handleAuth(children)}

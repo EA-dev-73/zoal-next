@@ -31,9 +31,15 @@ const ProductPage = () => {
               Taille : {product.size} | Prix : {product.price + "€"} | En stock
               : {product.stock > 0 ? product.stock : "❌"}
               {product.stock && (
-                <button onClick={() => addProductToCart(product.id)}>
-                  Ajouter au panier
-                </button>
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-primary my-3"
+                    onClick={() => addProductToCart(product.id)}
+                  >
+                    Ajouter au panier
+                  </button>
+                </div>
               )}
             </li>
           );
