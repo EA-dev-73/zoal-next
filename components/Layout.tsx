@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../context/user";
 import { LoginForm } from "./LoginForm";
 import { Nav } from "./Nav";
+import { isMobile } from "react-device-detect";
 
 type Props = {
   children?: ReactChild | ReactChild[];
@@ -13,7 +14,7 @@ type Props = {
 export const Layout = ({
   children,
   needsAuth = false,
-  insideContainer = true,
+  insideContainer = false,
 }: Props) => {
   const user = useRecoilValue(userState);
   const isLogged = user?.id;
@@ -27,7 +28,7 @@ export const Layout = ({
   };
 
   return (
-    <div className={insideContainer ? "main-layout" : ""}>
+    <div className={insideContainer && !isMobile ? "main-layout" : ""}>
       <Nav />
       <h1 className="title">ZOAL MNCH</h1>
       {handleAuth(children)}
