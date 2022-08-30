@@ -45,14 +45,18 @@ export const insertValidatedOrder = (
   command: any,
   productsWithUpdatedStocks: ProductsWithUpdatedStock[]
 ) => {
-  upsertValidatedOrder({
-    hasBeenSent: false,
-    isArchived: false,
-    orderContent: JSON.stringify(productsWithUpdatedStocks),
-    shippingAddress: formatShippingAddress(command),
-    stripeOrderId: command.id,
-    stripePaymentUrl: `https://dashboard.stripe.com/test/payments/${command.payment_intent}`,
-  });
+  try {
+    upsertValidatedOrder({
+      hasBeenSent: false,
+      isArchived: false,
+      orderContent: JSON.stringify(productsWithUpdatedStocks),
+      shippingAddress: formatShippingAddress(command),
+      stripeOrderId: command.id,
+      stripePaymentUrl: `https://dashboard.stripe.com/test/payments/${command.payment_intent}`,
+    });
+  } catch (error) {
+    console.error("err2", error);
+  }
 };
 
 const formatShippingAddress = (command: any) => {

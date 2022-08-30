@@ -27,10 +27,11 @@ export const AdminValidatedOrdersProductsMasterDetail = ({
 }) => {
   const [products, setProducts] = useState<
     ValidatedOrderMasterDetailProduct[] | null
-  >([]);
+  >();
   const stripeProducts: StripeProduct[] = JSON.parse(orderContent);
 
   useEffect(() => {
+    if (products?.length) return;
     fetchProductWithTypeDataAndCategory(
       stripeProducts.map((x: any) => x.productId)
     ).then((databaseProductTypes) => {
@@ -38,9 +39,9 @@ export const AdminValidatedOrdersProductsMasterDetail = ({
         stripeProducts,
         databaseProductTypes
       );
-      setProducts(formattedForMasterDetail);
+      setProducts(formattedForMasterDetail || []);
     });
-  }, [stripeProducts]);
+  }, [products?.length, stripeProducts]);
 
   return (
     <DataGrid dataSource={products || []}>

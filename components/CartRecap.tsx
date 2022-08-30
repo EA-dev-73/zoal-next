@@ -5,6 +5,7 @@ import { ProductWithTypeAndQuantity } from "../types";
 import { addQuantityToProducts } from "../utils/addItemsQuantityToProducts";
 import { calculateTotalPrice } from "../utils/calculateTotalPrice";
 import { useProductsForCart } from "../utils/cart";
+import { displayToast } from "../utils/displayToast";
 import { groupProductsByType } from "../utils/groupProductsByType";
 import {
   getCartContentFromLocalStorage,
@@ -50,6 +51,10 @@ export const CartRecap = ({ isRecap }: Props) => {
       const body = await res.json();
       router.replace(body.url);
     } catch (error: any) {
+      displayToast({
+        type: "error",
+        message: "Erreur lors de la connexion à la plateforme de paiement",
+      });
       console.error(error?.message || error);
     }
   };
