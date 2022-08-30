@@ -6,7 +6,9 @@
 
 - [ ] admin => bug suppresion d'une image
 - [ ] brancher react-query + cache partout
-- [ ] fix flicker modale admin
+- [ ] pouvoir update les images d'un product type sans editer le reste du product type
+- [ ] fix suppression des images du bucket quand un productType est supprimé
+- [ ] mise a jour de laffichage des images apres suppresion d'une image
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
 - [ ] améliorer le référencement naturel

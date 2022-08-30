@@ -1,13 +1,15 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { reactQueryKeys } from "../react-query-keys";
-import { DeleteProductImagesFromBucketDTO, ProductType } from "../types";
+import { DeleteProductImageFromBucketDTO, ProductType } from "../types";
+import { displayToast } from "../utils/displayToast";
 import { handlePostgresError } from "../utils/handleError";
 import { supabase } from "../utils/supabaseClient";
 import { BucketsConstants } from "../utils/TableConstants";
 
 export const useUploadProductTypeImagesToBucket = () => {
   const queryClient = useQueryClient();
+  //TODO fix return (rien n'est allData et errors non retournées pour le moment)
   return useMutation(
     async ({
       productTypeId,
@@ -16,18 +18,32 @@ export const useUploadProductTypeImagesToBucket = () => {
       productTypeId: ProductType["id"];
       images: File[];
     }) => {
-      for (const image of images) {
-        await supabase.storage
-          .from(BucketsConstants.products)
-          .upload(
-            `${productTypeId}/${image.name.replaceAll(" ", "_")}`,
-            image,
-            {
-              cacheControl: "3600",
-              upsert: false,
-            }
-          );
-      }
+      const { allData, errors } = (images || []).reduce<{
+        allData: any[];
+        errors: any[];
+      }>(
+        ({ allData, errors }, image) => {
+          supabase.storage
+            .from(BucketsConstants.products)
+            .upload(
+              `${productTypeId}/${image.name.replaceAll(" ", "_")}`,
+              image,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
+            )
+            .then(({ data, error }) => {
+              return {
+                allData: data,
+                error: error,
+              };
+            });
+          return { allData, errors };
+        },
+        { allData: [], errors: [] }
+      );
+      return { allData, errors };
     },
     {
       onSuccess: () => {
@@ -57,6 +73,8 @@ export const useListImagesForProductsTypes = ({
     queries: productsTypesIds.map((productTypeId) => ({
       queryKey: [reactQueryKeys.listImages, productTypeId],
       queryFn: () => queryFn(productTypeId),
+      notifyOnChangeProps: Array(productsTypesIds?.length).fill("data"),
+      enabled: !!productsTypesIds?.length,
     })),
   });
 
@@ -99,9 +117,13 @@ export const useBucketImagesPublicUrlsDic = ({
 
   return (productsTypesIds || []).reduce<Record<ProductType["id"], any>>(
     (dic, productTypeId) => {
-      const imagesPerProduct = Object.values(
-        imagesPerProductDic?.[productTypeId]
-      );
+      if (!imagesPerProductDic?.[productTypeId])
+        return {
+          ...dic,
+          [productTypeId]: [],
+        };
+      const imagesPerProduct =
+        Object.values(imagesPerProductDic?.[productTypeId]) || [];
       return {
         ...dic,
         [productTypeId]: (imagesPerProduct || []).reduce<(string | null)[]>(
@@ -137,46 +159,67 @@ export const useProductTypesImages = ({
   };
 };
 
-export const useDeleteImages = () => {
+export const useDeleteImage = () => {
   const queryClient = useQueryClient();
   return useMutation(
-    async (
-      deleteProductImagesFromBucketDTO: DeleteProductImagesFromBucketDTO
-    ) => {
-      for (const deleteProductImageFromBucketDTO of deleteProductImagesFromBucketDTO) {
-        await supabase.storage
-          .from(BucketsConstants.products)
-          .remove([
-            `${deleteProductImageFromBucketDTO.productTypeId}/${deleteProductImageFromBucketDTO.imageName}`,
-          ]);
-      }
+    async ({ imageName, productTypeId }: DeleteProductImageFromBucketDTO) => {
+      await supabase.storage
+        .from(BucketsConstants.products)
+        .remove([`${productTypeId}/${imageName}`]);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries();
+      onSuccess: (_, { productTypeId, imageName }) => {
+        const currentImages = queryClient.getQueryData([
+          reactQueryKeys.listImages,
+          productTypeId,
+        ]);
+
+        const filteredImages = (currentImages as unknown as any)?.data.filter(
+          (x: any) => x.name !== imageName
+        );
+        queryClient.setQueryData(
+          [reactQueryKeys.listImages, productTypeId],
+          filteredImages
+        );
+
+        queryClient.refetchQueries();
+
+        displayToast({
+          type: "success",
+          message: `Image ${imageName} supprimée`,
+        });
       },
     }
   );
 };
 
-export const deleteAllImagesForProductType = async (
+export const useDeleteAllImagesForProductType = (
   productTypeId: ProductType["id"]
 ) => {
-  const { mutate: deleteImages } = useDeleteImages();
-  // const { data: images } = useListImagesForProductsTypes({
-  //   productsTypesIds: [productTypeId],
-  // });
-  //TODO
-  let images: any[] = [];
+  const { dic } = useListImagesForProductsTypes({
+    productsTypesIds: [productTypeId],
+  });
+  const { mutate: deleteImage } = useDeleteImage();
 
-  const productImages = images?.[productTypeId];
+  const productImages = dic?.[productTypeId];
 
-  if (!productImages?.length) return;
+  if (!productImages?.length)
+    return {
+      deleteAllImagesForProductType: () => {},
+    };
 
-  deleteImages(
-    productImages.map((image: any) => ({
-      productTypeId,
-      imageName: image.name,
-    }))
-  );
+  const imagesToDelete = productImages.map((image: any) => ({
+    productTypeId,
+    imageName: image.name,
+  }));
+
+  const deleteImages = (imagesToDelete: any) => {
+    for (const image of imagesToDelete) {
+      deleteImage(image);
+    }
+  };
+
+  return {
+    deleteAllImagesForProductType: () => deleteImages(imagesToDelete),
+  };
 };

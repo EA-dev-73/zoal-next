@@ -1,8 +1,9 @@
 import { DataGrid } from "devextreme-react";
 import { Column, Editing, RequiredRule } from "devextreme-react/data-grid";
-import { useRouter } from "next/router";
 import { Product, ProductType } from "../../../types";
-import { onRowInserting, onRowRemoving, onRowUpdating } from "./lib";
+import { useOnRowInserting } from "./hooks/useOnRowInserting";
+import { useOnRowRemoving } from "./hooks/useOnRowRemoving";
+import { useOnRowUpdating } from "./hooks/useOnRowUpdating";
 
 type Props = {
   products: Product[];
@@ -13,15 +14,15 @@ export const AdminProductsMasterDetail = ({
   products,
   productTypeId,
 }: Props) => {
-  const router = useRouter();
+  const { onRowInserting } = useOnRowInserting();
+  const { onRowUpdating } = useOnRowUpdating();
+  const { onRowRemoving } = useOnRowRemoving();
   return (
     <DataGrid
       dataSource={products || []}
       onRowInserting={(e) => onRowInserting(e, productTypeId)}
       onRowUpdating={(e) => onRowUpdating(e, productTypeId)}
       onRowRemoving={(e) => onRowRemoving(e.data.id)}
-      //TODO moche mais wip
-      onSaved={() => router.reload()}
     >
       <Editing mode="batch" allowUpdating allowAdding allowDeleting />
       <Column dataField="size" caption="Taille">

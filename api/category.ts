@@ -34,7 +34,7 @@ export const useUpsertCategory = () => {
 const fetchCategories = async (): Promise<Category[] | null> => {
   const { data: categories, error } = await supabase
     .from(TableConstants.productCategory)
-    .select(`*`);
+    .select("*, productType!inner(*)");
   error && handlePostgresError(error);
   return categories;
 };
@@ -47,10 +47,11 @@ export const useUpdateCategoryName = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async ({ name, id }: UpdateCategoryNameDTO) => {
-      await supabase
+      const { data, error } = await supabase
         .from(TableConstants.productCategory)
         .update({ name })
         .match({ id });
+      return { data, error };
     },
     {
       onSuccess: () => {

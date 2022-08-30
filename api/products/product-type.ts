@@ -88,6 +88,27 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
   };
 };
 
+export const useDeleteProductType = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (productTypeId: ProductType["id"]) => {
+      const { data, error } = await supabase
+        .from(TableConstants.productType)
+        .delete()
+        .eq("id", productTypeId);
+      return {
+        data,
+        error,
+      };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
+};
+
 export const updateProductTypeWithCategory = async (
   newData: UpdateCategoryAndProductTypeDTO
 ) => {
@@ -123,10 +144,11 @@ export const useUpdateProductTypeName = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async ({ name, id }: UpdateProductTypeNameDTO) => {
-      await supabase
+      const { data, error } = await supabase
         .from(TableConstants.productType)
         .update({ name })
         .match({ id });
+      return { data, error };
     },
     {
       onSuccess: () => {
@@ -137,7 +159,9 @@ export const useUpdateProductTypeName = () => {
 };
 
 export const useProductTypes = () =>
-  useQuery([reactQueryKeys.productTypes], fetchProductTypes);
+  useQuery([reactQueryKeys.productTypes], fetchProductTypes, {
+    notifyOnChangeProps: ["data"],
+  });
 
 export const useProductTypesWithImages = () => {
   const { data: productTypes, isLoading: isLoadingProductTypes } =

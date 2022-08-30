@@ -1,6 +1,3 @@
-import { CreateCategoryDTO } from "./api/category";
-import { CreateProductTypeDTO } from "./api/products/types";
-
 export type Category = {
   id: number;
   name: string;
@@ -60,7 +57,11 @@ export type UploadProductImagesToBucketDTO = {
   image: File;
 }[];
 
-export type DeleteProductImagesFromBucketDTO = {
+export type DeleteProductImageFromBucketDTO = {
   productTypeId: ProductType["id"];
   imageName: string;
-}[];
+};
+
+export type ProductForAdminTable = ProductTypeWithImages & {
+  categoryName: string;
+};
