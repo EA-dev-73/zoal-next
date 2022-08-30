@@ -29,9 +29,11 @@ export const Layout = ({ children, needsAuth = false }: Props) => {
       {needsAuth && isLogged && (
         <div className="stripe-link-container">
           <a
-            target="_blank"
+            className="btn btn-success"
             href="https://dashboard.stripe.com/test/dashboard"
+            target="_blank"
             rel="noreferrer"
+            role="button"
           >
             Dashboard Stripe (paiements)
           </a>

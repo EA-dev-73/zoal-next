@@ -1,6 +1,3 @@
-import { CreateCategoryDTO } from "./api/category";
-import { CreateProductTypeDTO } from "./api/products/types";
-
 export type Category = {
   id: number;
   name: string;
@@ -24,7 +21,7 @@ export type ProductType = {
 };
 
 export type ProductTypeWithImages = ProductType & {
-  imagesUrls: string[];
+  imagesUrls?: string[];
 };
 
 export type ProductWithTypeData = Product & {
@@ -39,14 +36,6 @@ export type ProductWithTypeAndQuantity = ProductWithTypeData & {
   quantity: number;
 };
 
-export type CreateProductTypeWithCategoryAndImagesParams = {
-  createCategoryData: CreateCategoryDTO;
-  createProductTypeData: Omit<CreateProductTypeDTO, "categoryId">;
-  createProductTypeImages: {
-    images: FileList;
-  };
-};
-
 export type ValidatedOrder = {
   id: number;
   stripeOrderId: string;
@@ -56,4 +45,23 @@ export type ValidatedOrder = {
   shippingAddress: string;
   isArchived: boolean;
   created_at: Date;
+};
+
+export type UpdateEntityNameDTO<T extends ProductType | Category> = {
+  id: T["id"];
+  name: T["name"];
+};
+
+export type UploadProductImagesToBucketDTO = {
+  productTypeId: ProductType["id"];
+  image: File;
+}[];
+
+export type DeleteProductImageFromBucketDTO = {
+  productTypeId: ProductType["id"];
+  imageName: string;
+};
+
+export type ProductForAdminTable = ProductTypeWithImages & {
+  categoryName: string;
 };
