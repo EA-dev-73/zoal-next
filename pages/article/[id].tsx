@@ -2,12 +2,9 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { useProductTypes } from "../../api/products/product-type";
 import { Layout } from "../../components/Layout";
-import { ProductType } from "../../types";
+import { Product, ProductType } from "../../types";
+import { displayToast } from "../../utils/displayToast";
 import { useAddProductIdToCart } from "../../utils/localStorageHelpers";
-
-type Props = {
-  productType: ProductType;
-};
 
 const ProductPage = () => {
   const router = useRouter();
@@ -19,6 +16,14 @@ const ProductPage = () => {
     const { id: productTypeId } = router.query;
     return (productTypes || []).find((x) => x.id === Number(productTypeId));
   }, [productTypes, router.query]);
+
+  const handleAdd = (product: Product) => {
+    displayToast({
+      type: "success",
+      message: "Article ajouté au panier",
+    });
+    addProductToCart(product.id);
+  };
 
   const displayDisponibilities = () => {
     if (!productType?.products?.length)
@@ -35,7 +40,7 @@ const ProductPage = () => {
                   <button
                     type="button"
                     className="btn btn-primary my-3"
-                    onClick={() => addProductToCart(product.id)}
+                    onClick={() => handleAdd(product)}
                   >
                     Ajouter au panier
                   </button>

@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       displayToast({
         type: "success",
         message:
-          "Commande validée ! Vous allez recevoir un email de confirmation 😀",
+          "Commande validée ! Vous allez recevoir un email de confirmation",
       });
     }
 
