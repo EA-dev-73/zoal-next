@@ -4,11 +4,13 @@
 
 ## Todo list
 
-- [ ] brancher bucket supabase pour images + remplacer implementation sur admin + shop + panier ...
+- [ ] admin => bug suppresion d'une image
+- [ ] brancher react-query + cache partout
+- [ ] pouvoir update les images d'un product type sans editer le reste du product type
+- [ ] fix suppression des images du bucket quand un productType est supprimé
+- [ ] mise a jour de laffichage des images apres suppresion d'une image
 - [ ] style
 - [ ] ameliorer page post commande (success, cancel)
 - [ ] améliorer le référencement naturel
 - [ ] utiliser une lib pour meilleure gestion des images coté admin (ex: cliquer pour agrandir)
 - [ ] setter les var d'envs de prod sur vercel (supabase, stripe, stripe webhooks)
-- [ ] rajouter le prix de la livraison dans le recap du cart
-- [ ] faire une vidéo de présentation

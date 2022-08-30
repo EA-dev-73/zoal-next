@@ -9,6 +9,7 @@ import { uniq } from "lodash";
 import { TableConstants } from "../../utils/TableConstants";
 import { handlePostgresError } from "../../utils/handleError";
 import { DeleteProductDTO, UpsertProductDTO } from "./types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const getProductById = async (
   id: Product["id"]
@@ -57,12 +58,58 @@ export const fetchProductWithTypeDataAndCategory = async (
   return products;
 };
 
-export const deleteProduct = async (deleteProductData: DeleteProductDTO) => {
-  const { error } = await supabase
-    .from(TableConstants.products)
-    .delete()
-    .eq("id", deleteProductData.productId);
-  error && handlePostgresError(error);
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ productId }: DeleteProductDTO) => {
+      const { error, data } = await supabase
+        .from(TableConstants.products)
+        .delete()
+        .eq("id", productId);
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
+};
+
+export const useUpsertProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({
+      price,
+      productId,
+      productTypeId,
+      shippingFees,
+      size,
+      stock,
+    }: UpsertProductDTO) => {
+      const { data, error } = await supabase
+        .from(TableConstants.products)
+        .upsert(
+          {
+            id: productId,
+            size,
+            stock,
+            price,
+            shippingFees,
+            productTypeId,
+          },
+          {
+            onConflict: "id",
+          }
+        );
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
 };
 
 /**

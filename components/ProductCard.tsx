@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const ProductCard = ({ productType }: Props) => {
-  const image = productType.imagesUrls[0];
+  const image = productType?.imagesUrls?.[0];
   const placeholderImage = "/images/nav-logo.jpg";
 
   return (

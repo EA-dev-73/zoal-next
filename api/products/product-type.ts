@@ -1,16 +1,10 @@
-import {
-  CreateProductTypeWithCategoryAndImagesParams,
-  ProductType,
-  ProductTypeWithImages,
-} from "../../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { reactQueryKeys } from "../../react-query-keys";
+import { ProductType, UpdateEntityNameDTO } from "../../types";
 import { handlePostgresError } from "../../utils/handleError";
 import { supabase } from "../../utils/supabaseClient";
 import { TableConstants } from "../../utils/TableConstants";
-import { upsertCategory } from "../category";
-import {
-  getProductsImagesDictionnary,
-  uploadProductImagesToBucket,
-} from "../images";
+import { useProductTypesImages } from "../images";
 import { CreateProductTypeDTO, UpdateCategoryAndProductTypeDTO } from "./types";
 
 export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
@@ -23,24 +17,6 @@ export const fetchProductTypes = async (): Promise<ProductType[] | null> => {
     `);
   error && handlePostgresError(error);
   return products;
-};
-
-export const fetchProductTypesWithImages = async (): Promise<
-  ProductTypeWithImages[]
-> => {
-  try {
-    const products = await fetchProductTypes();
-    const images = await getProductsImagesDictionnary(
-      (products || []).map((x) => x.id)
-    );
-    return (products || []).map((product) => ({
-      ...product,
-      imagesUrls: images[product.id],
-    }));
-  } catch (error) {
-    console.log(1, error);
-    throw error;
-  }
 };
 
 export const fetchProductTypeById = async (
@@ -60,57 +36,29 @@ export const fetchProductTypeById = async (
   return product?.[0] as ProductType | null;
 };
 
-export const upsertProductType = async (
-  createProductTypeData: CreateProductTypeDTO
-) => {
-  const { data, error } = await supabase
-    .from(TableConstants.productType)
-    .upsert(
-      {
-        name: createProductTypeData.name,
-        categoryId: createProductTypeData.categoryId,
+export const useUpsertProductType = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ categoryId, name }: CreateProductTypeDTO) => {
+      if (!categoryId || !name) return { data: null, error: null };
+      const { data, error } = await supabase
+        .from(TableConstants.productType)
+        .upsert(
+          {
+            name: name,
+            categoryId: categoryId,
+          },
+          {
+            onConflict: "name",
+          }
+        );
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
       },
-      {
-        onConflict: "name",
-      }
-    );
-  return {
-    data,
-    error,
-  };
-};
-
-export const createProductTypeWithCategoryAndImages = async ({
-  createCategoryData,
-  createProductTypeData,
-  createProductTypeImages,
-}: CreateProductTypeWithCategoryAndImagesParams) => {
-  // Upsert de la catégorie
-  const { data, error } = await upsertCategory(createCategoryData);
-  error && handlePostgresError(error);
-  const newCategoryId = data?.[0]?.id;
-
-  if (!newCategoryId) {
-    throw new Error("Something went wrong while creating a new category");
-  }
-  // Upsert du product type
-  const { data: returningProductType, error: productTypeError } =
-    await upsertProductType({
-      categoryId: newCategoryId,
-      name: createProductTypeData.name,
-    });
-  productTypeError && handlePostgresError(productTypeError);
-  // on retourne l'id productType fraichement créé
-  if (!createProductTypeImages?.images?.length) return;
-  const productTypeId = returningProductType?.[0]?.id;
-  if (!productTypeId) {
-    throw new Error("Erreur lors de la création du produit :/");
-  }
-  await uploadProductImagesToBucket(
-    Array.from(createProductTypeImages?.images || []).map((image) => ({
-      productTypeId,
-      image,
-    }))
+    }
   );
 };
 
@@ -140,6 +88,27 @@ export const deleteProductType = async (productTypeId: ProductType["id"]) => {
   };
 };
 
+export const useDeleteProductType = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (productTypeId: ProductType["id"]) => {
+      const { data, error } = await supabase
+        .from(TableConstants.productType)
+        .delete()
+        .eq("id", productTypeId);
+      return {
+        data,
+        error,
+      };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
+};
+
 export const updateProductTypeWithCategory = async (
   newData: UpdateCategoryAndProductTypeDTO
 ) => {
@@ -167,4 +136,46 @@ export const updateProductTypeWithCategory = async (
     error && handlePostgresError(error);
   }
   return;
+};
+
+type UpdateProductTypeNameDTO = UpdateEntityNameDTO<ProductType>;
+
+export const useUpdateProductTypeName = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ name, id }: UpdateProductTypeNameDTO) => {
+      const { data, error } = await supabase
+        .from(TableConstants.productType)
+        .update({ name })
+        .match({ id });
+      return { data, error };
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+    }
+  );
+};
+
+export const useProductTypes = () =>
+  useQuery([reactQueryKeys.productTypes], fetchProductTypes, {
+    notifyOnChangeProps: ["data"],
+  });
+
+export const useProductTypesWithImages = () => {
+  const { data: productTypes, isLoading: isLoadingProductTypes } =
+    useProductTypes();
+  const { data: dicImagesUrls, isLoading: isLoadingImages } =
+    useProductTypesImages({
+      productsTypesIds: (productTypes || []).map((x) => x.id),
+    });
+
+  return {
+    productTypesWithImages: (productTypes || []).map((product) => ({
+      ...product,
+      imagesUrls: dicImagesUrls?.[product.id],
+    })),
+    isLoading: isLoadingProductTypes || isLoadingImages,
+  };
 };
