@@ -1,5 +1,6 @@
-import { NextPageContext } from "next";
-import { fetchProductTypeById } from "../../api/products/product-type";
+import { useRouter } from "next/router";
+import { useMemo } from "react";
+import { useProductTypes } from "../../api/products/product-type";
 import { Layout } from "../../components/Layout";
 import { ProductType } from "../../types";
 import { useAddProductIdToCart } from "../../utils/localStorageHelpers";
@@ -8,8 +9,16 @@ type Props = {
   productType: ProductType;
 };
 
-const ProductPage = ({ productType }: Props) => {
+const ProductPage = () => {
+  const router = useRouter();
   const addProductToCart = useAddProductIdToCart();
+
+  const { data: productTypes } = useProductTypes();
+
+  const productType = useMemo(() => {
+    const { id: productTypeId } = router.query;
+    return (productTypes || []).find((x) => x.id === Number(productTypeId));
+  }, [productTypes, router.query]);
 
   const displayDisponibilities = () => {
     if (!productType?.products?.length)
@@ -40,8 +49,3 @@ const ProductPage = ({ productType }: Props) => {
   );
 };
 export default ProductPage;
-
-export const getServerSideProps = async (context: NextPageContext) => {
-  const productType = await fetchProductTypeById(Number(context.query.id));
-  return { props: { productType } };
-};
