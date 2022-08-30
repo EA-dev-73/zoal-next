@@ -39,13 +39,7 @@ export const CartRecap = ({ isRecap }: Props) => {
     }
   };
 
-  if (isEmptyCart && !isRecap)
-    return (
-      <p>
-        Le panier est vide. Va{" "}
-        <Link href={"/shop"}>acheter des trucs 🤑🤑</Link>
-      </p>
-    );
+  if (isEmptyCart && !isRecap) return <p>Votre panier est vide</p>;
 
   const handleFinalizeCommand = async () => {
     try {
