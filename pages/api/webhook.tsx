@@ -34,7 +34,7 @@ const handleCompletedSessionEvent = async (event: any) => {
 
     // l'update du localStorage sera ensuite faite coté client
   } catch (error) {
-    console.error(error, error);
+    console.error("err3", error);
     displayToast({
       type: "error",
       message: "Erreur lors de la commande",
