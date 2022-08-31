@@ -10,8 +10,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("req", req);
-  console.log("origins", req.headers.origin);
   if (req.method === "POST") {
     const cartContent: Product["id"][] = JSON.parse(req.body);
     try {
@@ -56,6 +54,7 @@ export default async function handler(
           allowed_countries: ["FR"],
         },
         metadata: generateMetadata(),
+        receipt_email: "tommymartin1234@gmail.com",
       });
       res.json({ url: session.url });
     } catch (err: any) {

@@ -63,7 +63,7 @@ export default async function handler(
     if (event.type === "checkout.session.completed") {
       try {
         handleCompletedSessionEvent(event);
-        res.status(200).send("");
+        res.send("");
       } catch (error) {
         console.error(
           "Erreur lors de la mise a jour des stocks suite a une commande"
