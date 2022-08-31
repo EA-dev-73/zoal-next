@@ -54,7 +54,6 @@ export default async function handler(
           allowed_countries: ["FR"],
         },
         metadata: generateMetadata(),
-        receipt_email: "tommymartin1234@gmail.com",
       });
       res.json({ url: session.url });
     } catch (err: any) {
