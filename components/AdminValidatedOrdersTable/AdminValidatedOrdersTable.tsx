@@ -39,9 +39,11 @@ export const AdminValidatedOrdersTable = () => {
         <Editing mode="row" allowUpdating allowDeleting />
         <Column
           dataField="created_at"
+          defaultSortIndex={0}
+          defaultSortOrder="asc"
           caption="Date de la commande"
+          dataType="date"
           allowEditing={false}
-          sortOrder="asc"
           calculateDisplayValue={({ created_at }: { created_at: Date }) => {
             return new Intl.DateTimeFormat("fr-FR", {
               dateStyle: "medium",

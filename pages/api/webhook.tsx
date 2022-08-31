@@ -55,36 +55,31 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
-    const buf = await buffer(req);
-    const sig = req.headers["stripe-signature"];
+  try {
+    if (req.method === "POST") {
+      const buf = await buffer(req);
+      const sig = req.headers["stripe-signature"];
 
-    let event;
+      let event;
 
-    try {
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
-    } catch (err: any) {
-      res.status(400).send(`Webhook Error: ${err.message}`);
-      return;
-    }
 
-    // Handle the event
-    if (event.type === "checkout.session.completed") {
-      console.log("inside checkout.session.completed event");
-      try {
+      // Handle the event
+      if (event.type === "checkout.session.completed") {
+        console.log("inside checkout.session.completed event");
         handleCompletedSessionEvent(event);
-        res.send("");
+        res.status(200).end();
         return;
-      } catch (error) {
-        console.error(
-          "Erreur lors de la mise a jour des stocks suite a une commande"
-        );
       }
-    }
 
-    console.error(`Unhandled event type ${event.type}`);
-  } else {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+      console.error(`Unhandled event type ${event.type}`);
+    } else {
+      res.setHeader("Allow", "POST");
+      res.status(405).end("Method Not Allowed");
+    }
+  } catch (error) {
+    res.status(500).end;
+    console.error("err5", error);
+    throw error;
   }
 }

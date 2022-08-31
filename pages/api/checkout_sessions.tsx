@@ -4,7 +4,9 @@ import { fetchProductsFromIds } from "../../api/products/product";
 import { Product } from "../../types";
 import { generateStripePriceData, generateStripeShippingFees } from "./lib";
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-08-21",
+});
 
 export default async function handler(
   req: NextApiRequest,
