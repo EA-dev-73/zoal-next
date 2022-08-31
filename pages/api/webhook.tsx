@@ -14,7 +14,9 @@ import {
 } from "../../utils/webhookHelpers";
 import { displayToast } from "../../utils/displayToast";
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-08-21",
+});
 
 const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 
