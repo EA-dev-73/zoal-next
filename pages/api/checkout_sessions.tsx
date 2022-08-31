@@ -10,6 +10,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("req", req);
+  console.log("origins", req.headers.origin);
   if (req.method === "POST") {
     const cartContent: Product["id"][] = JSON.parse(req.body);
     try {
