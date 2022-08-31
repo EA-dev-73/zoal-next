@@ -20,17 +20,26 @@ const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
 
 const handleCompletedSessionEvent = async (event: any) => {
   try {
+    console.log("inside handleCompletedSessionEvent");
     const command = await stripe.checkout.sessions.retrieve(
       event.data.object.id
     );
+
+    console.log({ command });
 
     // 1 - update les stocks en bdd
     const productsWithUpdatedStocks = await updateStocksAfterValidatedOrder(
       command
     );
 
+    console.log({ productsWithUpdatedStocks });
+
+    console.log("before insertValidatedOrder");
+
     // 2 - Insert des données de la validatedOrder en base
     insertValidatedOrder(command, productsWithUpdatedStocks);
+
+    console.log("after insertValidatedOrder");
 
     // l'update du localStorage sera ensuite faite coté client
   } catch (error) {
@@ -61,9 +70,11 @@ export default async function handler(
 
     // Handle the event
     if (event.type === "checkout.session.completed") {
+      console.log("inside checkout.session.completed event");
       try {
         handleCompletedSessionEvent(event);
         res.send("");
+        return;
       } catch (error) {
         console.error(
           "Erreur lors de la mise a jour des stocks suite a une commande"
