@@ -7,6 +7,7 @@ import {
   FilterRow,
   MasterDetail,
 } from "devextreme-react/data-grid";
+import { sortBy } from "lodash";
 import { useEffect, useState } from "react";
 import { getValidatedOrders } from "../../api/validatedOrders";
 import { ValidatedOrder } from "../../types";
@@ -18,7 +19,10 @@ export const AdminValidatedOrdersTable = () => {
   const [validatedOrders, setValidatedOrders] = useState<ValidatedOrder[]>([]);
 
   useEffect(() => {
-    getValidatedOrders().then((res) => setValidatedOrders(res.data || []));
+    getValidatedOrders().then((res) => {
+      const sortedByDate = sortBy(res.data || [], "created_at");
+      setValidatedOrders(sortedByDate);
+    });
   }, []);
 
   return (
@@ -39,15 +43,13 @@ export const AdminValidatedOrdersTable = () => {
         <Editing mode="row" allowUpdating allowDeleting />
         <Column
           dataField="created_at"
-          defaultSortIndex={0}
-          defaultSortOrder="asc"
           caption="Date de la commande"
           dataType="date"
           allowEditing={false}
           calculateDisplayValue={({ created_at }: { created_at: Date }) => {
             return new Intl.DateTimeFormat("fr-FR", {
               dateStyle: "medium",
-              timeStyle: "medium",
+              timeStyle: "short",
             }).format(new Date(created_at));
           }}
         >

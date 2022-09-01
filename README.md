@@ -4,8 +4,6 @@
 
 ## Todo list
 
-- [ ] les commandes ne sont pas enregistrées en PROD
-- [ ] table validated orders pas bien ordonnée par date
 - [ ] admin => bug suppresion d'une image
 - [ ] pouvoir update les images d'un product type sans editer le reste du product type
 - [ ] fix suppression des images du bucket quand un productType est supprimé
