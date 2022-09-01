@@ -56,7 +56,7 @@ export const insertValidatedOrder = (
 };
 
 const formatShippingAddress = (command: any) => {
-  const shippingDetails = command.shipping_details;
+  const shippingDetails = command.shipping;
   const adressInfos = shippingDetails.address;
   return `${shippingDetails.name}, ${adressInfos.line1} ${
     adressInfos.line2 || ""

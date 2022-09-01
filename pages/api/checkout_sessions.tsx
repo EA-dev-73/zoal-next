@@ -10,7 +10,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("HERE");
   if (req.method === "POST") {
     const cartContent: Product["id"][] = JSON.parse(req.body);
     try {
@@ -56,7 +55,6 @@ export default async function handler(
         },
         metadata: generateMetadata(),
       });
-      console.log("session", session);
       res.json({ url: session.url });
     } catch (err: any) {
       res.status(err.statusCode || 500).json(err.message);

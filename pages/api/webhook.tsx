@@ -1,48 +1,37 @@
-// stripe a besoin du raw body et non un body parsé par nextjs
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-import { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
+import { NextApiRequest, NextApiResponse } from "next";
 import { handleCompletedSessionEvent } from "../../api/helpers";
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+export const config = { api: { bodyParser: false } };
 
-const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+  const signature = req.headers["stripe-signature"];
+  const endpointSecret = process.env.STRIPE_WEBOOK_ENDPOINT_SECRET;
+  // const endpointSecret =
+  //   "whsec_366ce93aecf7ad0eadba9595f745d0d4f6d8cd19b351ced677ccb25044e68cf7";
+  const reqBuffer = await buffer(req);
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+  let event;
+
   try {
-    if (req.method === "POST") {
-      const buf = await buffer(req);
-      const sig = req.headers["stripe-signature"];
-
-      let event;
-
-      event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
-
-      // Handle the event
-      if (event.type === "checkout.session.completed") {
-        console.log("inside checkout.session.completed event");
-        handleCompletedSessionEvent(event);
-        res.status(200).end();
-        return;
-      }
-
-      console.error(`Unhandled event type ${event.type}`);
-    } else {
-      res.setHeader("Allow", "POST");
-      res.status(405).end("Method Not Allowed");
+    event = stripe.webhooks.constructEvent(
+      reqBuffer,
+      signature,
+      endpointSecret
+    );
+    // Handle the event
+    if (event.type === "checkout.session.completed") {
+      handleCompletedSessionEvent(event);
+      res.status(200).end();
+      return;
     }
-  } catch (error) {
-    res.status(500).end;
-    console.error("err5", error);
-    throw error;
+  } catch (error: any) {
+    console.log(error);
+    return res.status(400).send(`Webhook error: ${error.message}`);
   }
-}
+
+  res.send({ received: true });
+};
+
+export default handler;
