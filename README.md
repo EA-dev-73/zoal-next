@@ -4,7 +4,6 @@
 
 ## Todo list
 
-- [ ] admin => bug suppresion d'une image
 - [ ] fix suppression des images du bucket quand un productType est supprimé
 - [ ] style
 - [ ] améliorer le référencement naturel
