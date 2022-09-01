@@ -608,3 +608,7 @@ label {
   margin: auto;
   max-width: 90%;
 }
+
+.img-preview {
+  cursor: zoom-in;
+}
