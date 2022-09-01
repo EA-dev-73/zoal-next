@@ -17,7 +17,6 @@ export const DisplayCurrentProductImages = ({
   imagesUrls = [],
   isEdit = true,
 }: Props) => {
-  const Viewer = dynamic(() => import("react-viewer"), { ssr: false });
   const { mutate: deleteImage } = useDeleteImage();
   const [showPreview, setShowPreview] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
