@@ -15,7 +15,10 @@ import { AdminProductsMasterDetail } from "./ProductMasterDetail/AdminProductsMa
 import { DisplayCurrentProductImages } from "./DisplayCurrentProductPictures";
 import { useProductsForAdminTable } from "./hooks/useProductsForAdminTable";
 import { ProductForAdminTable, ProductType } from "../../types";
-import { useOnRowUpdating } from "./hooks/useOnRowUpdating";
+import {
+  useOnRowImageUpdating,
+  useOnRowUpdating,
+} from "./hooks/useOnRowUpdating";
 import { useOnRowInserting } from "./hooks/useOnRowInserting";
 import { useOnRowRemoving } from "./hooks/useOnRowRemoving";
 
@@ -33,6 +36,7 @@ export const AdminProductsTable = () => {
   const { onRowRemoving } = useOnRowRemoving(
     productTypeIdToDelete as ProductType["id"]
   );
+  const { onRowImageUpdating } = useOnRowImageUpdating();
 
   if (isLoading) {
     return <p>Chargement des produits...</p>;
@@ -67,25 +71,41 @@ export const AdminProductsTable = () => {
       >
         <SearchPanel visible />
         <GroupPanel visible allowColumnDragging={false} />
-        <Editing mode="popup" allowUpdating allowAdding allowDeleting>
+        <Editing mode="form" allowUpdating allowAdding allowDeleting>
           <Form>
             <Popup title="Produit" showTitle width={700} />
             <Item itemType="group" colCount={2} colSpan={2}>
               <Item dataField="name" />
               <Item dataField="categoryName" />
             </Item>
-            <Item itemType="group" caption="Images" colCount={2} colSpan={2}>
-              <input
-                type="file"
-                ref={fileUploaderRef}
-                className="my-3"
-                multiple
-              />
-              <DisplayCurrentProductImages
-                productTypeId={currentlyEditingProductType?.id}
-                imagesUrls={currentlyEditingProductType?.imagesUrls || []}
-              />
-            </Item>
+            <Item
+              itemType="group"
+              caption="Images"
+              colCount={2}
+              colSpan={2}
+              render={() => (
+                <>
+                  <input
+                    type="file"
+                    ref={fileUploaderRef}
+                    className="my-3"
+                    multiple
+                    onChange={() => {
+                      onRowImageUpdating({
+                        images:
+                          fileUploaderRef?.current?.files ||
+                          ([] as unknown as FileList),
+                        productTypeId: currentlyEditingProductType?.id,
+                      });
+                    }}
+                  />
+                  <DisplayCurrentProductImages
+                    productTypeId={currentlyEditingProductType?.id}
+                    imagesUrls={currentlyEditingProductType?.imagesUrls || []}
+                  />
+                </>
+              )}
+            ></Item>
           </Form>
         </Editing>
 

@@ -1,6 +1,7 @@
 import { useUpdateCategoryName } from "../../../api/category";
 import { useUploadProductTypeImagesToBucket } from "../../../api/images";
 import { useUpdateProductTypeName } from "../../../api/products/product-type";
+import { ProductType } from "../../../types";
 import { displayToast } from "../../../utils/displayToast";
 import { OnRowEditingEvent } from "../types";
 
@@ -76,4 +77,41 @@ export const useOnRowUpdating = () => {
   };
 
   return { onRowUpdating };
+};
+
+export const useOnRowImageUpdating = () => {
+  const { mutateAsync: uploadProductImagesToBuket } =
+    useUploadProductTypeImagesToBucket();
+  const onRowImageUpdating = async ({
+    productTypeId,
+    images,
+  }: {
+    productTypeId?: ProductType["id"];
+    images: FileList;
+  }) => {
+    const imagesArr = Array.from(images || []);
+
+    if (!imagesArr?.length) return;
+    if (!productTypeId) {
+      displayToast({
+        type: "error",
+        message: "⚠️⚠️ Il manque le  productTypeId... voir avec tommy",
+      });
+      return;
+    }
+
+    const { allData, errors } = await uploadProductImagesToBuket({
+      images: imagesArr,
+      productTypeId,
+    });
+
+    if (errors?.length) {
+      displayToast({
+        message: `Error lors de l'upload d'une ou plusieurs images`,
+        type: "error",
+      });
+      return;
+    }
+  };
+  return { onRowImageUpdating };
 };

@@ -30,6 +30,8 @@ export const DisplayCurrentProductImages = ({
       imageName,
     });
   };
+
+  console.log(imagesUrls?.length, isEdit);
   return (
     <div className="d-flex flex-wrap justify-content-around">
       {imagesUrls.map((imageUrl) => (
