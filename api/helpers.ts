@@ -12,8 +12,6 @@ export const handleCompletedSessionEvent = async (event: any) => {
       event.data.object.id
     );
 
-    console.log("command retreived");
-
     // 1 - update les stocks en bdd
     const productsWithUpdatedStocks = await updateStocksAfterValidatedOrder(
       command

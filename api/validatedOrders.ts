@@ -18,7 +18,6 @@ type UpsertValidatedOrderDTO = Omit<ValidatedOrder, "id" | "created_at">;
 export const upsertValidatedOrder = async (
   upsertValidatedOrderData: UpsertValidatedOrderDTO
 ) => {
-  console.log("before upsertValidatedOrder");
   const { error } = await supabase.from(TableConstants.validatedOrder).upsert(
     {
       stripeOrderId: upsertValidatedOrderData.stripeOrderId,
@@ -32,6 +31,5 @@ export const upsertValidatedOrder = async (
       onConflict: "stripeOrderId",
     }
   );
-  console.log("after upsertValidatedOrder", error);
   error && handlePostgresError(error);
 };

@@ -22,14 +22,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
     // Handle the event
     if (event.type === "checkout.session.completed") {
-      console.log("event checkout.session.completed received");
       await handleCompletedSessionEvent(event);
-      console.log("after event");
       res.status(200).end();
       return;
     }
   } catch (error: any) {
-    console.log(error);
+    console.error("err6", error.message);
     return res.status(400).send(`Webhook error: ${error.message}`);
   }
 

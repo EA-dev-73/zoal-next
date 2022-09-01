@@ -45,7 +45,6 @@ export const insertValidatedOrder = (
   command: any,
   productsWithUpdatedStocks: ProductsWithUpdatedStock[]
 ) => {
-  console.log("inside insertValidatedOrder");
   return upsertValidatedOrder({
     hasBeenSent: false,
     isArchived: false,
