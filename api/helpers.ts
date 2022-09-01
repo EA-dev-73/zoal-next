@@ -20,7 +20,7 @@ export const handleCompletedSessionEvent = async (event: any) => {
     );
 
     // 2 - Insert des données de la validatedOrder en base
-    insertValidatedOrder(command, productsWithUpdatedStocks);
+    await insertValidatedOrder(command, productsWithUpdatedStocks);
 
     // l'update du localStorage sera ensuite faite coté client
   } catch (error) {
