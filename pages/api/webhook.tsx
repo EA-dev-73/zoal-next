@@ -22,7 +22,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
     // Handle the event
     if (event.type === "checkout.session.completed") {
+      console.log("event checkout.session.completed received");
       handleCompletedSessionEvent(event);
+      console.log("after event");
       res.status(200).end();
       return;
     }
