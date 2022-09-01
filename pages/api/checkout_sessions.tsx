@@ -4,14 +4,13 @@ import { fetchProductsFromIds } from "../../api/products/product";
 import { Product } from "../../types";
 import { generateStripePriceData, generateStripeShippingFees } from "./lib";
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2022-08-21",
-});
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("HERE");
   if (req.method === "POST") {
     const cartContent: Product["id"][] = JSON.parse(req.body);
     try {
@@ -57,6 +56,7 @@ export default async function handler(
         },
         metadata: generateMetadata(),
       });
+      console.log("session", session);
       res.json({ url: session.url });
     } catch (err: any) {
       res.status(err.statusCode || 500).json(err.message);
