@@ -592,18 +592,6 @@ label {
   font-size: 150%;
 }
 
-.blocs-accueil {
-  margin: auto;
-  max-width: 70%;
-}
-.blocs-accueil h2 {
-  margin: 30px;
-}
-
-.blocs-accueil p {
-  text-align: center;
-}
-
 .main-layout {
   margin: auto;
   max-width: 90%;
@@ -611,4 +599,8 @@ label {
 
 .img-preview {
   cursor: zoom-in;
+}
+
+.home-image {
+  margin: auto;
 }

@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
+import Image from "next/image";
 import { useEffect } from "react";
+import { isMobile } from "react-device-detect";
 import { Layout } from "../components/Layout";
 import { displayToast } from "../utils/displayToast";
 import { clearLocalStorageCart } from "../utils/localStorageHelpers";
@@ -30,19 +32,32 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className="blocs-accueil d-flex flex-column justify-content-center">
+      <div className="d-flex flex-column ">
         <div>
-          <h2>Présentation</h2>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit rem
-            magni, doloribus assumenda quaerat aperiam praesentium sed ex ad
-            omnis, ullam, quod laborum! Vel incidunt itaque doloremque
-            reprehenderit, tempora quidem.
+          <div
+            className="home-image"
+            style={{ maxWidth: isMobile ? "90%" : "30%" }}
+          >
+            <Image
+              src="/images/nav-logo.jpg"
+              alt="logo"
+              className="img-profil img-fluid rounded-circle mx-auto my-4"
+              width="90%"
+              height="90%"
+              layout="responsive"
+              objectFit="fill"
+            />
+          </div>
+          <p className="text-center mt-4">
+            Ici il faudra faire une présentation
+            <br />
+            Pour dire des choses
+            <br />
+            Tres cool
           </p>
         </div>
         <div>
-          <h2>Socials</h2>
-          <p>
+          <p className="text-center my-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="32"
