@@ -9,7 +9,8 @@ import { uniq } from "lodash";
 import { TableConstants } from "../../utils/TableConstants";
 import { handlePostgresError } from "../../utils/handleError";
 import { DeleteProductDTO, UpsertProductDTO } from "./types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { reactQueryKeys } from "../../react-query-keys";
 
 export const getProductById = async (
   id: Product["id"]
@@ -40,6 +41,12 @@ export const fetchProductsFromIds = async (
     .in("id", uniq(productIds));
   error && handlePostgresError(error);
   return products;
+};
+
+export const useFetchProductsFromIds = (productIds: Product["id"][]) => {
+  return useQuery([reactQueryKeys.products, ...productIds], () =>
+    fetchProductsFromIds(productIds)
+  );
 };
 
 export const fetchProductWithTypeDataAndCategory = async (

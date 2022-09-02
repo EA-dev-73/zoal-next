@@ -1,34 +1,63 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { fetchProductsFromIds } from "../api/products/product";
+import { useFetchProductsFromIds } from "../api/products/product";
 import { cartState } from "../context/cart";
-import { Product, ProductWithTypeAndQuantity } from "../types";
+import { Product } from "../types";
 import { addQuantityToProducts } from "./addItemsQuantityToProducts";
+import { displayToast } from "./displayToast";
+import { useRemoveItemFromCart } from "./localStorageHelpers";
 
 export const useProductsForCart = () => {
   const cartContent = useRecoilValue(cartState);
-  const [products, setProducts] = useState<ProductWithTypeAndQuantity[]>([]);
-  const [quantityError, setQuantityError] = useState<boolean>(false);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const { data: rawProducts } = useFetchProductsFromIds(cartContent);
+  const removeItemFromCart = useRemoveItemFromCart();
+
+  const getDeletedProductsIds = useCallback(() => {
+    if (!cartContent?.length || !rawProducts?.length) return;
+    return (cartContent || []).reduce<number[]>(
+      (deletedProductsIds, productId) => {
+        if ((rawProducts || []).some((x) => x.id === productId))
+          return deletedProductsIds;
+        return [...deletedProductsIds, productId];
+      },
+      []
+    );
+  }, [cartContent, rawProducts]);
+
+  const deletedProductsIds = useMemo(
+    () => getDeletedProductsIds(),
+    [getDeletedProductsIds]
+  );
 
   useEffect(() => {
-    //TODO refacto
-    fetchProductsFromIds(cartContent).then((products) => {
-      setLoadingProducts(false);
-      const withQuantity = addQuantityToProducts(products || []);
-      setProducts(withQuantity);
-      const amountOfProductInLocalStorage = (productId: Product["id"]) =>
-        cartContent.filter((id) => id === productId).length;
-      const hasQuantityError = (withQuantity || []).some(
-        (product) => product.stock < amountOfProductInLocalStorage(product.id)
-      );
-      setQuantityError(hasQuantityError);
-    });
-  }, [cartContent]);
+    if (deletedProductsIds?.length) {
+      displayToast({
+        type: "warning",
+        message: "Certains articles de votre panier ne sont plus disponible",
+      });
+
+      for (const productId of deletedProductsIds) {
+        removeItemFromCart(productId);
+      }
+    }
+  }, [deletedProductsIds, removeItemFromCart]);
+
+  const withQuantity = useMemo(
+    () => addQuantityToProducts(rawProducts || []),
+    [rawProducts]
+  );
+
+  const amountOfProductInLocalStorage = (productId: Product["id"]) =>
+    cartContent.filter((id) => id === productId).length;
+  const hasQuantityError = (withQuantity || []).some(
+    (product) => product.stock < amountOfProductInLocalStorage(product.id)
+  );
 
   return {
-    loadingProducts,
-    products,
-    quantityError,
+    loadingProducts: !withQuantity,
+    products: withQuantity,
+    quantityError: hasQuantityError,
+    hasDeletedProducts: getDeletedProductsIds,
   };
 };
