@@ -88,7 +88,7 @@ export const Nav = () => {
               </li>
               {userIsAdmin && (
                 <ul className="navbar-nav">
-                  <li className="nav-item big">Gestion ⬇️</li>
+                  <li className="nav-item big">Arrière boutique ⬇️</li>
                   <li className="nav-item">
                     <Link passHref href="/gestion-des-produits">
                       <a className="nav-link">Produits</a>

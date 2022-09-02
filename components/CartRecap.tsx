@@ -40,7 +40,8 @@ export const CartRecap = ({ isRecap }: Props) => {
     }
   };
 
-  if (isEmptyCart && !isRecap) return <p>Votre panier est vide</p>;
+  if (isEmptyCart && !isRecap)
+    return <p className="text-center my-4">Votre panier est vide</p>;
 
   const handleFinalizeCommand = async () => {
     try {
