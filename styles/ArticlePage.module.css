@@ -1,0 +1,26 @@
+.rightBlock,
+.leftBlock {
+  width: 40%;
+}
+
+.rightBlock h2 {
+  font-size: 180%;
+  text-align: center;
+}
+
+.images-container {
+  margin: 30px;
+}
+
+.product-name {
+  margin-bottom: 40%;
+}
+
+.stick-to-bottom {
+  bottom: 60%;
+  position: fixed;
+}
+
+.mobile h2 {
+  margin-bottom: 30px;
+}

@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "devextreme/dist/css/dx.light.css";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import type { AppProps } from "next/app";
 import { locale, loadMessages } from "devextreme/localization";

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useDeleteImage } from "../../api/images";
 import { ProductType, ProductTypeWithImages } from "../../types";
 import { displayToast } from "../../utils/displayToast";
-import dynamic from "next/dynamic";
 import ImageViewer from "react-simple-image-viewer";
 
 type Props = {

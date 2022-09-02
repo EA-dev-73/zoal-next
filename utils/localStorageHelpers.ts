@@ -22,8 +22,8 @@ export const getCartContentFromLocalStorage = (): Product["id"][] => {
 
 export const useAddProductIdToCart = () => {
   const [cartContent, setCartContent] = useRecoilState(cartState);
-  return (itemId: Product["id"]) => {
-    const newCartContent = [...cartContent, itemId];
+  return (itemId: Product["id"], quantity = 1) => {
+    const newCartContent = [...cartContent, ...Array(quantity).fill(itemId)];
     if (typeof window !== "undefined") {
       localStorage.setItem(
         LOCAL_STORAGE_CART_KEY,

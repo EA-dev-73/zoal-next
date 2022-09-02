@@ -30,7 +30,8 @@ export const Layout = ({
   return (
     <div className={insideContainer && !isMobile ? "main-layout" : ""}>
       <Nav />
-      <h1 className="title">ZOAL MNCH</h1>
+      {!isMobile && <h1 className="title">ZOAL MNCH</h1>}
+
       {handleAuth(children)}
       {needsAuth && isLogged && (
         <div className="stripe-link-container">

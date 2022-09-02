@@ -17,9 +17,9 @@ export const useOnRowUpdating = () => {
     const { data, error } = await upsertProduct({
       productId: e.oldData.id,
       price: e.newData.price || e.oldData.price,
-      shippingFees: e.newData.shippingFees || e.oldData.shippingFees,
+      shippingFees: e.newData.shippingFees ?? e.oldData.shippingFees,
       size: e.newData.size || e.oldData.size,
-      stock: e.newData.stock || e.oldData.stock,
+      stock: e.newData.stock ?? e.oldData.stock,
       productTypeId,
     });
 
