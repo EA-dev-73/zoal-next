@@ -48,7 +48,7 @@ const ProductPage = () => {
   );
 
   const noStock = useMemo(() => {
-    if (!productFromSelectedSize) return false;
+    if (!productFromSelectedSize) return true;
     return productFromSelectedSize?.stock < 1;
   }, [productFromSelectedSize]);
 
@@ -83,10 +83,7 @@ const ProductPage = () => {
           <DisplayArticlePageImages imagesUrls={productImages || []} />
         </div>
         <div className={isMobile ? styles.mobile : styles.rightBlock}>
-          {!isMobile ? (
-            <h2>{productType?.name || "Produit indisponible"}</h2>
-          ) : null}
-          {!productType?.products?.length || !noStock ? (
+          {!productType?.products?.length || noStock ? (
             <p className="text-center my-4">Plus de stocks disponible</p>
           ) : (
             <ArticleIdForm
