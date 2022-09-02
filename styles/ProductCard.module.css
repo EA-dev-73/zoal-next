@@ -1,6 +1,6 @@
 .product-card {
   cursor: pointer;
-  margin-left:3vw;
+  margin: 3vw;
 }
 
 .image {
@@ -8,7 +8,3 @@
   max-height: 300px;
   object-fit: cover;
 }
-
-/* .imageText {
-  text-align: center;
-} */
