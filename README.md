@@ -4,6 +4,8 @@
 
 ## Todo list
 
+- [ ] fix update d'une categorie avec une categorie qui existe deja
+- [ ] fix nombre delements dans le panier faux si des produits on ete supprimes en base
 - [ ] fix suppression des images du bucket quand un productType est supprimé
 - [ ] style
 - [ ] améliorer le référencement naturel
