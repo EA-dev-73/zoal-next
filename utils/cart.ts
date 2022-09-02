@@ -14,7 +14,7 @@ export const useProductsForCart = () => {
   const removeItemFromCart = useRemoveItemFromCart();
 
   const getDeletedProductsIds = useCallback(() => {
-    if (!cartContent?.length || !rawProducts?.length) return;
+    if (!cartContent?.length || !rawProducts) return;
     return (cartContent || []).reduce<number[]>(
       (deletedProductsIds, productId) => {
         if ((rawProducts || []).some((x) => x.id === productId))

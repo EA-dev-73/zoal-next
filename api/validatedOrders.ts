@@ -15,17 +15,22 @@ export const getValidatedOrders = async () => {
 
 type UpsertValidatedOrderDTO = Omit<ValidatedOrder, "id" | "created_at">;
 
-export const upsertValidatedOrder = async (
-  upsertValidatedOrderData: UpsertValidatedOrderDTO
-) => {
+export const upsertValidatedOrder = async ({
+  hasBeenSent,
+  isArchived,
+  orderContent,
+  shippingAddress,
+  stripeOrderId,
+  stripePaymentUrl,
+}: UpsertValidatedOrderDTO) => {
   const { error } = await supabase.from(TableConstants.validatedOrder).upsert(
     {
-      stripeOrderId: upsertValidatedOrderData.stripeOrderId,
-      orderContent: upsertValidatedOrderData.orderContent,
-      hasBeenSent: upsertValidatedOrderData.hasBeenSent,
-      stripePaymentUrl: upsertValidatedOrderData.stripePaymentUrl,
-      shippingAddress: upsertValidatedOrderData.shippingAddress,
-      isArchived: upsertValidatedOrderData.isArchived,
+      stripeOrderId,
+      orderContent,
+      hasBeenSent,
+      stripePaymentUrl,
+      shippingAddress,
+      isArchived,
     },
     {
       onConflict: "stripeOrderId",
