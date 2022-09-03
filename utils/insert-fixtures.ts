@@ -2,16 +2,18 @@ import { supabase } from "./supabaseClient";
 import faker from "@faker-js/faker";
 import { uniqBy } from "lodash";
 import { PostgrestError } from "@supabase/supabase-js";
-import { TableConstants } from "./TableConstants";
+import { BucketsConstants, TableConstants } from "./TableConstants";
 
-const CATEGORIES_TO_GENERATE = 0;
-const PRODUCT_TYPES_TO_GENERATE = 0;
-const PRODUCTS_TO_GENERATE = 0;
+const CATEGORIES_TO_GENERATE = 10;
+const PRODUCT_TYPES_TO_GENERATE = 30;
+const PRODUCTS_TO_GENERATE = 50;
 
 const cleanDatabase = async () => {
+  console.log("cleaning database...");
+  await supabase.from(TableConstants.validatedOrder).delete().neq("id", 0);
+  await supabase.from(TableConstants.products).delete().neq("id", 0);
   await supabase.from(TableConstants.productType).delete().neq("id", 0);
   await supabase.from(TableConstants.productCategory).delete().neq("id", 0);
-  await supabase.from(TableConstants.products).delete().neq("id", 0);
 };
 
 const handleError = (error: PostgrestError | null) => {
@@ -36,9 +38,6 @@ const generateCategories = async () => {
   handleError(error);
 
   createdCategoryIds.push(...(data || []).map((x) => x.id));
-  console.info(
-    `Fausses categories insérées en base : ${CATEGORIES_TO_GENERATE} ✅`
-  );
   return { createdCategoryIds };
 };
 
@@ -52,18 +51,14 @@ const generateProductTypes = async (createdCategoryIds: string[]) => {
         createdCategoryIds[
           Math.floor(Math.random() * createdCategoryIds.length)
         ],
-      imageBucketKey: faker.random.image(),
     });
-    console.info(productTypes);
   }
   const { data, error } = await supabase
     .from(TableConstants.productType)
     .insert(uniqBy(productTypes, "name"));
   handleError(error);
   createdProductTypeIds.push(...(data || []).map((x) => x.id));
-  console.info(
-    `Faux produits insérés en base : ${PRODUCT_TYPES_TO_GENERATE} ✅`
-  );
+
   return { createdCategoryIds, createdProductTypeIds };
 };
 
@@ -93,12 +88,28 @@ const generateProducts = async (createdProductTypeIds: string[]) => {
 };
 
 export const insertFixtures = async () => {
-  await cleanDatabase();
-  console.info("Database vidée ✅");
-  const { createdCategoryIds } = await generateCategories();
-  const { createdProductTypeIds } = await generateProductTypes(
-    createdCategoryIds
-  );
-  await generateProducts(createdProductTypeIds);
-  console.info("Fixtures appliquées ✅");
+  try {
+    await cleanDatabase();
+    console.info("Database vidée ✅");
+    console.info(`Création des catégories : ${CATEGORIES_TO_GENERATE}`);
+    const { createdCategoryIds } = await generateCategories();
+    console.info(
+      `Fausses categories insérées en base : ${CATEGORIES_TO_GENERATE} ✅`
+    );
+    console.info(`Création des produits types : ${PRODUCT_TYPES_TO_GENERATE}`);
+    const { createdProductTypeIds } = await generateProductTypes(
+      createdCategoryIds
+    );
+    console.info(
+      `Faux produits types insérés en base : ${PRODUCT_TYPES_TO_GENERATE} ✅`
+    );
+    console.info(`Création des produits : ${PRODUCT_TYPES_TO_GENERATE}`);
+
+    await generateProducts(createdProductTypeIds);
+    console.info(`Faux produits insérés en base : ${PRODUCTS_TO_GENERATE} ✅`);
+
+    console.info("Fixtures appliquées ✅");
+  } catch (error: any) {
+    console.error("error while inserting fixtures", error?.message);
+  }
 };

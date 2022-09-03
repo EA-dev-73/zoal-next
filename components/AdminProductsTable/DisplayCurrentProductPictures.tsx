@@ -35,9 +35,9 @@ export const DisplayCurrentProductImages = ({
   };
 
   return (
-    <div className="d-flex flex-wrap justify-content-around">
+    <div className="d-flex flex-wrap justify-content-start">
       {imagesUrls.map((imageUrl, idx) => (
-        <div key={imageUrl} className="d-flex flex-column">
+        <div key={imageUrl} className="d-flex flex-column mx-2">
           <Image
             src={imageUrl}
             width={100}

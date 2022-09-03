@@ -49,9 +49,9 @@ const Home: NextPage = () => {
             />
           </div>
           <p className="text-center mt-4">
-            Ici il faudra faire une présentation
+            Ici il faudra écrire du texte
             <br />
-            Pour dire des choses
+            Et dire des choses
             <br />
             Tres cool
           </p>

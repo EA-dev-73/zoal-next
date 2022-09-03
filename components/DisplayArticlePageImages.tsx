@@ -15,7 +15,10 @@ export const DisplayArticlePageImages = ({ imagesUrls }: Props) => {
     <>
       <div className="d-flex flex-column">
         {imagesUrls.map((image, idx) => (
-          <div key={image} className={styles["images-container"]}>
+          <div
+            key={image}
+            className={`${styles["images-container"]} img-preview`}
+          >
             <Image
               src={image}
               alt="image du produit"
