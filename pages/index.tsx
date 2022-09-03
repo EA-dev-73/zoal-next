@@ -36,7 +36,7 @@ const Home: NextPage = () => {
         <div>
           <div
             className="home-image"
-            style={{ maxWidth: isMobile ? "90%" : "30%" }}
+            style={{ maxWidth: isMobile ? "90%" : "20%" }}
           >
             <Image
               src="/images/nav-logo.jpg"

@@ -1,13 +1,20 @@
-import { useUpdateCategoryName } from "../../../api/category";
+import { useCategories, useUpdateCategoryName } from "../../../api/category";
 import { useUploadProductTypeImagesToBucket } from "../../../api/images";
-import { useUpdateProductTypeName } from "../../../api/products/product-type";
+import {
+  useProductTypes,
+  useUpdateProductTypeName,
+  useUpsertProductType,
+} from "../../../api/products/product-type";
 import { ProductType } from "../../../types";
 import { displayToast } from "../../../utils/displayToast";
 import { OnRowEditingEvent } from "../types";
 
 export const useOnRowUpdating = () => {
+  const { data: existingCategories } = useCategories();
+  const { data: existingProductTypes } = useProductTypes();
   const { mutateAsync: updateCategoryName } = useUpdateCategoryName();
   const { mutateAsync: updateProductTypeName } = useUpdateProductTypeName();
+  const { mutateAsync: upsertProductType } = useUpsertProductType();
   const { mutateAsync: uploadProductImagesToBuket } =
     useUploadProductTypeImagesToBucket();
 
@@ -20,10 +27,14 @@ export const useOnRowUpdating = () => {
 
     // update category
 
+    const categoryAlreadyExist = (existingCategories || []).find(
+      (x) => x.name === categoryName
+    );
+
     if (categoryId && categoryName) {
       const { error: errorUpdatingCategory } = await updateCategoryName({
-        id: categoryId,
-        name: categoryName,
+        id: categoryAlreadyExist?.id || categoryId,
+        name: categoryAlreadyExist?.name || categoryName,
       });
       if (errorUpdatingCategory) {
         displayToast({
@@ -54,6 +65,18 @@ export const useOnRowUpdating = () => {
           type: "error",
         });
         return;
+      }
+    }
+    const existingProductTypesForCategory = (existingProductTypes || []).filter(
+      (x) => x.productCategory.id === categoryId
+    );
+
+    if (categoryAlreadyExist && existingProductTypesForCategory?.length) {
+      for (const existingProductType of existingProductTypesForCategory) {
+        await upsertProductType({
+          categoryId: categoryAlreadyExist.id,
+          name: existingProductType.name,
+        });
       }
     }
     const imagesArr = Array.from(images || []);
