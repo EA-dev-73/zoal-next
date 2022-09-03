@@ -4,6 +4,7 @@
 
 ## Todo list
 
+- [ ] accueil : l'image est coupée selon la taille decran (ex sur mon telephone)
 - [ ] chargement des images ralentissent les pages shop | shop?:category | article/:id
 - [ ] update images => interface non refresh (demande un f5)
 - [ ] fix suppression des images du bucket quand un productType est supprimé
