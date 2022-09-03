@@ -8,6 +8,8 @@
 - [ ] update images => interface non refresh (demande un f5)
 - [ ] fix suppression des images du bucket quand un productType est supprimé
 - [ ] pouvoir fermer les toasts en cliquant dessus
+- [ ] nom de domaine
+- [ ] mettre a jour l'accueil (texte + lien insta)
 - [ ] style
 - [ ] améliorer le référencement naturel
 - [ ] sécuriser stripe (var d'env server sur vercel OK ??) + supabase (RLS UPDATE/INSERT products, validatedOrder)
