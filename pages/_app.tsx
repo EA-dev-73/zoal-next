@@ -19,7 +19,7 @@ function ZoalApp({ Component, pageProps }: AppProps) {
     import("bootstrap/dist/js/bootstrap"!);
   }, []);
 
-  //dx en francais
+  //dx en langue francaise
   loadMessages(frMessages);
   locale("fr-FR");
 
