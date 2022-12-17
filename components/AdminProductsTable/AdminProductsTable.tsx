@@ -52,12 +52,13 @@ export const AdminProductsTable = () => {
             fileUploaderRef?.current?.files || ([] as unknown as FileList)
           )
         }
-        onRowUpdating={(e) =>
-          onRowUpdating(
+        onRowUpdating={(e) => {
+          console.log({ fileRef: fileUploaderRef?.current });
+          return onRowUpdating(
             e,
             fileUploaderRef?.current?.files || ([] as unknown as FileList)
-          )
-        }
+          );
+        }}
         onRowRemoving={async (e) => {
           const productTypeId = e.data.id;
           setProductTypeIdToDelete(productTypeId);
