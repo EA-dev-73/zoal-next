@@ -7,5 +7,5 @@ export const TableConstants = {
 
 export const BucketsConstants = {
   products:
-    process.env.NODE_ENV === "production" ? "products_prod" : "products",
+    process.env.NODE_ENV === "production" ? "products-prod" : "products",
 };
