@@ -18,11 +18,13 @@ export const useUploadProductTypeImagesToBucket = () => {
       productTypeId: ProductType["id"];
       images: File[];
     }) => {
+      console.log({ productTypeId, images });
       const { allData, errors } = (images || []).reduce<{
         allData: any[];
         errors: any[];
       }>(
         ({ allData, errors }, image) => {
+          console.log({ allData, image });
           supabase.storage
             .from(BucketsConstants.products)
             .upload(

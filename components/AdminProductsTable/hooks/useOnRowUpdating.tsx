@@ -109,21 +109,15 @@ export const useOnRowImageUpdating = () => {
     productTypeId,
     images,
   }: {
-    productTypeId?: ProductType["id"];
+    productTypeId: ProductType["id"];
     images: FileList;
   }) => {
+    console.log("onRowImageUpdating", { productTypeId, images });
     const imagesArr = Array.from(images || []);
 
     if (!imagesArr?.length) return;
-    if (!productTypeId) {
-      displayToast({
-        type: "error",
-        message: "⚠️⚠️ Il manque le  productTypeId... voir avec tommy",
-      });
-      return;
-    }
 
-    const { allData, errors } = await uploadProductImagesToBuket({
+    const { errors } = await uploadProductImagesToBuket({
       images: imagesArr,
       productTypeId,
     });

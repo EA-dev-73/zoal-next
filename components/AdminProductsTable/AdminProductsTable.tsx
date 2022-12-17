@@ -91,11 +91,12 @@ export const AdminProductsTable = () => {
                     className="my-3"
                     multiple
                     onChange={() => {
+                      if (!currentlyEditingProductType?.id) return;
                       onRowImageUpdating({
                         images:
                           fileUploaderRef?.current?.files ||
                           ([] as unknown as FileList),
-                        productTypeId: currentlyEditingProductType?.id,
+                        productTypeId: currentlyEditingProductType.id,
                       });
                     }}
                   />

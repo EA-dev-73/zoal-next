@@ -37,6 +37,7 @@ export const useOnRowInserting = () => {
         categoryId,
         name: e.data.name,
       });
+    console.log("%c%s", "color: #00e600", createdProductType);
 
     if (errorCreatingProductType) {
       displayToast({
@@ -54,6 +55,7 @@ export const useOnRowInserting = () => {
     // upload images
 
     const productTypeId = createdProductType?.[0]?.id;
+    console.log("%c%s", "color: #ff0000", productTypeId);
 
     const imagesArr = Array.from(images || []);
 
