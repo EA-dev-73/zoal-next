@@ -100,6 +100,11 @@ export const Nav = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link passHref href="/gestion-des-images">
+                      <a className="nav-link">Images</a>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <span className="nav-link cursor-pointer" onClick={logOut}>
                       Déconnexion
                     </span>

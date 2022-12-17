@@ -1,11 +1,9 @@
 import { useCategories, useUpdateCategoryName } from "../../../api/category";
-import { useUploadProductTypeImagesToBucket } from "../../../api/images";
 import {
   useProductTypes,
   useUpdateProductTypeName,
   useUpsertProductType,
 } from "../../../api/products/product-type";
-import { ProductType } from "../../../types";
 import { displayToast } from "../../../utils/displayToast";
 import { OnRowEditingEvent } from "../types";
 
@@ -15,17 +13,13 @@ export const useOnRowUpdating = () => {
   const { mutateAsync: updateCategoryName } = useUpdateCategoryName();
   const { mutateAsync: updateProductTypeName } = useUpdateProductTypeName();
   const { mutateAsync: upsertProductType } = useUpsertProductType();
-  const { mutateAsync: uploadProductImagesToBuket } =
-    useUploadProductTypeImagesToBucket();
 
-  const onRowUpdating = async (e: OnRowEditingEvent, images: FileList) => {
+  const onRowUpdating = async (e: OnRowEditingEvent) => {
     const [productTypeId, productTypeName] = [e.oldData?.id, e.newData?.name];
     const [categoryId, categoryName] = [
       e.oldData?.productCategory?.id,
       e.newData?.categoryName,
     ];
-
-    console.log("%c%s", "color: #00a3cc", "updating category");
 
     // update category
 
@@ -47,7 +41,6 @@ export const useOnRowUpdating = () => {
       }
     }
 
-    console.log("%c%s", "color: #aa00ff", "updating product type");
     // update product type
 
     if (!productTypeId) {
@@ -82,58 +75,7 @@ export const useOnRowUpdating = () => {
         });
       }
     }
-    const imagesArr = Array.from(images || []);
-
-    console.log("%c%s", "color: #e50000", "updating images", imagesArr);
-
-    if (!imagesArr?.length) return;
-
-    // upload images
-
-    const { allData, errors } = await uploadProductImagesToBuket({
-      images: imagesArr,
-      productTypeId,
-    });
-
-    if (errors?.length) {
-      displayToast({
-        message: `Error lors de l'upload d'une ou plusieurs images`,
-        type: "error",
-      });
-      return;
-    }
   };
 
   return { onRowUpdating };
-};
-
-export const useOnRowImageUpdating = () => {
-  const { mutateAsync: uploadProductImagesToBuket } =
-    useUploadProductTypeImagesToBucket();
-  const onRowImageUpdating = async ({
-    productTypeId,
-    images,
-  }: {
-    productTypeId: ProductType["id"];
-    images: FileList;
-  }) => {
-    console.log("onRowImageUpdating", { productTypeId, images });
-    const imagesArr = Array.from(images || []);
-
-    if (!imagesArr?.length) return;
-
-    const { errors } = await uploadProductImagesToBuket({
-      images: imagesArr,
-      productTypeId,
-    });
-
-    if (errors?.length) {
-      displayToast({
-        message: `Error lors de l'upload d'une ou plusieurs images`,
-        type: "error",
-      });
-      return;
-    }
-  };
-  return { onRowImageUpdating };
 };

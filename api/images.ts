@@ -18,13 +18,11 @@ export const useUploadProductTypeImagesToBucket = () => {
       productTypeId: ProductType["id"];
       images: File[];
     }) => {
-      console.log({ productTypeId, images });
       const { allData, errors } = (images || []).reduce<{
         allData: any[];
         errors: any[];
       }>(
         ({ allData, errors }, image) => {
-          console.log({ allData, image });
           supabase.storage
             .from(BucketsConstants.products)
             .upload(
@@ -49,7 +47,7 @@ export const useUploadProductTypeImagesToBucket = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries();
+        queryClient.invalidateQueries([]);
       },
       onError: (err: PostgrestError) => handlePostgresError(err),
     }
@@ -144,14 +142,16 @@ export const useBucketImagesPublicUrlsDic = ({
 export const useProductTypesImages = ({
   productsTypesIds,
 }: {
-  productsTypesIds: ProductType["id"][];
+  productsTypesIds?: ProductType["id"][];
 }) => {
-  const { dic, res } = useListImagesForProductsTypes({ productsTypesIds });
+  const { dic, res } = useListImagesForProductsTypes({
+    productsTypesIds: productsTypesIds || [],
+  });
 
   const isLoadingImages = res.some((x) => x.isLoading);
 
   const dicImagesUrls = useBucketImagesPublicUrlsDic({
-    productsTypesIds,
+    productsTypesIds: productsTypesIds || [],
     imagesPerProductDic: dic,
   });
 

@@ -34,6 +34,8 @@ export const DisplayCurrentProductImages = ({
     });
   };
 
+  if (!imagesUrls?.length) return <p>nada 🤔</p>;
+
   return (
     <div className="d-flex flex-wrap justify-content-start">
       {imagesUrls.map((imageUrl, idx) => (

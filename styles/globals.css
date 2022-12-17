@@ -604,3 +604,7 @@ label {
 .home-image {
   margin: auto;
 }
+
+.navbar {
+  overflow-y: auto;
+}

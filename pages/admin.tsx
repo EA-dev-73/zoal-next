@@ -8,6 +8,8 @@ export default function Admin() {
       <Link href="/gestion-des-produits">Gestion des produits</Link>
       <br />
       <Link href="/gestion-des-commandes">Gestion des commandes</Link>
+      <br />
+      <Link href="/gestion-des-images">Gestion des images</Link>
     </Layout>
   );
 }

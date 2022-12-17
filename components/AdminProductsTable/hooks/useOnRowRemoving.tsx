@@ -1,5 +1,4 @@
 import { useDeleteAllImagesForProductType } from "../../../api/images";
-import { useDeleteProduct } from "../../../api/products/product";
 import { useDeleteProductType } from "../../../api/products/product-type";
 import { ProductType } from "../../../types";
 import { displayToast } from "../../../utils/displayToast";

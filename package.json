@@ -10,6 +10,9 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@mantine/core": "^5.9.5",
+    "@mantine/hooks": "^5.9.5",
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.25.0",
     "@supabase/supabase-js": "^1.30.7",

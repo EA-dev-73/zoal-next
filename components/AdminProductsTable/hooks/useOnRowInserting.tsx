@@ -1,5 +1,4 @@
 import { useUpsertCategory } from "../../../api/category";
-import { useUploadProductTypeImagesToBucket } from "../../../api/images";
 import { useUpsertProductType } from "../../../api/products/product-type";
 import { displayToast } from "../../../utils/displayToast";
 import { OnRowInsertingEvent } from "../types";
@@ -7,10 +6,8 @@ import { OnRowInsertingEvent } from "../types";
 export const useOnRowInserting = () => {
   const { mutateAsync: upsertCategory } = useUpsertCategory();
   const { mutateAsync: upsertProductType } = useUpsertProductType();
-  const { mutateAsync: uploadProductImagesToBuket } =
-    useUploadProductTypeImagesToBucket();
 
-  const onRowInserting = async (e: OnRowInsertingEvent, images: FileList) => {
+  const onRowInserting = async (e: OnRowInsertingEvent) => {
     // create category
     const { data: createdCategory, error: errorCreatingCategory } =
       await upsertCategory({
@@ -37,7 +34,6 @@ export const useOnRowInserting = () => {
         categoryId,
         name: e.data.name,
       });
-    console.log("%c%s", "color: #00e600", createdProductType);
 
     if (errorCreatingProductType) {
       displayToast({
@@ -51,26 +47,6 @@ export const useOnRowInserting = () => {
         type: "success",
       });
     }
-
-    // upload images
-
-    const productTypeId = createdProductType?.[0]?.id;
-    console.log("%c%s", "color: #ff0000", productTypeId);
-
-    const imagesArr = Array.from(images || []);
-
-    await uploadProductImagesToBuket({
-      images: imagesArr,
-      productTypeId,
-    });
-
-    // if (errors?.length) {
-    //   displayToast({
-    //     message: `Error lors de l'upload d'une ou plusieurs images`,
-    //     type: "error",
-    //   });
-    //   return;
-    // }
   };
 
   return { onRowInserting };
