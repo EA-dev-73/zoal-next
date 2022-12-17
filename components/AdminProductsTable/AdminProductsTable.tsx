@@ -24,7 +24,6 @@ import { useOnRowRemoving } from "./hooks/useOnRowRemoving";
 
 export const AdminProductsTable = () => {
   const fileUploaderRef = useRef<HTMLInputElement>(null);
-  console.log({ fileUploaderRef });
   const { products, isLoading } = useProductsForAdminTable();
   const [currentlyEditingProductType, setCurrentlyEditingProductType] =
     useState<ProductForAdminTable | null>(null);
@@ -93,6 +92,7 @@ export const AdminProductsTable = () => {
                     className="my-3"
                     multiple
                     onChange={() => {
+                      console.log(fileUploaderRef?.current?.files);
                       console.log("inside imageref onchange ");
                       if (!currentlyEditingProductType?.id) return;
                       onRowImageUpdating({
