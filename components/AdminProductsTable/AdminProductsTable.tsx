@@ -92,6 +92,7 @@ export const AdminProductsTable = () => {
                     className="my-3"
                     multiple
                     onChange={() => {
+                      console.log("inside imageref onchange ");
                       if (!currentlyEditingProductType?.id) return;
                       onRowImageUpdating({
                         images:
