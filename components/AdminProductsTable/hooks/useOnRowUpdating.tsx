@@ -25,6 +25,8 @@ export const useOnRowUpdating = () => {
       e.newData?.categoryName,
     ];
 
+    console.log("%c%s", "color: #00a3cc", "updating category");
+
     // update category
 
     const categoryAlreadyExist = (existingCategories || []).find(
@@ -45,6 +47,7 @@ export const useOnRowUpdating = () => {
       }
     }
 
+    console.log("%c%s", "color: #aa00ff", "updating product type");
     // update product type
 
     if (!productTypeId) {
@@ -80,6 +83,8 @@ export const useOnRowUpdating = () => {
       }
     }
     const imagesArr = Array.from(images || []);
+
+    console.log("%c%s", "color: #e50000", "updating images", imagesArr);
 
     if (!imagesArr?.length) return;
 
